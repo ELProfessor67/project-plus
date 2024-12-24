@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserProvider } from "@/providers/UserProvider";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "ProjectPlus.com",
@@ -11,8 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+
     <html lang="en">
+
+      
       <body>
+      <Suspense>
         <UserProvider>
           {children}
         </UserProvider>
@@ -30,6 +35,7 @@ export default function RootLayout({ children }) {
           theme="light"
           transition={Bounce}
         />
+      </Suspense>
       </body>
     </html>
   );

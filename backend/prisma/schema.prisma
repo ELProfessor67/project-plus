@@ -21,12 +21,21 @@ model User {
   hear_about_as   String? @default("null") 
   created_at   DateTime @default(now()) 
   updated_at   DateTime @updatedAt
+  active_status String @default("Online")
   Projects Project[]
   Collaboration ProjectMember[]
   AssignedTasks TaskMember[]
   CreatedTasks Task[]
   Notifications Notification[]
   otps OTP[]
+  Transcibtions Transcibtion[]
+  Emails Email[]
+  Comments Comment[]
+  Progress TaskProgress[]
+  Conversation Participant[]
+  Meetings Meeting[]
+  MeetingParticipants MeetingParticipant[]
+  Transcribtions MeetingTranscibtion[]
 }
 
 
@@ -95,6 +104,12 @@ model Task {
   project Project @relation(fields: [project_id], references: [project_id])
   assignees TaskMember[]
   creator User @relation(fields: [created_by], references: [user_id]) 
+  Transcibtions Transcibtion[]
+  Emails Email[]
+  Comments Comment[]
+  Progress TaskProgress[]
+  Conversation Conversation[]
+  Meetings Meeting[]
 }
 
 
@@ -136,4 +151,147 @@ model Invitation {
   role Role
 
   project     Project   @relation(fields: [project_id], references: [project_id])
+}
+
+
+
+model Transcibtion {
+  transcribtion_id String @id @default(uuid())
+  task_id Int
+  user_id Int
+  Transcibtion String @db.Text
+  name String @db.VarChar(255) @default("Test")
+  created_at      DateTime @default(now())
+
+  task  Task @relation(fields: [task_id], references: [task_id])
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+
+model Email {
+  email_id String @id @default(uuid())
+  task_id Int
+  user_id Int
+  subject String @db.Text
+  content String @db.Text
+  created_at      DateTime @default(now())
+  to_user Int? @default(1)
+
+  task  Task @relation(fields: [task_id], references: [task_id])
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+model TaskProgress {
+  progress_id String @id @default(uuid())
+  task_id Int
+  message String @db.Text
+  created_at      DateTime @default(now())
+  user_id Int
+  task  Task @relation(fields: [task_id], references: [task_id])
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+model Comment {
+  comment_id String @id @default(uuid())
+  task_id Int
+  user_id Int
+  content String @db.Text
+  created_at      DateTime @default(now())
+  task  Task @relation(fields: [task_id], references: [task_id])
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+enum MeetingStatus {
+  PENDING
+  SCHEDULED
+  CANCELED
+  COMPLETED
+  PROCESSING
+}
+
+model Meeting {
+  meeting_id String @id @default(uuid())
+  task_id Int
+  heading String @db.Text
+  description String @db.Text
+  isScheduled Boolean
+  date DateTime?
+  time DateTime?
+  created_at  DateTime @default(now())
+  user_id Int
+  status MeetingStatus @default(PENDING)
+  participants MeetingParticipant[]
+  transcribtions MeetingTranscibtion[]
+  user User @relation(fields: [user_id],references: [user_id])
+  task Task @relation(fields: [task_id],references: [task_id])
+  duration Int @default(0)
+  start_time DateTime?
+  end_time DateTime?
+}
+
+enum Vote {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+model MeetingParticipant {
+  meeting_participant_id String @id @default(uuid())
+  meeting_id String
+  created_at  DateTime @default(now())
+  user_id Int
+  vote Vote? @default(PENDING)
+
+  meeting Meeting @relation(fields: [meeting_id],references: [meeting_id])
+  user User @relation(fields: [user_id],references: [user_id])
+}
+
+model MeetingTranscibtion {
+  meeting_transcribtion_id String @id @default(uuid())
+  meeting_id String
+  user_id Int
+  transcribe String @db.Text
+  meeting Meeting @relation(fields: [meeting_id],references: [meeting_id])
+  user User @relation(fields: [user_id],references: [user_id])
+  created_at DateTime @default(now())
+}
+
+
+
+// chat systems
+model Conversation {
+  conversation_id           String        @id @default(uuid())
+  name         String?
+  isGroup      Boolean       @default(false)
+  last_message String?
+  participants Participant[]
+  task_id Int
+  task Task @relation(fields: [task_id],references: [task_id])
+}
+
+model Participant {
+  participant_id             String        @id @default(uuid())
+  user_id        Int
+  user           User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  conversation_id String
+  conversation   Conversation  @relation(fields: [conversation_id], references: [conversation_id], onDelete: Cascade)
+}
+
+enum ContentType {
+  PLAIN_TEXT
+  MARKDOWN
+  IMAGE
+  VIDEOS
+  AUDIO
+  DOCUMENT
+}
+
+model Message {
+  message_id             String        @id @default(uuid())
+  conversation_id String
+  sender_id       Int
+  reciever_id Int
+  content        String
+  createdAt      DateTime      @default(now())
+  content_type ContentType @default(PLAIN_TEXT)
+
 }

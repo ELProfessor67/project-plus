@@ -4,6 +4,9 @@ import ErrorHandler from '../utils/errorHandler.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { AddProjectRequestBodySchema } from '../schema/projectSchema.js';
 import crypto from 'crypto';
+import { dmmfToRuntimeDataModel } from '@prisma/client/runtime/library';
+import { projectSelector } from '../prisma/selectors/project.selector.js';
+import { sendInviation } from '../services/userService.js';
 
 const prisma = new PrismaClient();
 
@@ -40,15 +43,38 @@ export const createProject = catchAsyncError(async (req, res, next) => {
 });
 
 export const getMyProjects = catchAsyncError(async (req, res, next) => {
-    const projects = await prisma.project.findMany({
+    let projects = await prisma.project.findMany({
         where: {
             created_by: req.user.user_id
-        }
+        },
+        include: projectSelector
     });
 
+
+    let collaboratedProjects = await prisma.projectMember.findMany({
+        where: { user_id: req.user.user_id },
+        include: {
+          project: {
+            select: {
+                project_id: true,
+                name: true,
+                description: true,
+                created_by: true,
+                created_at: true,
+                updated_at: true,
+                ...projectSelector
+            }
+          },
+        },
+    });
+
+    
+    collaboratedProjects = collaboratedProjects.map(collabrationMember => ({...collabrationMember.project,isCollabrationProject: true}));
+    collaboratedProjects = collaboratedProjects.filter(project => project.created_by !== req.user.user_id)
     res.status(200).json({
         success: true,
         projects,
+        collaboratedProjects
     });
 });
 
@@ -323,3 +349,17 @@ export const getProjectMembers = catchAsyncError(async (req, res, next) => {
     });
 });
 
+
+
+
+
+export const sendInvitationViaMail = catchAsyncError(async (req, res, next) => {
+    const { invitation,mail } = req.body;
+    if(!invitation || !mail) return next(new ErrorHandler('Inviation and Mail is required.'));
+    await sendInviation(invitation,mail);
+
+    res.status(200).json({
+        success: true,
+        message: "Mail Send Successfully",
+    });
+});

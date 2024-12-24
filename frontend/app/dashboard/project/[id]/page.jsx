@@ -132,7 +132,7 @@ export default function Page({ params }) {
           </TabsContent>
           <TabsContent value="table">
 
-            <TableView project={project}/>
+            <TableView project={project} reloadProject={getProjectDetails}/>
 
 
           </TabsContent>

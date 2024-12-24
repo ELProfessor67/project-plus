@@ -1,13 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft } from 'lucide-react'
+import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import BigDialog from "./Dialogs/BigDialog"
@@ -17,9 +17,20 @@ import { useUser } from "@/providers/UserProvider"
 const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
     const [favoritesOpen, setFavoritesOpen] = useState(true);
     const [workspaceOpen, setWorkspaceOpen] = useState(true);
+    const [openMail, setOpenMail] = useState(false);
+    const [chatOpen, setChatOpen] = useState(false);
     const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+    const [openMeeting, setOpenMeeting] = useState(false);
     const pathname = usePathname();
-    const {user} = useUser();
+    const { user } = useUser();
+
+
+    const  connectWhatsapp = useCallback(() => {
+        if(typeof window !== 'undefined'){
+            window.open('https://web.whatsapp.com', '_blank','width=800,height=600');
+        } 
+    },[]);
+
     return (
         <>
             <aside className={`
@@ -43,10 +54,115 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                         </Button>
                     </Link>
 
-                    <Link href={'/dashboard/my-work'}>
-                        <Button variant={pathname == '/dashboard/dashboard/my-work' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
+                    {/* <Link href={'/dashboard/my-project-work'}>
+                        <Button variant={pathname == '/dashboard/my-project-work' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-project-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
                             <Briefcase className="mr-2 h-4 w-4" />
                             My work
+                        </Button>
+                    </Link> */}
+
+
+
+                    <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
+                        <CollapsibleTrigger asChild>
+                            <Button variant="ghost" className="w-full justify-between">
+                                <div className="flex items-center">
+                                    <MessagesSquare className="mr-2 h-4 w-4" />
+                                    Chat
+                                </div>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${chatOpen ? "rotate-180" : ""}`} />
+                            </Button>
+                        </CollapsibleTrigger>
+
+                        <CollapsibleContent className="px-4 py-2">
+                            <div className="flex flex-col gap-2">
+
+                                <Link href={'/dashboard/chat'}>
+                                    <Button variant="ghost" size="sm" className="justify-start w-full">
+                                        <MessageSquareMore className="mr-2 h-4 w-4" />
+                                        System Chat
+                                    </Button>
+                                </Link>
+                             
+                                <Button variant="ghost" size="sm" className="justify-start w-full" onClick={connectWhatsapp}>
+                                    <MessageCircleMore className="mr-2 h-4 w-4" />
+                           
+                                    Connect Whatsapp
+                                </Button>
+                            </div>
+                        </CollapsibleContent>
+                    </Collapsible>
+
+
+                    <Collapsible open={openMeeting} onOpenChange={setOpenMeeting}>
+                        <CollapsibleTrigger asChild>
+                            <Button variant="ghost" className="w-full justify-between">
+                                <div className="flex items-center">
+                                    <Presentation className="mr-2 h-4 w-4" />
+                                    Meetings
+                                </div>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMail ? "rotate-180" : ""}`} />
+                            </Button>
+                        </CollapsibleTrigger>
+
+                        <CollapsibleContent className="px-4 py-2">
+                            <div className="flex flex-col gap-2">
+
+                                <Link href={'/dashboard/meeting'}>
+                                    <Button variant="ghost" size="sm" className="justify-start w-full">
+                                        <Projector  className="mr-2 h-4 w-4" />
+                                        Instant Meet
+                                    </Button>
+                                </Link>
+                                <Link href={'/dashboard/schedule-meet'}>
+                                    <Button variant="ghost" size="sm" className="justify-start w-full" >
+                                        <CalendarCheck className="mr-2 h-4 w-4" />
+                                        Schedule Meet
+                                    </Button>
+                                </Link>
+
+                            </div>
+                        </CollapsibleContent>
+                    </Collapsible>
+
+
+                    <Collapsible open={openMail} onOpenChange={setOpenMail}>
+                        <CollapsibleTrigger asChild>
+                            <Button variant="ghost" className="w-full justify-between">
+                                <div className="flex items-center">
+                                    <Mails className="mr-2 h-4 w-4" />
+                                    Main
+                                </div>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMail ? "rotate-180" : ""}`} />
+                            </Button>
+                        </CollapsibleTrigger>
+
+                        <CollapsibleContent className="px-4 py-2">
+                            <div className="flex flex-col gap-2">
+
+                                <Link href={'/dashboard/mail'}>
+                                    <Button variant="ghost" size="sm" className="justify-start w-full">
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        Mail
+                                    </Button>
+                                </Link>
+                                <Link href={'/dashboard/connect-mail'}>
+                                    <Button variant="ghost" size="sm" className="justify-start w-full" >
+                                        <Unplug className="mr-2 h-4 w-4" />
+                                        Connect Mail
+                                    </Button>
+                                </Link>
+
+                            </div>
+                        </CollapsibleContent>
+                    </Collapsible>
+
+                 
+
+                    <Link href={'/dashboard/projects'}>
+                        <Button variant={pathname == '/dashboard/projects' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
+                            <PanelsTopLeft className="mr-2 h-4 w-4" />
+                            My Project
                         </Button>
                     </Link>
 
@@ -116,7 +232,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                         </Link>
                                     ))
                                 }
-                                
+
 
                                 <Button variant="ghost" className="justify-start">
                                     <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -129,7 +245,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
             </aside>
 
             <BigDialog onClose={() => setProjectDialogOpen(false)} open={projectDialogOpen}>
-                <CreateProject onClose={() => setProjectDialogOpen(false)}/>
+                <CreateProject onClose={() => setProjectDialogOpen(false)} />
             </BigDialog>
         </>
     )

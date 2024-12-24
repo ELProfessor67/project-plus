@@ -4,6 +4,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { config } from 'dotenv';
 import ErrorMiddleware from './middlewares/error.js'
+import initChatServer from './config/chatServerConfig.js';
+import http from 'http';
+import { Server } from "socket.io";
+import initTranscribeServer from './config/transcribeServerConfig.js';
+
 config();
 
 const app = express();
@@ -20,6 +25,23 @@ app.use(ErrorMiddleware);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT,() => {
+const httpserver = http.createServer(app);
+
+const io = new Server({
+    cors: {
+      allowedHeaders: ["*"],
+      origin: "*",
+    },
+});
+io.attach(httpserver);
+
+const chatIO = io.of('/chat');
+initChatServer(chatIO);
+
+
+const transcribeIO = io.of('/transcribe');
+initTranscribeServer(transcribeIO);
+
+httpserver.listen(PORT,() => {
     console.log(`server running: http://localhost:${PORT}`);
 });

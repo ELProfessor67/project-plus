@@ -3,8 +3,98 @@ import catchAsyncError from '../middlewares/catchAsyncError.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { CreateTaskRequestBodySchema } from '../schema/taskSchema.js';
+import { transcribeFile } from '../services/taskService.js';
+
 
 const prisma = new PrismaClient();
+
+async function getTaskDetailsByDate(taskId) {
+    const emails = await prisma.email.findMany({
+      where: { task_id: taskId },
+      select: {
+        created_at: true,
+        content: true,
+        subject: true,
+        user: {
+          select: { 
+            user_id: true,
+            name: true,
+            email: true 
+        },
+        },
+      },
+    });
+  
+    const comments = await prisma.comment.findMany({
+      where: { task_id: taskId },
+      select: {
+        created_at: true,
+        content: true,
+        user: {
+          select: { 
+            user_id: true,
+            name: true,
+            email: true 
+        },
+        },
+      },
+    });
+  
+    const transcriptions = await prisma.transcibtion.findMany({
+      where: { task_id: taskId },
+      select: {
+        created_at: true,
+        Transcibtion: true,
+        name: true,
+        user: {
+          select: { 
+            user_id: true,
+            name: true,
+            email: true 
+        },
+        },
+      },
+    });
+  
+    // Combine and format data
+    const combined = [
+      ...emails.map((email) => ({
+        type: 'email',
+        created_at: email.created_at,
+        content: email.content,
+        subject: email.subject,
+        user: email.user,
+      })),
+      ...comments.map((comment) => ({
+        type: 'comment',
+        created_at: comment.created_at,
+        content: comment.content,
+        user: comment.user,
+      })),
+      ...transcriptions.map((transcription) => ({
+        type: 'transcription',
+        created_at: transcription.created_at,
+        Transcibtion: transcription.Transcibtion,
+        name: transcription.name,
+        user: transcription.user,
+      })),
+    ];
+  
+    // Group data by date
+    const grouped = combined.reduce((acc, curr) => {
+      const date = curr.created_at.toISOString().split('T')[0];
+      if (!acc[date]) {
+        acc[date] = { date, emails: [], comments: [], transcriptions: [] };
+      }
+      if (curr.type === 'email') acc[date].emails.push(curr);
+      if (curr.type === 'comment') acc[date].comments.push(curr);
+      if (curr.type === 'transcription') acc[date].transcriptions.push(curr);
+      return acc;
+    }, {});
+  
+    // Convert grouped data to array format
+    return  Object.values(grouped) ;
+  }
 
 export const createTask = catchAsyncError(async (req, res, next) => {
     const { project_id, name, description, assigned_to, priority, last_date, otherMember, status } = req.body;
@@ -79,6 +169,85 @@ export const createTask = catchAsyncError(async (req, res, next) => {
     res.status(201).json({
         success: true,
         task,
+    });
+});
+
+
+export const getTaskById = catchAsyncError(async (req,res,next) => {
+    const task_id = req.params.task_id;
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        },
+        include: {
+            assignees: { 
+                include: { 
+                    user: { 
+                        select: { 
+                            name: true,
+                            email: true,
+                            user_id: true
+                        }
+                    }
+                }
+            },
+            Transcibtions: {
+                select: {
+                    transcribtion_id: true,
+                    name: true,
+                    Transcibtion: true,
+                    user: {
+                        select: {
+                            user_id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    created_at: true,
+                }
+            },
+
+            Emails: {
+                select: {
+                    email_id: true,
+                    subject: true,
+                    content: true,
+                    user: {
+                        select: {
+                            user_id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    created_at: true,
+                }
+            },
+
+            
+            Comments: {
+                select: {
+                    comment_id: true,
+                    content: true,
+                    user: {
+                        select: {
+                            user_id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    created_at: true,
+                }
+            }
+        }
+    });
+
+    const progress = await getTaskDetailsByDate( parseInt(task_id));
+
+    res.status(200).json({
+        success: true,
+        task,
+        progress
     });
 });
 
@@ -236,5 +405,245 @@ export const addMembersToTask = catchAsyncError(async (req, res, next) => {
     res.status(201).json({
         success: true,
         taskMember,
+    });
+});
+
+
+
+export const addTranscibtion = catchAsyncError(async (req, res, next) => {
+    let { task_id,name } = req.body;
+    const user_id = req.user.user_id;
+    if(!task_id || !name) return next(new ErrorHandler(401,"Task Id is required."));
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    });
+
+
+
+    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+
+
+    const file = req.file;
+    if(!file || !name) return next(new ErrorHandler(401,"File And Name Required."));
+    const fileBuffer = file.buffer;
+    const Transcibtion = await transcribeFile(fileBuffer);
+
+    await prisma.transcibtion.create({
+        data: {
+            task_id: parseInt(task_id),
+            user_id: user_id,
+            Transcibtion: Transcibtion,
+            name: name
+        }
+    })
+
+    res.status(200).json({
+        success: true,
+        message: 'Audio Tanscibed Successfully',
+    });
+});
+
+
+export const addComments = catchAsyncError(async (req, res, next) => {
+    let { task_id,content } = req.body;
+    const user_id = req.user.user_id;
+    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    });
+
+
+
+    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+
+
+
+    if(!content) return next(new ErrorHandler(401,"Content is required."));
+   
+    await prisma.comment.create({
+        data: {
+            task_id: parseInt(task_id),
+            user_id: user_id,
+            content: content
+        }
+    })
+
+
+
+    await prisma.taskProgress.create({
+        data: {
+            message: `User Add a comments: ${content}`,
+            user_id: user_id,
+            task_id: parseInt(task_id),
+        }
+    });
+
+
+    res.status(200).json({
+        success: true,
+        message: 'Comment Add Successfully',
+    });
+});
+
+
+
+export const addEmail = catchAsyncError(async (req, res, next) => {
+    let { task_id,subject,content } = req.body;
+    const user_id = req.user.user_id;
+    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        },
+        include: {
+            assignees: {
+                select: {
+                    user_id: true
+                }
+            }
+        }
+    });
+
+
+
+    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+
+
+
+    if(!content || !subject) return next(new ErrorHandler(401,"Content and subject is required."));
+    const data = [
+        {
+            task_id: parseInt(task_id),
+            user_id: user_id,
+            content: content,
+            subject: subject
+        }
+    ]
+
+    for (let index = 0; index < task.assignees.length; index++) {
+        const assignees =  task.assignees[index];
+        if(assignees.user_id == user_id) continue;
+        data.push(
+            {
+                task_id: parseInt(task_id),
+                user_id: user_id,
+                content: content,
+                subject: subject,
+                to_user: assignees.user_id
+            }
+        )
+        
+    }
+    
+    await prisma.email.createMany({
+        data: data
+    });
+
+    await prisma.taskProgress.create({
+        data: {
+            message: `User Send a mail subject: ${subject}`,
+            user_id: user_id,
+            task_id: parseInt(task_id),
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Email Send  Successfully to all member.',
+    });
+});
+
+
+export const getMails = catchAsyncError(async (req, res, next) => {
+    const user_id = req.user.user_id;
+    const {date} = req.query;
+    const whereCondition = {
+        OR: [
+            {user_id: user_id},
+            {to_user: user_id},
+        ],
+    };
+
+    // Check if both start and end dates are provided
+    if (date) {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0); 
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+
+        whereCondition.created_at = {
+            gte: startOfDay, 
+            lte: endOfDay,   
+        };
+    }
+    const emails = await prisma.email.findMany({
+        where: whereCondition,
+        include: {
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                }
+            }
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        emails
+    });
+});
+
+
+
+
+
+export const getProgress = catchAsyncError(async (req, res, next) => {
+    const task_id = req.params.task_id;
+    const {date} = req.query;
+
+    const whereCondition = {
+        task_id: parseInt(task_id)
+    };
+
+    
+    if (date) {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0); 
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+
+        whereCondition.created_at = {
+            gte: startOfDay, 
+            lte: endOfDay,   
+        };
+    }
+
+    const progresss = await prisma.taskProgress.findMany({
+        where: whereCondition,
+        include:{
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                }
+            }
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        progresss
     });
 });

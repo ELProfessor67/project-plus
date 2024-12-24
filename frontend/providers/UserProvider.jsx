@@ -10,9 +10,10 @@ export const UserProvider = ({children}) => {
     const [isAuth, setIsAuth] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
     const [userAvatar,setUserAvatar] = useState('EX');
-    console.log(user,'user')
+  
 
     const loadUser = useCallback(async () => {
+        setIsLoading(true)
         try {
             const res = await loadUserRequest();
             setIsAuth(true);
@@ -26,6 +27,8 @@ export const UserProvider = ({children}) => {
         } catch (error) {
             setIsAuth(false);
             console.log(error?.response?.data?.message || error.message)
+        }finally{
+            setIsLoading(false);
         }
     },[]);
 

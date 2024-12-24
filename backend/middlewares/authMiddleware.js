@@ -30,6 +30,12 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
               created_at: true,
               updated_at: true,
               created_by: true,
+              Tasks: {
+                select: {
+                  task_id: true,
+                  name: true
+                }
+              }
             },
           },
           Collaboration: {
@@ -42,17 +48,31 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
                   project_id: true,
                   name: true,
                   description: true,
+                  Tasks: {
+                    select: {
+                      task_id: true,
+                      name: true
+                    }
+                  }
                 },
+              
               },
             },
           },
         },
     });
-      
+
+
     if(!user) throw new ErrorHandler('Unauthorize user',401);
 
-    req.user = user;
-    
 
+    const projectIds = user.Projects.map(project => project.project_id);
+
+    let CollaborationProject = user.Collaboration.map((project) => ({is_collabration_project: true,...project.project}));
+    CollaborationProject = CollaborationProject.filter(project => !projectIds.includes(project.project_id));
+    user.Projects = [...user.Projects,...CollaborationProject];
+
+    req.user = user;
+  
     next()
 });

@@ -9,7 +9,8 @@ import {
     removeMemberFromProject,
     getProjectMembers,
     generateInvitationLink,
-    addMemberThroughInvitation
+    addMemberThroughInvitation,
+    sendInvitationViaMail
 } from '../controllers/projectController.js';
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.route('/:project_id/invite').post(authMiddleware,generateInvitationLink);
 router.route('/join').post(authMiddleware,addMemberThroughInvitation);
 router.route('/members/:project_member_id').delete(authMiddleware,removeMemberFromProject);
 router.route('/:project_id/members').get(authMiddleware,getProjectMembers);
+router.route('/send-via-mail').post(authMiddleware,sendInvitationViaMail);
 
 
 

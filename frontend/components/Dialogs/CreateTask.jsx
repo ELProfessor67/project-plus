@@ -147,20 +147,19 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
                 </div>
 
 
-
                 <div className="grid grid-cols-[auto,1fr] gap-5 items-center ">
                     <div className='flex items-center gap-2 w-[6rem]'>
                         <UserCircle className="h-5 w-5 text-gray-500" />
                         <span className='text-black/80 text-sm'>Leader</span>
                     </div>
-                    <Select onValueChange={(value) => setFormdata(prev => ({ ...prev, assigned_to: value }))}>
+                    <Select onValueChange={(value) => setFormdata(prev => ({ ...prev, assigned_to: value }))} >
                         <SelectTrigger className="focus-visible:ring-0 focus-visible:ring-transparent outline-none">
                             <SelectValue placeholder="Task Leader" />
                         </SelectTrigger>
                         <SelectContent className="focus-visible:ring-0 focus-visible:ring-transparent">
                             {
                                 project?.Members?.map(member => (
-                                    <SelectItem value={member?.user_id} key={member.user_id}>
+                                    <SelectItem value={member?.user?.user_id} key={member?.user?.user_id}>
                                         <div className='flex items-center gap-3'>
                                             <Avatar className="w-[2rem] h-[2rem]">
                                                 <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
@@ -173,7 +172,12 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
                             }
                         </SelectContent>
                     </Select>
-                </div>
+                </div> 
+
+
+
+
+                
 
 
                 <div className="grid grid-cols-[auto,1fr] gap-5 items-center ">

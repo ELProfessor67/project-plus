@@ -279,3 +279,5 @@ export const resendOTP = catchAsyncError(async (req, res, next) => {
         message: 'A new OTP has been sent to your email.',
     });
 });
+
+
