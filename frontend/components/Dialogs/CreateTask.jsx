@@ -15,8 +15,11 @@ import MultiSelect from "@/components/ui/multi-select";
 import AvatarCompoment from '../AvatarCompoment'
 import { toast } from 'react-toastify'
 import { createTaskRequest } from '@/lib/http/task'
-import JoditEditor from 'jodit-react'
-
+import dynamic from 'next/dynamic'
+const JoditEditor = dynamic(
+    () => import('jodit-react'),
+    { ssr: false }
+)
 
 
 const CreateTask = ({ project, onClose, getProjectDetails }) => {

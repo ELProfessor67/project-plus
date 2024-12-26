@@ -1,7 +1,7 @@
 'use client'
 import { ChatSidebar } from '@/components/ChattingComponent'
-import Sibebar from '@/components/Sidebar'
 import TopNavigation from '@/components/TopNavigation'
+import Sibebar from '@/components/Sidebar'
 import { Button } from '@/components/ui/button'
 import ProtectedRouteProvider from '@/providers/ProtectedRouteProvider'
 import { MessageCircle } from 'lucide-react'
@@ -18,7 +18,7 @@ const layout = ({ children }) => {
                     <Sibebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                     <div className="flex flex-1 flex-col overflow-hidden">
 
-                        {/* Main Content Area */}
+                        
                         {children}
                     </div>
                 </div>

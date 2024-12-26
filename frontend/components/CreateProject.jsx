@@ -2,12 +2,15 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './Button'
-import JoditEditor from 'jodit-react';
 import { toast } from 'react-toastify';
 import { createProjectRequest } from '@/lib/http/project';
 import { useUser } from '@/providers/UserProvider';
 
-
+import dynamic from 'next/dynamic'
+const JoditEditor = dynamic(
+    () => import('jodit-react'),
+    { ssr: false }
+)
 
 
 const CreateProject = ({onClose}) => {

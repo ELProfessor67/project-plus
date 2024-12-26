@@ -25,8 +25,10 @@ const page = ({ params }) => {
 
   useLayoutEffect(() => {
     if (isAuth == false) {
+      if(typeof window != 'undefined'){
       const url = window.location.href;
       router.push(`/sign-in?next_to=${url}`);
+      }
     }
   }, [user, isAuth]);
 

@@ -46,7 +46,7 @@ export class TranscribedService {
 
         if (typeof window !== 'undefined') {
             try {
-                this.audioStream = await navigator.mediaDevices.getUserMedia({
+                this.audioStream = await window.navigator.mediaDevices.getUserMedia({
                     audio: true
                 });
                 return this.audioStream;

@@ -96,7 +96,7 @@ const TableView = ({ project: projectsDetails,reloadProject }) => {
                 <Table className="border-collapse border rounded-md">
                     <TableHeader className="border-b">
                         <TableRow>
-                            <TableHead className="!w-[10px] border-r last:border-r-0">#</TableHead>
+                            <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
 
                             <TableHead className="w-[300px] border-r last:border-r-0">Task Name</TableHead>
                             <TableHead className="border-r last:border-r-0">Member</TableHead>
@@ -113,7 +113,7 @@ const TableView = ({ project: projectsDetails,reloadProject }) => {
 
                                 <TableRow key={task.task_id}>
                                     <TableCell className=' border-r last:border-r-0 cursor-pointer'>
-                                        <Link href={`/dashboard/projects/tasks/${task.task_id}`}>{index + 1}</Link>
+                                        <Link href={`/dashboard/projects/tasks/${task.task_id}`}>Task {index + 1}</Link>
                                     </TableCell>
 
                                     <TableCell className={`border-r last:border-r-0 !p-0 text-center text-white cursor-pointer relative group`} style={{background: getColorByFirstLetter(task.name)}}>

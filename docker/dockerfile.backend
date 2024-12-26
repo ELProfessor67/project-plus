@@ -21,7 +21,9 @@ RUN apk update && \
     libc6-compat \
     net-tools \
     iputils \
-    curl
+    curl \
+    openssl \
+    openssl-dev
 
 # Copy the entire project to the working directory
 COPY ../.. .

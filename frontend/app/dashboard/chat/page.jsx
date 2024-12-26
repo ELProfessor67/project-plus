@@ -23,12 +23,16 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState('');
   const { handleSendMessage, socketRef } = useChatHook();
-  const audioRef = useRef(new Audio('/ding.mp3'));
+  const audioRef = useRef();
   const filterUser = useMemo(() => users.filter(user => (user.name.toLowerCase().includes(query.toLowerCase())) || user.email.toLowerCase().includes(query.toLowerCase())), [query, users]);
 
 
 
-
+  useEffect(() => {
+    if(typeof window !== 'undefined'){
+      audioRef.current = new window.Audio('/ding.mp3');
+    }
+  },[])
 
   useEffect(() => {
     if (user) {

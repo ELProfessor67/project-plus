@@ -101,7 +101,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                     <Presentation className="mr-2 h-4 w-4" />
                                     Meetings
                                 </div>
-                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMail ? "rotate-180" : ""}`} />
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMeeting ? "rotate-180" : ""}`} />
                             </Button>
                         </CollapsibleTrigger>
 
@@ -131,7 +131,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                             <Button variant="ghost" className="w-full justify-between">
                                 <div className="flex items-center">
                                     <Mails className="mr-2 h-4 w-4" />
-                                    Main
+                                    MaiL
                                 </div>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMail ? "rotate-180" : ""}`} />
                             </Button>
@@ -248,6 +248,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                 <CreateProject onClose={() => setProjectDialogOpen(false)} />
             </BigDialog>
         </>
+    
     )
 }
 
