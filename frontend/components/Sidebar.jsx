@@ -25,11 +25,11 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
     const { user } = useUser();
 
 
-    const  connectWhatsapp = useCallback(() => {
-        if(typeof window !== 'undefined'){
-            window.open('https://web.whatsapp.com', '_blank','width=800,height=600');
-        } 
-    },[]);
+    const connectWhatsapp = useCallback(() => {
+        if (typeof window !== 'undefined') {
+            window.open('https://web.whatsapp.com', '_blank', 'width=800,height=600');
+        }
+    }, []);
 
     return (
         <>
@@ -54,13 +54,6 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                         </Button>
                     </Link>
 
-                    {/* <Link href={'/dashboard/my-project-work'}>
-                        <Button variant={pathname == '/dashboard/my-project-work' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-project-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
-                            <Briefcase className="mr-2 h-4 w-4" />
-                            My work
-                        </Button>
-                    </Link> */}
-
 
 
                     <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
@@ -83,10 +76,10 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                         System Chat
                                     </Button>
                                 </Link>
-                             
+
                                 <Button variant="ghost" size="sm" className="justify-start w-full" onClick={connectWhatsapp}>
                                     <MessageCircleMore className="mr-2 h-4 w-4" />
-                           
+
                                     Connect Whatsapp
                                 </Button>
                             </div>
@@ -110,7 +103,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
 
                                 <Link href={'/dashboard/meeting'}>
                                     <Button variant="ghost" size="sm" className="justify-start w-full">
-                                        <Projector  className="mr-2 h-4 w-4" />
+                                        <Projector className="mr-2 h-4 w-4" />
                                         Instant Meet
                                     </Button>
                                 </Link>
@@ -157,7 +150,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                         </CollapsibleContent>
                     </Collapsible>
 
-                 
+
 
                     <Link href={'/dashboard/projects'}>
                         <Button variant={pathname == '/dashboard/projects' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
@@ -165,6 +158,11 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                             My Project
                         </Button>
                     </Link>
+
+                    <Button variant={'ghost'} className={`justify-start w-full`} onClick={() => setProjectDialogOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Project
+                    </Button>
 
                     {/* Favorites Section */}
                     <Collapsible open={favoritesOpen} onOpenChange={setFavoritesOpen}>
@@ -179,37 +177,38 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                         </CollapsibleTrigger>
                         <CollapsibleContent className="px-4 py-2">
                             <div className="flex flex-col gap-2">
-
-                                <Button variant="ghost" size="sm" className="justify-start">
-                                    Project 1
-                                </Button>
-                                <Button variant="ghost" size="sm" className="justify-start">
-                                    Project 2
-                                </Button>
+                                {
+                                    user?.Projects?.map(project => (
+                                        <Link href={`/dashboard/project/${project.project_id}`}>
+                                            <Button variant="ghost" className="justify-start flex items-center w-full">
+                                                <PanelLeft className="mr-1" />
+                                                {project.name}
+                                            </Button>
+                                        </Link>
+                                    ))
+                                }
                             </div>
                         </CollapsibleContent>
                     </Collapsible>
 
                     {/* Main Workspace */}
-                    <Collapsible open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
+                    {/* <Collapsible open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
                         <CollapsibleTrigger asChild>
                             <Button variant="ghost" className="w-full justify-between">
                                 <div className="flex items-center">
                                     <div className="mr-2 flex h-5 w-5 items-center justify-center rounded bg-purple-600 text-xs font-medium text-white">
                                         M
                                     </div>
-                                    Main workspace
+                                    All Project
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${workspaceOpen ? "rotate-180" : ""}`} />
-                                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
+
                                 </div>
                             </Button>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                            {/* Search and Add */}
+                           
                             <div className="flex gap-1 p-3">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -220,7 +219,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                 </Button>
                             </div>
 
-                            {/* Workspace Items */}
+                       
                             <div className="flex flex-col gap-1 px-3">
                                 {
                                     user?.Projects?.map(project => (
@@ -234,13 +233,10 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                 }
 
 
-                                <Button variant="ghost" className="justify-start">
-                                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                                    Dashboard and reporting
-                                </Button>
+
                             </div>
                         </CollapsibleContent>
-                    </Collapsible>
+                    </Collapsible> */}
                 </div>
             </aside>
 
@@ -248,7 +244,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                 <CreateProject onClose={() => setProjectDialogOpen(false)} />
             </BigDialog>
         </>
-    
+
     )
 }
 

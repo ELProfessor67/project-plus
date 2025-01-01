@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
 import jwt from "jsonwebtoken";
 
 
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const authMiddleware = catchAsyncError(async (req,res,next) => {
     const token = req.cookies.token;

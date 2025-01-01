@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import ErrorHandler from "../utils/errorHandler.js";
@@ -7,7 +6,7 @@ import { ChangePasswordRequestBodySchema, LoginRequestBodySchema, OTPRequestBody
 import { generateJWTToken, sendOTPOnMail } from '../services/userService.js';
 import crypto from 'crypto';
 
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const register = catchAsyncError(async (req, res, next) => {
     const { name, email, password, account_name, bring, teams_member_count,focus,hear_about_as } = req.body;

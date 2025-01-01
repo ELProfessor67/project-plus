@@ -99,7 +99,7 @@ export default function Page() {
             <Button variant="ghost" size="icon"><PenSquare className="h-5 w-5" /></Button>
           </div>
         </div>
-        <div className="flex items-center space-x-2 mb-4">
+        {/* <div className="flex items-center space-x-2 mb-4">
           <Button variant="secondary" className="w-full justify-start">
             <MessageCircle className="mr-2 h-4 w-4" />
             Chats
@@ -108,7 +108,7 @@ export default function Page() {
             <Users className="mr-2 h-4 w-4" />
             Groups
           </Button>
-        </div>
+        </div> */}
         <div className="relative mb-4">
           <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
           <Input className="pl-8" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />

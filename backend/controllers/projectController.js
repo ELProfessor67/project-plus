@@ -1,14 +1,11 @@
-import { PrismaClient } from '@prisma/client';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { AddProjectRequestBodySchema } from '../schema/projectSchema.js';
 import crypto from 'crypto';
-import { dmmfToRuntimeDataModel } from '@prisma/client/runtime/library';
 import { projectSelector } from '../prisma/selectors/project.selector.js';
 import { sendInviation } from '../services/userService.js';
-
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const createProject = catchAsyncError(async (req, res, next) => {
     const { name, description } = req.body;

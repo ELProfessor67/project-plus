@@ -1,12 +1,9 @@
-import { PrismaClient } from '@prisma/client';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { CreateTaskRequestBodySchema } from '../schema/taskSchema.js';
 import { transcribeFile } from '../services/taskService.js';
-
-
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 async function getTaskDetailsByDate(taskId) {
     const emails = await prisma.email.findMany({

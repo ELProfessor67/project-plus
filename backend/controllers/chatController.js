@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
-
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const getConversationID = catchAsyncError(async (req, res, next) => {
     let { user_id, task_id } = req.body;

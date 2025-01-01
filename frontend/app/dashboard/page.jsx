@@ -24,7 +24,7 @@ export default function Page() {
   const [workspacesOpen, setWorkspacesOpen] = React.useState(true);
   const [projects, setProjects] = React.useState([]);
   const [meeting, setMeeting] = React.useState(null);
-  const {user} = useUser();
+  const { user } = useUser();
 
 
 
@@ -70,177 +70,138 @@ export default function Page() {
               Quickly access your recent boards, inbox and workspaces
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline">Give feedback</Button>
-            <Button variant="outline">Quick Search</Button>
-          </div>
         </div>
 
         {/* Recently Visited Section */}
-        <Collapsible
-          open={recentlyVisitedOpen}
-          onOpenChange={setRecentlyVisitedOpen}
-          className="mb-6"
-        >
-          <CollapsibleTrigger className="flex w-full items-center gap-2">
-            <ChevronDown
-              className={`h-5 w-5 transition-transform ${recentlyVisitedOpen ? "rotate-180" : ""
-                }`}
-            />
-            <h2 className="text-lg font-semibold">Recently visited</h2>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project, index) => (
-                <Link href={`/dashboard/project/${project.project_id}`}>
 
-                  <Card key={project.project_id} className="group cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="relative mb-2 aspect-video overflow-hidden rounded-lg">
-                        <img
-                          src={"https://cdn.monday.com/images/quick_search_recent_dashboard.svg"}
-                          alt={project.name}
-                          className="object-cover transition-transform group-hover:scale-105 w-full h-full"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-medium">{project.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            work management {'>'} Main workspace
-                          </p>
+        {
+          projects && projects.length > 0 &&
+          <Collapsible
+            open={recentlyVisitedOpen}
+            onOpenChange={setRecentlyVisitedOpen}
+            className="mb-6"
+          >
+            <CollapsibleTrigger className="flex w-full items-center gap-2">
+              <ChevronDown
+                className={`h-5 w-5 transition-transform ${recentlyVisitedOpen ? "rotate-180" : ""
+                  }`}
+              />
+              <h2 className="text-lg font-semibold">Recently visited</h2>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {projects?.map((project, index) => (
+                  <Link href={`/dashboard/project/${project.project_id}`}>
+
+                    <Card key={project.project_id} className="group cursor-pointer">
+                      <CardContent className="p-4">
+                        <div className="relative mb-2 aspect-video overflow-hidden rounded-lg">
+                          <img
+                            src={"https://cdn.monday.com/images/quick_search_recent_dashboard.svg"}
+                            alt={project.name}
+                            className="object-cover transition-transform group-hover:scale-105 w-full h-full"
+                          />
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="opacity-0 group-hover:opacity-100"
-                        >
-                          <Star className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium">{project.name}</h3>
+                            <p className="text-sm text-gray-600">
+                              work management {'>'} Main workspace
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="opacity-0 group-hover:opacity-100"
+                          >
+                            <Star className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        }
 
         {/* Update Feed Section */}
-        <Collapsible
-          open={updateFeedOpen}
-          onOpenChange={setUpdateFeedOpen}
-          className="mb-6"
-        >
-          <CollapsibleTrigger className="flex w-full items-center gap-2">
-            <ChevronDown
-              className={`h-5 w-5 transition-transform ${updateFeedOpen ? "rotate-180" : ""
-                }`}
-            />
-            <h2 className="text-lg font-semibold">Schedule Meetings</h2>
-            <span className="rounded-full bg-blue-600 px-1.5 py-0.5 text-xs text-white">
-              1
-            </span>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="mt-4">
-              <Card className='border-none shadow-gray-50'>
-                <CardContent className='p-3'>
-                  <div className='flex justify-between items-center'>
-                    <h3 className='text-gray-700 text-lg'>{meeting?.user_id == user?.user_id ? 'You created a meeting' : 'You participant a meeting'}</h3>
-                    <RenderMembers members={meeting?.participants || []} />
-                    <Badge className={`py-2 px-4 ${meeting?.status == 'SCHEDULED' ? "bg-green-500" : meeting?.status == 'CANCELED' ? 'bg-red-500' : 'bg-gray-500'}`}> {meeting?.status}</Badge>
-                    <time className='text-gray-600 text-md'>{moment(meeting?.created_at).format("DD MMM YYYY")}</time>
+        {
+          meeting &&
+          <Collapsible
+            open={updateFeedOpen}
+            onOpenChange={setUpdateFeedOpen}
+            className="mb-6"
+          >
+            <CollapsibleTrigger className="flex w-full items-center gap-2">
+              <ChevronDown
+                className={`h-5 w-5 transition-transform ${updateFeedOpen ? "rotate-180" : ""
+                  }`}
+              />
+              <h2 className="text-lg font-semibold">Schedule Meetings</h2>
+              <span className="rounded-full bg-blue-600 px-1.5 py-0.5 text-xs text-white">
+                1
+              </span>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="mt-4">
+                <Card className='border-none shadow-gray-50'>
+                  <CardContent className='p-3'>
+                    <div className='flex justify-between items-center'>
+                      <h3 className='text-gray-700 text-lg'>{meeting?.user_id == user?.user_id ? 'You created a meeting' : 'You participant a meeting'}</h3>
+                      <RenderMembers members={meeting?.participants || []} />
+                      <Badge className={`py-2 px-4 ${meeting?.status == 'SCHEDULED' ? "bg-green-500" : meeting?.status == 'CANCELED' ? 'bg-red-500' : 'bg-gray-500'}`}> {meeting?.status}</Badge>
+                      <time className='text-gray-600 text-md'>{moment(meeting?.created_at).format("DD MMM YYYY")}</time>
 
-                  </div>
+                    </div>
 
-                  <div className='mt-8'>
-                    <h2 className='text-3xl'>{meeting?.heading}</h2>
-                    <p className='mt-2 text-gray-600'>{meeting?.description}</p>
-                    <p className='flex items-center gap-4 text-gray-600 mt-2'><strong className='text-black'>Scheduled Time:</strong> {moment(meeting?.date).format("lll")}</p>
-                    {
-                      meeting?.status == "SCHEDULED" && (
-                        <Link className={'text-blue-500 my-2'} href={`/meeting/${meeting?.meeting_id}`}>Join Now</Link>
-                      )
-                    }
-                  </div>
+                    <div className='mt-8'>
+                      <h2 className='text-3xl'>{meeting?.heading}</h2>
+                      <p className='mt-2 text-gray-600'>{meeting?.description}</p>
+                      <p className='flex items-center gap-4 text-gray-600 mt-2'><strong className='text-black'>Scheduled Time:</strong> {moment(meeting?.date).format("lll")}</p>
+                      {
+                        meeting?.status == "SCHEDULED" && (
+                          <Link className={'text-blue-500 my-2'} href={`/meeting/${meeting?.meeting_id}`}>Join Now</Link>
+                        )
+                      }
+                    </div>
 
-                  <div className="mt-8">
-                    <Table className="border-collapse border rounded-md">
-                      <TableHeader className="border-b">
-                        <TableRow>
-                          <TableHead className="border-r last:border-r-0 text-white bg-yellow-600">Name</TableHead>
-                          <TableHead className="border-r last:border-r-0 text-white bg-red-600">Opinion</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody className="divide-y">
-                        {
-                          meeting?.participants.map((participant) => (
-                            <TableRow key={participant.meeting_participant_id}>
-                              <TableCell className='border-r last:border-r-0 cursor-pointer text-gray-600'>
-                                {participant.user.name}
-                              </TableCell>
-                              <TableCell className='border-r last:border-r-0 cursor-pointer text-gray-600'>
-                                {participant.vote == "PENDING" ? "NO RESPONSE" : participant.vote}
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        }
+                    <div className="mt-8">
+                      <Table className="border-collapse border rounded-md">
+                        <TableHeader className="border-b">
+                          <TableRow>
+                            <TableHead className="border-r last:border-r-0 text-white bg-yellow-600">Name</TableHead>
+                            <TableHead className="border-r last:border-r-0 text-white bg-red-600">Opinion</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody className="divide-y">
+                          {
+                            meeting?.participants.map((participant) => (
+                              <TableRow key={participant.meeting_participant_id}>
+                                <TableCell className='border-r last:border-r-0 cursor-pointer text-gray-600'>
+                                  {participant.user.name}
+                                </TableCell>
+                                <TableCell className='border-r last:border-r-0 cursor-pointer text-gray-600'>
+                                  {participant.vote == "PENDING" ? "NO RESPONSE" : participant.vote}
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          }
 
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        }
+
       </div>
 
-      {/* Right Sidebar */}
-      <div className="hidden w-80 border-l bg-gray-50 p-6 lg:block">
-        <div className="mb-8">
-          <img
-            src="https://cdn.monday.com/images/homepage-desktop/templates-banner.png"
-            alt="Templates"
-            className="mb-4 rounded-lg"
-          />
-          <h3 className="mb-2 text-center font-medium">
-            Boost your workflow in minutes with ready-made templates
-          </h3>
-          <Button className="w-full" variant="outline">
-            Explore templates
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="font-medium">Learn & get inspired</h3>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2"
-          >
-            <Rocket className="h-5 w-5 text-blue-600" />
-            <div className="text-left">
-              <div className="font-medium">Getting started</div>
-              <div className="text-sm text-gray-600">
-                Learn how monday.com works
-              </div>
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2"
-          >
-            <HelpCircle className="h-5 w-5 text-purple-600" />
-            <div className="text-left">
-              <div className="font-medium">Help center</div>
-              <div className="text-sm text-gray-600">
-                Learn and get support
-              </div>
-            </div>
-          </Button>
-        </div>
-      </div>
+     
     </div>
   )
 }

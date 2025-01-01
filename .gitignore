@@ -4,5 +4,6 @@
 /frontend/.env.local
 /backend/.env
 /backend/node_modules
+
 /backend/kafka.pem
 /backend/prisma/ca.pem

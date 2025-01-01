@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { ON_MESSAGE, REDIS_CHANNEL } from "../constants/chatEventConstant.js";
 import { userSocketMap } from "../constants/userSocketMapConstant.js";
 import { produceChat } from "./kafkaService.js";
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const handleDisconnect = (config) => {
     //delete user id user socket is map

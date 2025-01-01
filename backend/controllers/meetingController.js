@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import { sendInviation, sendMailDetails, sendMailUpdate } from '../services/meetingService.js';
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const createMeeting = catchAsyncError(async (req, res, next) => {
     const { heading,description,task_id,time,date,isScheduled,mail_text } = req.body;

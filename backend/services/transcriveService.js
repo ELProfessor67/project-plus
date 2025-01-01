@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { produceTranscribtion } from './kafkaService.js';
-const prisma = new PrismaClient();
+import {prisma} from "../prisma/index.js";
 
 export const handleTranscibtion = async (transcribe,config) => {
     const message = {
