@@ -91,8 +91,9 @@ const CallDialog = ({ open, setCurrentCallUser, currentCallUser, isCallByMe = tr
 
                 {
                     (status == CallStatus.no_response || status == CallStatus.rejected) &&
-                    <div className='mt-4 flex items-center gap-20 justify-center'>
-                        <Button className="bg-blue-500 hover:bg-blue-600" onClick={handleCallAgain}>Call Again!</Button>
+                    <div className='mt-4 flex items-center  justify-between gap-5'>
+                        <Button className="bg-gray-500 hover:bg-gray-600 flex-1" onClick={() => setCurrentCallUser(null)}>Go Back</Button>
+                        <Button className="bg-blue-500 hover:bg-blue-600 flex-1" onClick={handleCallAgain}>Call Again!</Button>
                     </div>
                 }
 
