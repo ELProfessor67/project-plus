@@ -21,7 +21,7 @@ model User {
   hear_about_as   String? @default("null") 
   created_at   DateTime @default(now()) 
   updated_at   DateTime @updatedAt
-  active_status String @default("Online")
+  active_status String @default("Offline")
   Projects Project[]
   Collaboration ProjectMember[]
   AssignedTasks TaskMember[]
@@ -283,6 +283,15 @@ enum ContentType {
   VIDEOS
   AUDIO
   DOCUMENT
+  CALL
+}
+
+enum CallStatus {
+  RINGING
+  PROCESSING
+  REJECTED
+  ENDED
+  NO_RESPONSE
 }
 
 model Message {
@@ -293,5 +302,6 @@ model Message {
   content        String
   createdAt      DateTime      @default(now())
   content_type ContentType @default(PLAIN_TEXT)
-
+  duration String? @default("1min")
+  call_status CallStatus @default(RINGING)
 }

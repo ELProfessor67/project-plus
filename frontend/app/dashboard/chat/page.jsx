@@ -12,6 +12,7 @@ import RenderChats from "@/components/chat/RenderChats"
 import useChatHook from "@/hooks/useChatHook"
 import { toast } from "react-toastify"
 import { ON_MESSAGE } from "@/contstant/chatEventConstant"
+import CallDialog from "@/components/Dialogs/CallDialog"
 
 export default function Page() {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -23,16 +24,21 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState('');
   const { handleSendMessage, socketRef } = useChatHook();
+  const [currentCallUser, setCurrentCallUser] = useState(null);
   const audioRef = useRef();
   const filterUser = useMemo(() => users.filter(user => (user.name.toLowerCase().includes(query.toLowerCase())) || user.email.toLowerCase().includes(query.toLowerCase())), [query, users]);
+  
 
+  const handleCall = useCallback((user) => {
+    setCurrentCallUser(user);
+  },[]);
 
 
   useEffect(() => {
-    if(typeof window !== 'undefined'){
+    if (typeof window !== 'undefined') {
       audioRef.current = new window.Audio('/ding.mp3');
     }
-  },[])
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -83,53 +89,47 @@ export default function Page() {
     return () => {
       socketRef?.current.off(ON_MESSAGE, handleMessageRecive);
     }
-  }, [conversationId,socketRef.current]);
+  }, [conversationId, socketRef.current]);
 
 
 
   return (
-    <div className="flex flex-col h-screen  md:flex-row bg-white m-2 rounded-md relative">
-      {/* Sidebar */}
-      <div className="w-full md:w-80 bg-white p-4 border-r">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold">Chats</h1>
-          <div className="flex space-x-2">
-            <Button variant="ghost" size="icon"><Bell className="h-5 w-5" /></Button>
-            <Button variant="ghost" size="icon"><Moon className="h-5 w-5" /></Button>
-            <Button variant="ghost" size="icon"><PenSquare className="h-5 w-5" /></Button>
+    <>
+      <div className="flex flex-col h-[calc(100vh-5rem)]  md:flex-row bg-white m-2 rounded-md relative">
+        {/* Sidebar */}
+        <div className="w-full md:w-80 bg-white p-4 border-r">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-bold">Users</h1>
+
+          </div>
+          <div className="relative mb-4">
+            <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
+            <Input className="pl-8" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
+          </div>
+          <div className="space-y-2 overflow-auto h-[85%]">
+            <RenderUserComponent users={filterUser} handleSelectChat={handleSelectChat} />
           </div>
         </div>
-        {/* <div className="flex items-center space-x-2 mb-4">
-          <Button variant="secondary" className="w-full justify-start">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Chats
-          </Button>
-          <Button variant="ghost" className="w-full justify-start">
-            <Users className="mr-2 h-4 w-4" />
-            Groups
-          </Button>
-        </div> */}
-        <div className="relative mb-4">
-          <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
-          <Input className="pl-8" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <RenderUserComponent users={filterUser} handleSelectChat={handleSelectChat} />
-        </div>
+
+        {/* Main Chat */}
+        {
+          selectedChat &&
+          <RenderChats selectedChat={selectedChat} setSelectTask={setSelectTask} selectedTask={selectedTask} handleSendMessage={handleSendMessage} socketRef={socketRef} messages={messages} setMessages={setMessages} conversationId={conversationId} setConversationId={setConversationId} handleCall={handleCall}/>
+        }
+
+        {
+          !selectedChat &&
+          <div className="flex-1 flex items-center justify-center bg-gray-200">
+            <img src="/assets/Internet-Chat-Rooms.svg" />
+          </div>
+        }
       </div>
 
-      {/* Main Chat */}
       {
-        selectedChat &&
-        <RenderChats selectedChat={selectedChat} setSelectTask={setSelectTask} selectedTask={selectedTask} handleSendMessage={handleSendMessage} socketRef={socketRef} messages={messages} setMessages={setMessages} conversationId={conversationId} setConversationId={setConversationId} />
+        currentCallUser && 
+        <CallDialog setCurrentCallUser={setCurrentCallUser} currentCallUser={currentCallUser}/>
       }
+    </>
 
-      {
-        !selectedChat &&
-        <div className="flex-1 flex items-center justify-center bg-gray-200">
-          <img src="/assets/Internet-Chat-Rooms.svg" />
-        </div>
-      }
-    </div>
   )
 }

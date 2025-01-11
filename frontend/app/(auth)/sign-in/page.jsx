@@ -44,6 +44,14 @@ export default function Login() {
     }
   },[formdata]);
 
+
+
+  const handleGoogleLogin = useCallback(() => {
+    if(typeof window !== 'undefined'){
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/auth/google`;
+    }
+  },[]);
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Left Column */}
@@ -119,7 +127,7 @@ export default function Login() {
             </div>
 
             <div className="grid grid-cols-1">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={handleGoogleLogin}>
                 <Image src="https://dapulse-res.cloudinary.com/image/upload/remote_logos/995426/google-icon.svg" alt="Google" width={20} height={20} className="mr-2" />
                 <span className="text-gray-700">Continue with Google</span>
               </Button>

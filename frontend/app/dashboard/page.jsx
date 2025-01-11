@@ -126,6 +126,12 @@ export default function Page() {
           </Collapsible>
         }
 
+
+        {
+          projects && projects.length == 0 &&
+          <h1 className="text-3xl">No Project Created</h1>
+        }
+
         {/* Update Feed Section */}
         {
           meeting &&
@@ -198,6 +204,8 @@ export default function Page() {
             </CollapsibleContent>
           </Collapsible>
         }
+
+        
 
       </div>
 

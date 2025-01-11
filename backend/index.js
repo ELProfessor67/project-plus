@@ -8,6 +8,7 @@ import initChatServer from './config/chatServerConfig.js';
 import http from 'http';
 import { Server } from "socket.io";
 import initTranscribeServer from './config/transcribeServerConfig.js';
+import passport from 'passport';
 
 config();
 
@@ -19,7 +20,7 @@ app.use(cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
-
+app.use(passport.initialize());
 app.use('/api/v1/',router);
 app.use(ErrorMiddleware);
 

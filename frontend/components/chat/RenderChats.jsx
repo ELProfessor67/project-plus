@@ -7,7 +7,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuPortal,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuSub,
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
@@ -18,14 +17,15 @@ import { Button } from '../Button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { useUser } from '@/providers/UserProvider';
-import { Bell, ListTodo, PanelsTopLeft, Send, Video, Text } from 'lucide-react';
+import { Bell, ListTodo, PanelsTopLeft, Send, Video, Text, PhoneCall } from 'lucide-react';
 import { getConversationIdRequest, getConversationRequest } from '@/lib/http/chat';
 import moment from 'moment';
 import { Skeleton } from "@/components/ui/skeleton"
+import CallDialog from '../Dialogs/CallDialog';
 
 
 
-const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setMessages, conversationId, setConversationId, handleSendMessage, socketRef }) => {
+const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setMessages, conversationId, setConversationId, handleSendMessage, socketRef, handleCall }) => {
     const [messageValue, setMessageValue] = useState('');
     const [loading,setLoading] = useState(false);
     const { user } = useUser();
@@ -100,8 +100,7 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                         </div>
                     </div>
                     <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon"><Video className="h-5 w-5" /></Button>
-                        <Button variant="ghost" size="icon"><Bell className="h-5 w-5" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleCall(selectedChat)}><PhoneCall className="h-5 w-5" /></Button>
                     </div>
                 </div>
                 <div className="h-[72vh]  overflow-y-auto p-2 space-y-4 overflow-x-hidden" ref={containerRef}>
@@ -184,6 +183,7 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                     </div>
                 </div>
             </div>
+        
         </>
     )
 }

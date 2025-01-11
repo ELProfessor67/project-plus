@@ -27,6 +27,11 @@ const initChatServer = (io) => {
     //save user socket id
     const config = socket.handshake.query;
     const user_id = config.user_id;
+
+    if(user_id){
+      //change user active status on db - pending
+    }
+    
     userSocketMap.set(user_id,socket.id);
     
 

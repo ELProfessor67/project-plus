@@ -162,6 +162,37 @@ export const verify = catchAsyncError(async (req,res, next) => {
 
 }) ;
 
+
+export const googleLogin = catchAsyncError(async (req,res, next) => {
+    const user = req.user;
+    const jwttoken = generateJWTToken(user);
+
+    // Set options for the cookie
+    const options = {
+        httpOnly: true,    // Prevent access to the cookie from JavaScript
+        expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // Set expiration time
+        secure: process.env.NODE_ENV === 'production' ? true : false  // Only send cookies over HTTPS in production
+    };
+
+    // Send response with token as a cookie
+    res.status(201).cookie("token", jwttoken, options).redirect(`${process.env.FRONTEND_URL}/dashboard`);
+});
+
+export const logout = catchAsyncError(async (req,res, next) => {
+   
+    const options = {
+        httpOnly: true, 
+        expires: new Date(Date.now()),
+        secure: process.env.NODE_ENV === 'production' ? true : false
+    };
+
+    // Send response with token as a cookie
+    res.status(201).cookie("token", null, options).json({
+        success: true,
+        message: "Logout Successfully"
+    });
+});
+
 export const changePassword = catchAsyncError(async (req, res, next) => {
     const { currentPassword, newPassword } = req.body;
 
