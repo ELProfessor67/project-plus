@@ -1,8 +1,8 @@
 import { config } from "dotenv";
 import { Redis } from "ioredis";
 import { userSocketMap } from "../constants/userSocketMapConstant.js";
-import { ON_DISCONNET, ON_MESSAGE } from "../constants/chatEventConstant.js";
-import { handleDisconnect, handleMessage, initRedisSubcriber } from "../services/chatService.js";
+import { ON_CALL, ON_CALL_ANSWER, ON_CALL_END, ON_CALL_NO_RESPONSE, ON_DISCONNET, ON_MESSAGE, ON_SIGNAL } from "../constants/chatEventConstant.js";
+import { handelNoResponse, handleCall, handleCallAnswer, handleCallEnd, handleCallSignal, handleDisconnect, handleMessage, initRedisSubcriber } from "../services/chatService.js";
 import { initChatConsumer } from "../services/kafkaService.js";
 
 config();
@@ -33,10 +33,14 @@ const initChatServer = (io) => {
     }
     
     userSocketMap.set(user_id,socket.id);
-    
 
     socket.on(ON_DISCONNET,() => handleDisconnect(config));
     socket.on(ON_MESSAGE, (data) => handleMessage(data,redisPub));
+    socket.on(ON_CALL, (data) => handleCall(data,redisPub));
+    socket.on(ON_CALL_ANSWER, (data) => handleCallAnswer(data,redisPub));
+    socket.on(ON_SIGNAL, (data) => handleCallSignal(data,redisPub));
+    socket.on(ON_CALL_END, (data) => handleCallEnd(data,redisPub));
+    socket.on(ON_CALL_NO_RESPONSE, (data) => handelNoResponse(data,redisPub));
     
   });
 };

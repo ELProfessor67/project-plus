@@ -109,7 +109,7 @@ export const flushTranscribtion = async () => {
         const messagesCopy = [...chatMessages];
         chatMessages.length = 0;
         await addChatMessage(messagesCopy);
-        console.log(`${chatMessages.length} chat message Flushed`);
+        console.log(`${messagesCopy.length} chat message Flushed`);
     }
 
     

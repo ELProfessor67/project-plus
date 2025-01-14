@@ -22,6 +22,10 @@ model User {
   created_at   DateTime @default(now()) 
   updated_at   DateTime @updatedAt
   active_status String @default("Offline")
+
+  connect_mail_hash String?
+  encryption_key String?
+  encryption_vi String?
   Projects Project[]
   Collaboration ProjectMember[]
   AssignedTasks TaskMember[]
@@ -36,6 +40,7 @@ model User {
   Meetings Meeting[]
   MeetingParticipants MeetingParticipant[]
   Transcribtions MeetingTranscibtion[]
+  Media Media[]
 }
 
 
@@ -51,6 +56,7 @@ model Project {
   Members ProjectMember[]
   Tasks Task[]
   invitations Invitation[]
+  Media Media[]
 }
 
 enum Role {
@@ -110,6 +116,7 @@ model Task {
   Progress TaskProgress[]
   Conversation Conversation[]
   Meetings Meeting[]
+  Media Media[]
 }
 
 
@@ -132,6 +139,24 @@ model Notification {
   created_at      DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [user_id])
+}
+
+
+model Media {
+  media_id String @id @default(uuid())
+  project_id Int
+  task_id Int
+  user_id Int
+  file_url String
+  created_at      DateTime @default(now())
+  size Int?
+  mimeType String?
+  filename String?
+  key String?
+
+  user User @relation(fields: [user_id], references: [user_id])
+  task Task @relation(fields: [task_id], references: [task_id])
+  project Project @relation(fields: [project_id], references: [project_id])
 }
 
 
@@ -292,6 +317,7 @@ enum CallStatus {
   REJECTED
   ENDED
   NO_RESPONSE
+  LINE_BUSY
 }
 
 model Message {
@@ -299,9 +325,10 @@ model Message {
   conversation_id String
   sender_id       Int
   reciever_id Int
-  content        String
+  content        String?
   createdAt      DateTime      @default(now())
   content_type ContentType @default(PLAIN_TEXT)
   duration String? @default("1min")
   call_status CallStatus @default(RINGING)
 }
+

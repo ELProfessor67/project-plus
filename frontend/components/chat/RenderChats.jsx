@@ -17,7 +17,7 @@ import { Button } from '../Button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { useUser } from '@/providers/UserProvider';
-import { Bell, ListTodo, PanelsTopLeft, Send, Video, Text, PhoneCall } from 'lucide-react';
+import { Bell, ListTodo, PanelsTopLeft, Send, Video, Text, PhoneCall, PhoneIncoming, PhoneOutgoing } from 'lucide-react';
 import { getConversationIdRequest, getConversationRequest } from '@/lib/http/chat';
 import moment from 'moment';
 import { Skeleton } from "@/components/ui/skeleton"
@@ -27,7 +27,7 @@ import CallDialog from '../Dialogs/CallDialog';
 
 const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setMessages, conversationId, setConversationId, handleSendMessage, socketRef, handleCall }) => {
     const [messageValue, setMessageValue] = useState('');
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { user } = useUser();
     const containerRef = useRef(null);
 
@@ -63,14 +63,13 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
             setMessages(res.data.conversations);
         } catch (error) {
             console.log(error.response?.data?.message || error.message);
-        }finally{
+        } finally {
             setLoading(false);
         }
     }, []);
 
 
     useEffect(() => {
-
         if (selectedChat && selectedTask) {
             getConversation(selectedChat.user_id, selectedTask.task_id)
         }
@@ -100,14 +99,14 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                         </div>
                     </div>
                     <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleCall(selectedChat)}><PhoneCall className="h-5 w-5" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleCall(selectedChat)} disabled={!conversationId}><PhoneCall className="h-5 w-5" /></Button>
                     </div>
                 </div>
                 <div className="h-[72vh]  overflow-y-auto p-2 space-y-4 overflow-x-hidden" ref={containerRef}>
                     {
-                        loading && 
-                        Array(8).fill(0).map((_,index) => (
-                            <Skeleton className={`h-12 ${index&1 ? 'ml-auto': ''}`} style={{width: `${200+(index*10)}px`}}/>
+                        loading &&
+                        Array(8).fill(0).map((_, index) => (
+                            <Skeleton className={`h-12 ${index & 1 ? 'ml-auto' : ''}`} style={{ width: `${200 + (index * 10)}px` }} />
                         ))
                     }
                     {
@@ -119,15 +118,65 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                                         ?
                                         (
                                             <Card className="p-3 w-fit  bg-purple-500 ml-auto text-white px-7 flex-row mr-1 mb-2 !flex gap-2  items-center">
-                                                <p className='break-words max-w-md'>{message.content}</p>
-                                                <time className='text-white/70 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
+                                                {
+                                                    message.content_type == "CALL" &&
+                                                    <div className='flex items-center gap-5'>
+                                                        <PhoneOutgoing />
+                                                        <div>
+                                                            <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
+                                                            <p className='break-words max-w-md text-xs text-muted mt-1 text-white/70'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                {
+                                                    message.content_type == "PLAIN_TEXT" &&
+                                                    <>
+                                                        <p className='break-words max-w-md'>{message.content}</p>
+                                                        <time className='text-white/70 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
+                                                    </>
+                                                }
+
+
                                             </Card>
                                         )
                                         :
                                         (
                                             <Card className="p-3 w-fit px-7 flex-row mr-1 mb-2 !flex gap-2  items-center">
-                                                <time className='text-gray-400 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
-                                                <p className='break-words max-w-md'>{message.content}</p>
+                                                {
+                                                    message.content_type == "CALL" &&
+                                                    <>
+                                                        {
+                                                            message.call_status != "NO_RESPONSE" &&
+                                                            <div className='flex items-center gap-5'>
+                                                                <PhoneIncoming />
+                                                                <div>
+                                                                    <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
+                                                                    <p className='break-words max-w-md text-xs text-muted mt-1 text-black/70'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        {
+                                                            message.call_status == "NO_RESPONSE" &&
+                                                            <div className='flex items-center gap-5 text-red-500 cursor-pointer' onClick={() => handleCall(selectedChat)}>
+                                                                <PhoneIncoming />
+                                                                <div>
+                                                                    <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
+                                                                    <p className='break-words max-w-md text-xs text-muted mt-1 text-red-500'>You Missed Call Click To Callback</p>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </>
+                                                }
+
+                                                {
+                                                    message.content_type == "PLAIN_TEXT" &&
+                                                    <>
+                                                        <time className='text-gray-400 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
+                                                        <p className='break-words max-w-md'>{message.content}</p>
+                                                    </>
+                                                }
                                             </Card>
                                         )
                                 }
@@ -183,7 +232,7 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                     </div>
                 </div>
             </div>
-        
+
         </>
     )
 }

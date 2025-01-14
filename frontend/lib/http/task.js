@@ -12,3 +12,4 @@ export const addTaskCommentsRequest = async (formdata) => api.post(`/task/commen
 export const sendTaskEmailRequest = async (formdata) => api.post(`/task/email`,formdata);
 export const getTaskEmailRequest = async (date) => api.get(`/task/emails/get-emails${date ? `?date=${date}`: ''}`);
 export const getTaskProgressRequest = async (id,date) => api.get(`/task/progress/get-progress/${id}${date ? `?date=${date}`: ''}`);
+export const getConnectMailsRequest = async () => api.get(`/task/get-connect-mails`);

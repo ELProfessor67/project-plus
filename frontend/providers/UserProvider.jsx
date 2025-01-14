@@ -32,6 +32,9 @@ export const UserProvider = ({children}) => {
         }
     },[]);
 
+
+
+
     useLayoutEffect(() => {
         loadUser();
     },[])

@@ -6,40 +6,61 @@ import {
     ArrowUpDown,
     CircleUser,
     Ellipsis,
+    FileText,
     FilterIcon,
-    LayoutGrid,
-    List,
-    Plus,
     SearchIcon,
 } from "lucide-react"
 import AvatarCompoment from './AvatarCompoment'
 import { getColor } from '@/utils/getRandomColor';
 import InviteComponet from './InviteComponet';
 import RenderMembers from './RenderMembers'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from 'next/link'
 
 
-  
 
-const RenderProject = ({ project, setSelectedProject,index,reloadProject }) => {
+
+const RenderProject = ({ project, setSelectedProject, index, reloadProject }) => {
     const [inviteOpen, setInviteOpen] = useState(false);
     return (
         <>
             <Card className='shadow-sm p-0 !px-0 border border-gray-200'>
                 <CardContent className='p-0'>
-                    <div className="mb-8  flex items-center justify-between  text-white rounded-sm py-1 px-2" style={{background: getColor(index)}}>
+                    <div className="mb-8  flex items-center justify-between  text-white rounded-sm py-1 px-2" style={{ background: getColor(index) }}>
                         <h1 className="text-3xl font-semibold text-white">{project?.name}</h1>
                         <div className="flex items-center gap-4">
 
-                            <RenderMembers members={project?.Members || []}/>
+                            <RenderMembers members={project?.Members || []} />
 
-                            
+
 
                             <Button className='bg-transparent border border-white text-white hover:bg-gray-200 ' onClick={() => setInviteOpen(true)}>
                                 Invite/{project?.Members?.length}
                             </Button>
 
                             <button className='bg-transparent hover:bg-gray-200 text-white p-2 rounded-sm'>
-                                <Ellipsis size={25} />
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild className='hover:bg-transparent'>
+                                        <Ellipsis size={25} />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56 mr-2 mt-2">
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                               <Link href={`/dashboard/projects/media/${project.project_id}`} className='flex items-center justify-start gap-2 w-full'>
+                                                    <FileText />
+                                                    <span className='text-black/70'>Media Box</span>
+                                               </Link>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                             </button>
                         </div>
                     </div>
@@ -72,10 +93,10 @@ const RenderProject = ({ project, setSelectedProject,index,reloadProject }) => {
                             </Button>
                         </div>
                     </div>
-                    <TableView project={project} reloadProject={reloadProject}/>
+                    <TableView project={project} reloadProject={reloadProject} />
                 </CardContent>
             </Card>
-            <InviteComponet open={inviteOpen} onClose={() => setInviteOpen(false)} project={project}/>
+            <InviteComponet open={inviteOpen} onClose={() => setInviteOpen(false)} project={project} />
         </>
     )
 }

@@ -4,6 +4,8 @@ import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { CreateTaskRequestBodySchema } from '../schema/taskSchema.js';
 import { transcribeFile } from '../services/taskService.js';
 import {prisma} from "../prisma/index.js";
+import { decrypt } from '../services/encryptionService.js';
+import { fetchMail } from '../services/googleService.js';
 
 async function getTaskDetailsByDate(taskId) {
     const emails = await prisma.email.findMany({
@@ -642,5 +644,39 @@ export const getProgress = catchAsyncError(async (req, res, next) => {
     res.status(200).json({
         success: true,
         progresss
+    });
+});
+
+
+
+
+
+export const getConnectMails = catchAsyncError(async (req, res, next) => {
+    const user_id = req.user.user_id;
+    const user = await prisma.user.findFirst({
+        where: {
+            user_id: user_id,
+        },
+        select: {
+            connect_mail_hash: true,
+            encryption_key: true,
+            encryption_vi: true
+        }
+    });
+
+    if(!user.connect_mail_hash){
+        next(new ErrorHandler("Please Connect Mail First",401));
+        return
+    }
+
+    const decryptData = decrypt(user.connect_mail_hash,user.encryption_key,user.encryption_vi);
+    const [mail,password] = decryptData.split('|');
+   
+    const mails = await fetchMail(mail,password);
+
+
+    res.status(200).json({
+        success: true,
+        mails
     });
 });

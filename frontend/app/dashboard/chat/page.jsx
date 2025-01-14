@@ -11,7 +11,7 @@ import RenderUserComponent from "@/components/chat/RenderUserComponent"
 import RenderChats from "@/components/chat/RenderChats"
 import useChatHook from "@/hooks/useChatHook"
 import { toast } from "react-toastify"
-import { ON_MESSAGE } from "@/contstant/chatEventConstant"
+import { ON_CALL, ON_MESSAGE } from "@/contstant/chatEventConstant"
 import CallDialog from "@/components/Dialogs/CallDialog"
 
 export default function Page() {
@@ -23,15 +23,24 @@ export default function Page() {
   const { user } = useUser();
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState('');
-  const { handleSendMessage, socketRef } = useChatHook();
+  const { handleSendMessage, handleCall, handleCallAnswer, handleSendSignal, handleCallEnd, handelNoResponse, socketRef } = useChatHook();
   const [currentCallUser, setCurrentCallUser] = useState(null);
+  const [isCallByMe, setIsCallByMe] = useState(true);
+  const [callMessageId, setCallMessageId] = useState(null);
   const audioRef = useRef();
+  const currentCallUserRef = useRef(null);
   const filterUser = useMemo(() => users.filter(user => (user.name.toLowerCase().includes(query.toLowerCase())) || user.email.toLowerCase().includes(query.toLowerCase())), [query, users]);
   
 
-  const handleCall = useCallback((user) => {
+
+  useEffect(() => {
+    currentCallUserRef.current = currentCallUser;
+  },[currentCallUser]);
+
+  const handleSetCall = useCallback((user) => {
     setCurrentCallUser(user);
-  },[]);
+    setIsCallByMe(true);
+  }, []);
 
 
   useEffect(() => {
@@ -82,12 +91,41 @@ export default function Page() {
   }, [selectedChat, conversationId]);
 
 
+  const handleRecieveCall = useCallback((data) => {
+    // penfing line busy 
+    // if (currentCallUserRef.current) {
+    //   const data = {
+    //     message_id: data.message_id,
+    //     picked_up: false,
+    //     sender_id: user.user_id,
+    //     reciever_id: data.sender_id,
+    //     line_busy: true
+    //   }
+    //   handleCallAnswer(data);
+    //   return
+    // }
+
+    const user = {
+      name: data.sender_name,
+      user_id: data.sender_id,
+      conversation_id: data.conversation_id
+    }
+
+    setCallMessageId(data.message_id);
+    setCurrentCallUser(user);
+    setMessages(prev => [...prev, data]);
+    setIsCallByMe(false);
+  }, [currentCallUserRef.current]);
+
+
   //subscribe on message event
   useEffect(() => {
     socketRef?.current?.on(ON_MESSAGE, handleMessageRecive);
+    socketRef?.current?.on(ON_CALL, handleRecieveCall);
 
     return () => {
       socketRef?.current.off(ON_MESSAGE, handleMessageRecive);
+      socketRef?.current.off(ON_CALL, handleRecieveCall);
     }
   }, [conversationId, socketRef.current]);
 
@@ -114,7 +152,7 @@ export default function Page() {
         {/* Main Chat */}
         {
           selectedChat &&
-          <RenderChats selectedChat={selectedChat} setSelectTask={setSelectTask} selectedTask={selectedTask} handleSendMessage={handleSendMessage} socketRef={socketRef} messages={messages} setMessages={setMessages} conversationId={conversationId} setConversationId={setConversationId} handleCall={handleCall}/>
+          <RenderChats selectedChat={selectedChat} setSelectTask={setSelectTask} selectedTask={selectedTask} handleSendMessage={handleSendMessage} socketRef={socketRef} messages={messages} setMessages={setMessages} conversationId={conversationId} setConversationId={setConversationId} handleCall={handleSetCall} />
         }
 
         {
@@ -126,8 +164,8 @@ export default function Page() {
       </div>
 
       {
-        currentCallUser && 
-        <CallDialog setCurrentCallUser={setCurrentCallUser} currentCallUser={currentCallUser}/>
+        currentCallUser &&
+        <CallDialog setCurrentCallUser={setCurrentCallUser} handelNoResponse={handelNoResponse} setIsCallByMe={setIsCallByMe} setCallMessageId={setCallMessageId} callMessageId={callMessageId} handleCallAnswer={handleCallAnswer} currentCallUser={currentCallUser} isCallByMe={isCallByMe} conversationId={conversationId} socketRef={socketRef} handleCall={handleCall} selectedTask={selectedTask} setMessages={setMessages} handleSendSignal={handleSendSignal} handleCallEnd={handleCallEnd} />
       }
     </>
 

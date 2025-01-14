@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, register, verify, changePassword, updateUser, loadUser, resendOTP, googleLogin, logout } from '../controllers/userController.js';
+import { login, register, verify, changePassword, updateUser, loadUser, resendOTP, googleLogin, logout, connectGmail } from '../controllers/userController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import passport from 'passport';
 import { initPassport } from '../services/passportService.js';
@@ -14,6 +14,7 @@ router.route('/resend-otp').post(resendOTP);
 router.route('/change-password').put(authMiddleware,changePassword);
 router.route('/update').put(authMiddleware,updateUser);
 router.route('/get').get(authMiddleware,loadUser);
+router.route('/connect-mail').post(authMiddleware,connectGmail);
 router.route('/logout').get(authMiddleware,logout);
 
 

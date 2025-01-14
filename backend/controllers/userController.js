@@ -7,6 +7,8 @@ import { generateJWTToken, sendOTPOnMail } from '../services/userService.js';
 import crypto from 'crypto';
 
 import {prisma} from "../prisma/index.js";
+import { encrypt } from '../services/encryptionService.js';
+import { verifyMailPassword } from '../processors/verifyMailPasswordProcessor.js';
 
 export const register = catchAsyncError(async (req, res, next) => {
     const { name, email, password, account_name, bring, teams_member_count,focus,hear_about_as } = req.body;
@@ -311,3 +313,38 @@ export const resendOTP = catchAsyncError(async (req, res, next) => {
 });
 
 
+export const connectGmail = catchAsyncError(async (req, res, next) => {
+    const { connect_mail_password, connect_mail } = req.body;
+
+
+    if (!connect_mail || !connect_mail) {
+        return next(new ErrorHandler("gmail and app password required", 401));
+    }
+
+    const verify = await verifyMailPassword(connect_mail,connect_mail_password);
+
+    if (!verify) {
+        return next(new ErrorHandler("Invalid Gmail Or App Password", 401));
+    }
+
+    const user_id = req.user.user_id;
+    const mergeData = `${connect_mail}|${connect_mail_password}`;
+    const encryptedData = encrypt(mergeData);
+
+
+    // Update user details in the database
+    const updatedUser = await prisma.user.update({
+        where: { user_id: user_id },
+        data: {
+            connect_mail_hash: encryptedData.encryptedData,
+            encryption_key: encryptedData.key,
+            encryption_vi: encryptedData.iv
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Mail Connect Successfully',
+        user: updatedUser,
+    });
+});

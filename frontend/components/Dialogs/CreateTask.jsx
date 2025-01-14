@@ -54,6 +54,17 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
             formdata['project_id'] = project.project_id;
             formdata['last_date'] = formdata.last_date + 'T00:00:00Z';
             const res = await createTaskRequest(formdata);
+            setSelectedMember([]);
+            setFormdata({
+                project_id: project?.project_id,
+                name: "New Task",
+                description: "",
+                assigned_to: -1,
+                priority: "NONE",
+                last_date: "",
+                otherMember: [],
+                status: "TO_DO"
+            })
             toast.success(res?.data?.message);
             await getProjectDetails();
             onClose();

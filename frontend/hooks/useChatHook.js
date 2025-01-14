@@ -1,4 +1,4 @@
-import { ON_MESSAGE } from '@/contstant/chatEventConstant';
+import { ON_CALL, ON_CALL_ANSWER, ON_CALL_END, ON_CALL_NO_RESPONSE, ON_MESSAGE, ON_SIGNAL } from '@/contstant/chatEventConstant';
 import { useUser } from '@/providers/UserProvider';
 import { useCallback, useEffect, useRef } from 'react';
 import { io } from "socket.io-client";
@@ -28,9 +28,42 @@ const useChatHook = () => {
     },[socketRef.current]);
 
 
+    const handleCall = useCallback((data) => {
+        if(socketRef.current &&  socketRef.current.connected){
+            socketRef.current.emit(ON_CALL, data);
+        }
+    },[]);
 
 
-    return {handleSendMessage, socketRef};
+    const handleCallAnswer = useCallback((data) => {
+        if(socketRef.current &&  socketRef.current.connected){
+            socketRef.current.emit(ON_CALL_ANSWER, data);
+        }
+    },[]);
+
+
+    const handleSendSignal = useCallback((data) => {
+        if(socketRef.current &&  socketRef.current.connected){
+            socketRef.current.emit(ON_SIGNAL, data);
+        }
+    },[]);
+
+
+
+    const handleCallEnd = useCallback((data) => {
+        if(socketRef.current &&  socketRef.current.connected){
+            socketRef.current.emit(ON_CALL_END, data);
+        }
+    },[]);
+
+
+    const handelNoResponse = useCallback((data) => {
+        if(socketRef.current &&  socketRef.current.connected){
+            socketRef.current.emit(ON_CALL_NO_RESPONSE, data);
+        }
+    },[]);
+
+    return {handleSendMessage, handleCall,handleCallAnswer,handleSendSignal, handleCallEnd, handelNoResponse,socketRef};
 }
 
 export default useChatHook

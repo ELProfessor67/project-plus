@@ -49,7 +49,7 @@ export default function Page() {
             const res = await getTaskEmailRequest(date);
             setMails(res?.data?.emails);
         } catch (error) {
-            console.log(error?.response?.data?.message || error?.message,'ssss');
+            console.log(error?.response?.data?.message || error?.message);
         }
     },[date]);
 

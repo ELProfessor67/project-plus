@@ -10,12 +10,6 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logoutUserRequest } from '@/lib/http/auth'
@@ -66,11 +60,11 @@ const TopNavigation = ({ setSidebarOpen }) => {
                             <DropdownMenuGroup>
                                 <DropdownMenuItem className="cursor-pointer">
                                     <User />
-                                    <span>Profile</span>
+                                    <span className='text-black/70'>Profile</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer" onClick={handleClick}>
                                     <DoorOpen />
-                                    <span>Logout</span>
+                                    <span className='text-black/70'>Logout</span>
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
                         </DropdownMenuContent>
