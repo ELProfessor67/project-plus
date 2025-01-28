@@ -17,6 +17,7 @@ import RenderMembers from "@/components/RenderMembers"
 import { Badge } from "@/components/ui/badge"
 import moment from "moment"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Loader from "@/components/Loader"
 
 export default function Page() {
   const [recentlyVisitedOpen, setRecentlyVisitedOpen] = React.useState(true)
@@ -25,12 +26,13 @@ export default function Page() {
   const [projects, setProjects] = React.useState([]);
   const [meeting, setMeeting] = React.useState(null);
   const { user } = useUser();
+  const [isLoading,setIsloading] = React.useState(false)
 
 
 
 
   const getProjectAllProject = React.useCallback(async () => {
-
+    setIsloading(true)
     try {
       const res = await getAllProjectRequest();
       const { projects, collaboratedProjects } = res.data;
@@ -38,6 +40,8 @@ export default function Page() {
     } catch (error) {
       setProjects(null);
       console.log(error?.response?.data?.meesage || error?.meesage);
+    }finally{
+      setIsloading(false)
     }
   }, []);
 
@@ -57,6 +61,16 @@ export default function Page() {
     getProjectAllProject();
     getMeetings();
   }, []);
+
+
+  if (isLoading) {
+    return <>
+    <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
+
+      <Loader />
+    </div>
+    </>
+  }
 
   return (
     <div className="flex h-screen bg-white m-2 rounded-md overflow-y-auto">

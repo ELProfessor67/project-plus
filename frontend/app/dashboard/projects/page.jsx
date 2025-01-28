@@ -14,6 +14,7 @@ import Kanban from "@/components/Kanban"
 import TableView from "@/components/TableView"
 import { Badge } from "@/components/ui/badge"
 import RenderProject from "@/components/RenderProject"
+import Loader from "@/components/Loader"
 
 
 const statusColors = {
@@ -52,6 +53,17 @@ export default function Page({ params }) {
     useEffect(() => {
         getProjectAllProject();
     }, []);
+
+
+    if (isLoading) {
+        return <>
+        <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
+    
+          <Loader />
+        </div>
+        </>
+      }
+    
 
 
     return (

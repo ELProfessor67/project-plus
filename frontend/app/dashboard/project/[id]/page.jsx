@@ -22,6 +22,7 @@ import BigDialog from "@/components/Dialogs/BigDialog"
 import CreateTask from "@/components/Dialogs/CreateTask"
 import Kanban from "@/components/Kanban"
 import TableView from "@/components/TableView"
+import Loader from "@/components/Loader"
 
 
 const statusColors = {
@@ -56,6 +57,16 @@ export default function Page({ params }) {
   }, []);
 
 
+  if (isLoading) {
+    return <>
+    <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
+
+      <Loader />
+    </div>
+    </>
+  }
+
+
   return (
     <>
       <main className="flex-1 overflow-auto p-4 bg-white m-2 rounded-md">
@@ -69,7 +80,7 @@ export default function Page({ params }) {
               <AvatarFallback className="bg-blue-500 text-white">{getNameAvatar(project?.user?.name)}</AvatarFallback>
             </Avatar>
 
-            <Button className='bg-transparent border bg-blue-500 text-white hover:bg-blue-600'>
+            {/* <Button className='bg-transparent border bg-blue-500 text-white hover:bg-blue-600'>
               Create a room
             </Button>
 
@@ -79,7 +90,7 @@ export default function Page({ params }) {
 
             <button className='bg-transparent hover:bg-gray-200 text-black/80 p-2 rounded-sm'>
               <Ellipsis size={25} />
-            </button>
+            </button> */}
           </div>
         </div>
 

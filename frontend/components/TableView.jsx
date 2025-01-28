@@ -25,12 +25,14 @@ const statusColors = {
     "IN_PROGRESS": "bg-blue-400",
     "STUCK": "bg-yellow-400",
     "DONE": "bg-green-400",
+    "OVER_DUE": "bg-red-400"
 }
 const statusLabel = {
     "TO_DO": "TO DO",
     "IN_PROGRESS": "IN PROGRESS",
     "STUCK": "STUCK",
     "DONE": "DONE",
+    "OVER_DUE":"OVER DUE"
 }
 
 

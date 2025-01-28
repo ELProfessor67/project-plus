@@ -145,6 +145,14 @@ export default function Page() {
             <Input className="pl-8" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
           <div className="space-y-2 overflow-auto h-[85%]">
+            {
+              loading && 
+              [1,2,3,4,5,6,7].map(() => (
+                <div className="flex items-center space-x-3 p-2 bg-gray-100 rounded-lg py-10 px-2">
+                        
+                  </div>
+              ))
+            }
             <RenderUserComponent users={filterUser} handleSelectChat={handleSelectChat} />
           </div>
         </div>

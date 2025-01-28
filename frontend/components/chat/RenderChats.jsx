@@ -187,7 +187,9 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
 
                     {
                         !loading && messages.length == 0 &&
-                        <div>NO message</div>
+                        <div className='h-full w-full flex items-center justify-center'>
+                            <img src='/assets/no-message.png'/>
+                        </div>  
                     }
                 </div>
                 <div className="bg-white p-4 border-t">

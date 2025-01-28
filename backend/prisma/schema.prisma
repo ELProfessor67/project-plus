@@ -83,6 +83,7 @@ enum Status {
   IN_PROGRESS
   STUCK
   DONE
+  OVER_DUE
 }
 
 enum Priorities {

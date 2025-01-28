@@ -9,12 +9,13 @@ import { updateTaskRequest } from '@/lib/http/task'
 import RenderMembers from './RenderMembers'
 
 // 'TO_DO','IN_PROGRESS','STUCK','DONE'
-const statuses = [["TO_DO", "TO DO"], ["IN_PROGRESS", "IN PROGRESS"], ["STUCK", "STUCK"], ["DONE", "DONE"]]
+const statuses = [["TO_DO", "TO DO"], ["IN_PROGRESS", "IN PROGRESS"], ["STUCK", "STUCK"], ["DONE", "DONE"], ["OVER_DUE","OVER DUE"]]
 const statusColors = {
     "TO_DO": "bg-gray-400",
     "IN_PROGRESS": "bg-blue-400",
     "STUCK": "bg-yellow-400",
     "DONE": "bg-green-400",
+    "OVER_DUE": "bg-red-400"
 }
 
 const Kanban = ({project:projectsDetails}) => {
@@ -48,7 +49,7 @@ const Kanban = ({project:projectsDetails}) => {
 
 
     return (
-        <div className="grid gap-4 md:grid-cols-4 relative">
+        <div className="grid gap-4 md:grid-cols-5 relative">
             {statuses.map(([value, status]) => (
                 <Card key={status} className="h-full bg-gray-100"  onDrop={(e) => handleDrop(e,value)} onDragOver={(e) => e.preventDefault()}>
                     <CardContent className="p-0">
