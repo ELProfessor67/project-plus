@@ -8,6 +8,7 @@ export const handleDisconnect = (config) => {
     //delete user id user socket is map
     const user_id = config.user_id;
     userSocketMap.delete(user_id);
+    updateActiveStatus("Offline",user_id);
 }
 
 
@@ -171,6 +172,23 @@ export const addChatMessage = async (messages) => {
     try {
         await prisma.message.createMany({
             data: messages
+        });
+    } catch (error) {
+        console.log('getting an error while save chats',error.message)
+    }
+}
+
+
+
+export const updateActiveStatus = async (status,user_id) => {
+    try {
+        await prisma.user.update({
+            where: {
+                user_id: Number(user_id)
+            },
+            data: {
+                active_status: status
+            }
         });
     } catch (error) {
         console.log('getting an error while save chats',error.message)

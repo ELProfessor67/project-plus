@@ -115,7 +115,7 @@ model Task {
   Emails Email[]
   Comments Comment[]
   Progress TaskProgress[]
-  Conversation Conversation[]
+  // Conversation Conversation[]
   Meetings Meeting[]
   Media Media[]
 }
@@ -291,7 +291,7 @@ model Conversation {
   last_message String?
   participants Participant[]
   task_id Int
-  task Task @relation(fields: [task_id],references: [task_id])
+  // task Task @relation(fields: [task_id],references: [task_id])
 }
 
 model Participant {

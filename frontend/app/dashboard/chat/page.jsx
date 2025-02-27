@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Bell, MessageCircle, Moon, PenSquare, Search, Users } from 'lucide-react'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { getChatUserRequest } from "@/lib/http/chat"
+import { getChatUserRequest, getConversationUserRequest } from "@/lib/http/chat"
 import { useUser } from "@/providers/UserProvider"
 import RenderUserComponent from "@/components/chat/RenderUserComponent"
 import RenderChats from "@/components/chat/RenderChats"
@@ -17,9 +17,11 @@ import CallDialog from "@/components/Dialogs/CallDialog"
 export default function Page() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [users, setUser] = useState([]);
+  const [searchUser, setSearchUser] = useState([]);
+  const [searchLoading,setSearchLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedTask, setSelectTask] = useState(null);
+  const [selectedTask, setSelectTask] = useState({task_id: -1, name:"Common Chat"});
   const { user } = useUser();
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState('');
@@ -29,9 +31,28 @@ export default function Page() {
   const [callMessageId, setCallMessageId] = useState(null);
   const audioRef = useRef();
   const currentCallUserRef = useRef(null);
-  const filterUser = useMemo(() => users.filter(user => (user.name.toLowerCase().includes(query.toLowerCase())) || user.email.toLowerCase().includes(query.toLowerCase())), [query, users]);
-  
+  const debounceRef = useRef();
 
+  const handleQueryUser = useCallback(async () => {
+    setSearchLoading(true);
+    try {
+        const res = await getChatUserRequest(query);
+        setSearchUser(res.data.users);
+    } catch (error) {
+      console.log(error.response?.data?.message || error.message)
+    }finally{
+      setSearchLoading(false)
+    }
+  },[query]);
+
+  useEffect(() => {
+    if(!query) return;
+
+    debounceRef.current = setTimeout(handleQueryUser,1000);
+    return () => {
+      clearTimeout(debounceRef.current)
+    }
+  },[query]);
 
   useEffect(() => {
     currentCallUserRef.current = currentCallUser;
@@ -49,18 +70,18 @@ export default function Page() {
     }
   }, [])
 
-  useEffect(() => {
-    if (user) {
-      const firstTask = user.Projects[0]?.Tasks[0];
-      setSelectTask(firstTask);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     const firstTask = user.Projects[0]?.Tasks[0];
+  //     setSelectTask(firstTask);
+  //   }
+  // }, [user]);
 
 
   const getAllChatUser = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getChatUserRequest();
+      const res = await getConversationUserRequest();
       setUser(res.data.users);
     } catch (error) {
       console.log(error?.response?.data?.message || error?.message);
@@ -153,7 +174,7 @@ export default function Page() {
                   </div>
               ))
             }
-            <RenderUserComponent users={filterUser} handleSelectChat={handleSelectChat} />
+            <RenderUserComponent searchLoading={searchLoading} users={users} searchUser={searchUser} handleSelectChat={handleSelectChat} query={query} setUser={setUser} setQuery={setQuery}/>
           </div>
         </div>
 

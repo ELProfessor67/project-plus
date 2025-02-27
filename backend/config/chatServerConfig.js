@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import { Redis } from "ioredis";
 import { userSocketMap } from "../constants/userSocketMapConstant.js";
 import { ON_CALL, ON_CALL_ANSWER, ON_CALL_END, ON_CALL_NO_RESPONSE, ON_DISCONNET, ON_MESSAGE, ON_SIGNAL } from "../constants/chatEventConstant.js";
-import { handelNoResponse, handleCall, handleCallAnswer, handleCallEnd, handleCallSignal, handleDisconnect, handleMessage, initRedisSubcriber } from "../services/chatService.js";
+import { handelNoResponse, handleCall, handleCallAnswer, handleCallEnd, handleCallSignal, handleDisconnect, handleMessage, initRedisSubcriber, updateActiveStatus } from "../services/chatService.js";
 import { initChatConsumer } from "../services/kafkaService.js";
 
 config();
@@ -30,6 +30,7 @@ const initChatServer = (io) => {
 
     if(user_id){
       //change user active status on db - pending
+      updateActiveStatus("Online",user_id);
     }
     
     userSocketMap.set(user_id,socket.id);

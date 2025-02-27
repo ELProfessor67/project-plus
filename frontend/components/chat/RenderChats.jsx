@@ -34,6 +34,7 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
 
     const handleSend = useCallback(() => {
         // sender_id,reciever_id,content,conversation_id,content_type
+        if(!messageValue) return
         const data = {
             sender_id: user.user_id,
             reciever_id: selectedChat.user_id,
