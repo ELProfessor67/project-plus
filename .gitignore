@@ -7,3 +7,5 @@
 
 /backend/kafka.pem
 /backend/prisma/ca.pem
+/call-server
+/contact.csv

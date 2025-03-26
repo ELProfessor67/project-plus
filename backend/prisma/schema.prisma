@@ -8,13 +8,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Roles {
+  CLIENT
+  PROVIDER
+}
 
 model User {
   user_id      Int      @id @default(autoincrement()) 
   name         String   @db.VarChar(100) 
   email        String   @unique        
   password_hash String   @db.VarChar(255)
-  account_name String
+  account_name String? 
   bring String? @default("null")
   teams_member_count String? @default("null") 
   focus String[]
@@ -26,6 +30,9 @@ model User {
   connect_mail_hash String?
   encryption_key String?
   encryption_vi String?
+
+  Role Roles @default(PROVIDER)
+  // Relations
   Projects Project[]
   Collaboration ProjectMember[]
   AssignedTasks TaskMember[]
@@ -41,6 +48,7 @@ model User {
   MeetingParticipants MeetingParticipant[]
   Transcribtions MeetingTranscibtion[]
   Media Media[]
+  Services ProjectClient[]
 }
 
 
@@ -54,6 +62,7 @@ model Project {
   updated_at  DateTime @updatedAt         
   user User @relation(fields: [created_by], references: [user_id])
   Members ProjectMember[]
+  Clients ProjectClient[]
   Tasks Task[]
   invitations Invitation[]
   Media Media[]
@@ -63,6 +72,75 @@ enum Role {
   ADMIN
   MEMBER
   VIEWER
+  CLIENT
+}
+
+model ProjectClient {
+  project_client_id String       @id @default(uuid())
+  project_id        Int      
+  user_id           Int
+  added_at          DateTime  @default(now())
+  project Project @relation(fields: [project_id], references: [project_id])
+  user User     @relation(fields: [user_id], references: [user_id])
+  Documents Documents[]
+  Updates Updates[]
+  Billing Billing[]
+}
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Documents {
+  document_id String @id @default(uuid())
+  project_client_id String
+  project_id Int
+  user_id Int
+  file_url String?
+  created_at      DateTime @default(now())
+  size Int?
+  mimeType String?
+  filename String?
+  description String?
+  name String?
+  key String?
+  status DocumentStatus @default(PENDING)
+  projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id])
+  
+}
+
+model Updates {
+  update_id String @id @default(uuid())
+  project_client_id String
+  project_id Int
+  user_id Int
+  message String @db.Text
+  created_at      DateTime @default(now())
+  size Int?
+  mimeType String?
+  filename String?
+  file_url String?
+  projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id])
+}
+
+enum BillingStatus {
+  PAID
+  UNPAID
+}
+
+model Billing {
+  billing_id String @id @default(uuid())
+  project_client_id String
+  project_id Int
+  user_id Int
+  created_at      DateTime @default(now())
+  amount Float
+  description String?
+  status BillingStatus @default(UNPAID)
+  start_date String
+  end_date String
+  projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id])
 }
 
 
@@ -169,6 +247,7 @@ model OTP {
 }
 
 
+
 model Invitation {
   id          Int       @id @default(autoincrement())
   token       String    @unique
@@ -202,6 +281,7 @@ model Email {
   content String @db.Text
   created_at      DateTime @default(now())
   to_user Int? @default(1)
+  project_id Int?
 
   task  Task @relation(fields: [task_id], references: [task_id])
   user User @relation(fields: [user_id], references: [user_id])
@@ -238,6 +318,7 @@ enum MeetingStatus {
 model Meeting {
   meeting_id String @id @default(uuid())
   task_id Int
+  project_id Int?
   heading String @db.Text
   description String @db.Text
   isScheduled Boolean
@@ -291,6 +372,7 @@ model Conversation {
   last_message String?
   participants Participant[]
   task_id Int
+  project_id Int?
   // task Task @relation(fields: [task_id],references: [task_id])
 }
 

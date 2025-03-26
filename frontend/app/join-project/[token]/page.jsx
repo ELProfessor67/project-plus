@@ -2,7 +2,7 @@
 import { Button } from '@/components/Button'
 import { joinProjectRequest } from '@/lib/http/project';
 import { useUser } from '@/providers/UserProvider';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 
@@ -10,16 +10,22 @@ const page = ({ params }) => {
   const [isLoading, setIsLoading] = useState(false);
   const {user, isAuth} = useUser();
   const router = useRouter();
+  const serachParam = useSearchParams();
+  const role = serachParam.get('role'); 
 
   useLayoutEffect(() => {
     if(isAuth == false){
       if(typeof window != 'undefined'){
         const url = window.location.href;
-        router.push(`/sign-in?next_to=${url}`);
+        if(role == 'client'){
+          router.push(`/sign-up-as-client?next_to=${url}`);
+        }else{
+          router.push(`/sign-in?next_to=${url}`);
+        }
       }
       
     }
-  },[user,isAuth]);
+  },[user,isAuth,role]);
 
   const handleJoin = useCallback(async (e) => {
     e.preventDefault();

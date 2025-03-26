@@ -35,5 +35,17 @@ export const projectSelector = {
         },
       },
     },
+    Clients: {
+      select: {
+        project_client_id: true,
+        user: {
+          select: {
+            user_id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+    },
   };
   

@@ -5,7 +5,7 @@ import { AddProjectRequestBodySchema } from '../schema/projectSchema.js';
 import crypto from 'crypto';
 import { projectSelector } from '../prisma/selectors/project.selector.js';
 import { sendInviation } from '../services/userService.js';
-import {prisma} from "../prisma/index.js";
+import { prisma } from "../prisma/index.js";
 
 export const createProject = catchAsyncError(async (req, res, next) => {
     const { name, description } = req.body;
@@ -51,22 +51,22 @@ export const getMyProjects = catchAsyncError(async (req, res, next) => {
     let collaboratedProjects = await prisma.projectMember.findMany({
         where: { user_id: req.user.user_id },
         include: {
-          project: {
-            select: {
-                project_id: true,
-                name: true,
-                description: true,
-                created_by: true,
-                created_at: true,
-                updated_at: true,
-                ...projectSelector
-            }
-          },
+            project: {
+                select: {
+                    project_id: true,
+                    name: true,
+                    description: true,
+                    created_by: true,
+                    created_at: true,
+                    updated_at: true,
+                    ...projectSelector
+                }
+            },
         },
     });
 
-    
-    collaboratedProjects = collaboratedProjects.map(collabrationMember => ({...collabrationMember.project,isCollabrationProject: true}));
+
+    collaboratedProjects = collaboratedProjects.map(collabrationMember => ({ ...collabrationMember.project, isCollabrationProject: true }));
     collaboratedProjects = collaboratedProjects.filter(project => project.created_by !== req.user.user_id)
     res.status(200).json({
         success: true,
@@ -86,7 +86,7 @@ export const getProjectById = catchAsyncError(async (req, res, next) => {
                     name: true,
                     email: true,
                     user_id: true,
-                  
+
                 },
             },
             Members: {
@@ -114,6 +114,18 @@ export const getProjectById = catchAsyncError(async (req, res, next) => {
                         },
                     },
                 },
+            },
+            Clients: {
+                select: {
+                    project_client_id: true,
+                    user: {
+                        select: {
+                            name: true,
+                            email: true,
+                            user_id: true,
+                        }
+                    },
+                }
             },
         },
     });
@@ -207,7 +219,7 @@ export const deleteProject = catchAsyncError(async (req, res, next) => {
 
 export const generateInvitationLink = catchAsyncError(async (req, res, next) => {
     const { project_id } = req.params;
-    const {role} = req.body;
+    const { role } = req.body;
     const user_id = req.user.user_id;
 
     // Check if the user is the project owner
@@ -256,38 +268,110 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
         return next(new ErrorHandler("Invalid or expired invitation link", 400));
     }
 
-    // Check if the user is already a member of the project
-    const existingMember = await prisma.projectMember.findFirst({
-        where: {
-            project_id: invitation.project_id,
-            user_id,
-        },
-    });
+    if (invitation.role != "CLIENT") {
+        // Check if the user is already a member of the project
+        const existingMember = await prisma.projectMember.findFirst({
+            where: {
+                project_id: invitation.project_id,
+                user_id,
+            },
+        });
 
-    if (existingMember) {
-        return next(new ErrorHandler("You are already a member of this project", 400));
+        if (existingMember) {
+            return next(new ErrorHandler("You are already a member of this project", 400));
+        }
+
+        // Add the user as a project member
+        const projectMember = await prisma.projectMember.create({
+            data: {
+                project_id: invitation.project_id,
+                user_id,
+                role: invitation.role || 'MEMBER',
+            },
+        });
+
+        // Optionally delete the invitation (one-time use)
+        await prisma.invitation.delete({
+            where: { token },
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "You have successfully joined the project",
+            projectMember,
+        });
+    } else {
+        // Check if the user is already a member of the project
+        const existingClient = await prisma.projectClient.findFirst({
+            where: {
+                project_id: invitation.project_id,
+                user_id,
+            },
+        });
+
+        if (existingClient) {
+            return next(new ErrorHandler("You are already a client of this project", 400));
+        }
+
+        // Add the user as a project member
+        const projectClient = await prisma.projectClient.create({
+            data: {
+                project_id: invitation.project_id,
+                user_id
+            },
+        });
+
+        const prismaProjectMember = await prisma.projectMember.findMany({
+            where: {
+                project_id: invitation.project_id,
+            },
+        });
+
+        //create conversation
+        const data = [];
+
+        prismaProjectMember.forEach(member => {
+            data.push({
+                isGroup: false,
+                task_id: -1,
+                project_id: invitation.project_id,
+                participants: [
+                    { user_id: member.user_id },
+                    { user_id: user_id }
+                ]
+            });
+        });
+
+        // Use a loop to create conversations individually
+        for (const conversation of data) {
+            await prisma.conversation.create({
+                data: {
+                    isGroup: conversation.isGroup,
+                    task_id: conversation.task_id,
+                    participants: {
+                        create: conversation.participants
+                    }
+                }
+            });
+        }
+
+        // Optionally delete the invitation (one-time use)
+        await prisma.invitation.delete({
+            where: { token },
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "You have successfully joined the project",
+            projectClient,
+        });
     }
-
-    // Add the user as a project member
-    const projectMember = await prisma.projectMember.create({
-        data: {
-            project_id: invitation.project_id,
-            user_id,
-            role: invitation.role || 'MEMBER',
-        },
-    });
-
-    // Optionally delete the invitation (one-time use)
-    await prisma.invitation.delete({
-        where: { token },
-    });
-
-    res.status(201).json({
-        success: true,
-        message: "You have successfully joined the project",
-        projectMember,
-    });
 });
+
+
+
+
+
 
 
 
@@ -329,7 +413,7 @@ export const getProjectMembers = catchAsyncError(async (req, res, next) => {
 
     const members = await prisma.projectMember.findMany({
         where: { project_id: parseInt(project_id) },
-        include: { 
+        include: {
             user: {
                 select: {
                     name: true,
@@ -337,7 +421,7 @@ export const getProjectMembers = catchAsyncError(async (req, res, next) => {
                     user_id: true,
                 }
             }
-         }
+        }
     });
 
     res.status(200).json({
@@ -351,9 +435,9 @@ export const getProjectMembers = catchAsyncError(async (req, res, next) => {
 
 
 export const sendInvitationViaMail = catchAsyncError(async (req, res, next) => {
-    const { invitation,mail } = req.body;
-    if(!invitation || !mail) return next(new ErrorHandler('Inviation and Mail is required.'));
-    await sendInviation(invitation,mail);
+    const { invitation, mail } = req.body;
+    if (!invitation || !mail) return next(new ErrorHandler('Inviation and Mail is required.'));
+    await sendInviation(invitation, mail);
 
     res.status(200).json({
         success: true,

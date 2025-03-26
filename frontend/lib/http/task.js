@@ -10,6 +10,7 @@ export const addTaskTranscribtionRequest = async (formdata) => api.post(`/task/t
 });
 export const addTaskCommentsRequest = async (formdata) => api.post(`/task/comment`,formdata);
 export const sendTaskEmailRequest = async (formdata) => api.post(`/task/email`,formdata);
+export const sendEmailToClientRequest = async (formdata) => api.post(`/task/email/client`,formdata);
 export const getTaskEmailRequest = async (date) => api.get(`/task/emails/get-emails${date ? `?date=${date}`: ''}`);
 export const getTaskProgressRequest = async (id,date) => api.get(`/task/progress/get-progress/${id}${date ? `?date=${date}`: ''}`);
 export const getConnectMailsRequest = async () => api.get(`/task/get-connect-mails`);

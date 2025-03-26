@@ -6,10 +6,21 @@ export const getConversationID = catchAsyncError(async (req, res, next) => {
   user_id = parseInt(user_id);
   const my_id = req.user.user_id;
 
+  const task = await prisma.task.findUnique({
+    where: {
+      task_id: parseInt(task_id)
+    }
+  });
+
+  const projectData = {};
+  if(task){
+    projectData.project_id = task.project_id
+  }
   let conversation = await prisma.conversation.findFirst({
     where: {
       isGroup: false,
       task_id: parseInt(task_id),
+      ...projectData,
       AND: [
         {
           participants: {
@@ -110,7 +121,8 @@ export const getConversationUsers = catchAsyncError(async (req, res, next) => {
           user_id: true,
           name: true,
           email: true,
-          active_status: true
+          active_status: true,
+          Role: true,
         },
       },
     },

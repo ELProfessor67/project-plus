@@ -5,10 +5,10 @@ export const RegisterRequestBodySchema = z.object({
     name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid email address'),
     password: z.string().min(8, 'Password length must be 8 or greater'),
-    account_name: z.string().min(1, 'Account name is required'),
+    account_name: z.string().min(1, 'Account name is required').optional(),
     bring: z.string().optional(),
     teams_member_count: z.string().optional(),
-    focus: z.array(z.string()).min(1, 'At least one item should be provided in the bring array'),
+    focus: z.array(z.string()).min(1, 'At least one item should be provided in the bring array').optional(),
 });
 
 

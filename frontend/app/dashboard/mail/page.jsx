@@ -30,18 +30,21 @@ import SendMail from "@/components/SendMail"
 import { getTaskEmailRequest } from "@/lib/http/task"
 import { useUser } from "@/providers/UserProvider"
 import { getRecentDatesWithLabels } from "@/utils/getRecentDatesWithLabels"
+import SendMailClient from "@/components/SendMailClient"
+
 
 
 
 
 export default function Page() {
     const [sendMail, setSendMail] = useState(false);
+    const [sendMailClient, setSendMailClient] = useState(false);
     const [selectedMail, setSelectedMail] = useState(null);
-    const [mails,setMails] = useState([]);
-    const [date,setDate] = useState(null);
-    const [dates,setDates] = useState(getRecentDatesWithLabels(100));
-    const {user} = useUser();
-    
+    const [mails, setMails] = useState([]);
+    const [date, setDate] = useState(null);
+    const [dates, setDates] = useState(getRecentDatesWithLabels(100));
+    const { user } = useUser();
+
 
 
     const getAllMail = useCallback(async () => {
@@ -51,11 +54,11 @@ export default function Page() {
         } catch (error) {
             console.log(error?.response?.data?.message || error?.message);
         }
-    },[date]);
+    }, [date]);
 
     useEffect(() => {
         getAllMail();
-    },[date]);
+    }, [date]);
 
 
     return (
@@ -80,11 +83,11 @@ export default function Page() {
                             </Button>
                         </div>
                         <div className="flex items-center gap-4">
-                            <Button  variant='ghost' className='text-gray-600'>
+                            <Button variant='ghost' className='text-gray-600'>
                                 <ArchiveRestore />
                                 Move To...
                             </Button>
-                        <Button size='icon' variant='ghost' className='text-gray-600'>
+                            <Button size='icon' variant='ghost' className='text-gray-600'>
                                 <Trash2 />
                             </Button>
                         </div>
@@ -128,14 +131,34 @@ export default function Page() {
                                     <TabsTrigger value="outbox">Outbox</TabsTrigger>
                                 </TabsList>
                                 <div className="flex items-center gap-2">
-                                    <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMail(true)}>
-                                        <Plus className="mr-0 h-4 w-4" />
-                                        Send Mail
-                                    </Button>
-                                    <div className="relative">
+                                    {
+                                        user?.Role != "CLIENT" &&
+                                        <>
+                                            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMail(true)}>
+                                                <Plus className="mr-0 h-4 w-4" />
+                                                Send Mail To Team
+                                            </Button>
+                                            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMailClient(true)}>
+                                                <Plus className="mr-0 h-4 w-4" />
+                                                Send Mail To Client
+                                            </Button>
+                                        </>
+                                    }
+
+                                    {
+                                        user?.Role == "CLIENT" &&
+                                        <>
+                                            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMailClient(true)}>
+                                                <Plus className="mr-0 h-4 w-4" />
+                                                Send Mail
+                                            </Button>
+                                        </>
+                                    }
+
+                                    {/* <div className="relative">
                                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                                         <Input className="w-64 pl-8" placeholder="Search" />
-                                    </div>
+                                    </div> */}
                                     <Select onValueChange={(value) => setDate(value)}>
                                         <SelectTrigger className="w-[180px]">
                                             <SelectValue placeholder="Select a date" />
@@ -145,12 +168,12 @@ export default function Page() {
                                                 <SelectLabel>Today</SelectLabel>
                                                 <SelectItem value={null}>ALL</SelectItem>
                                                 {
-                                                   dates.map(date => (
+                                                    dates.map(date => (
                                                         <SelectItem value={date.date} key={date.date}>{date.label}</SelectItem>
-                                                   ))
+                                                    ))
                                                 }
-                                                
-                                                
+
+
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -194,13 +217,14 @@ export default function Page() {
                                     </div>
                                 }
                             </TabsContent>
-                          
+
                         </Tabs>
                     </div>
                 </div>
             }
 
-            <SendMail open={sendMail} onClose={() => setSendMail(false)} getAllMail={getAllMail}/>
+            <SendMail open={sendMail} onClose={() => setSendMail(false)} getAllMail={getAllMail} />
+            <SendMailClient open={sendMailClient} onClose={() => setSendMailClient(false)} getAllMail={getAllMail} />
         </>
     )
 }

@@ -14,8 +14,9 @@ export const initPassport = () => {
                 clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
                 callbackURL: `${process.env.BACKEND_URL}/api/v1/user/auth/google/callback`,
+                passReqToCallback: true,
             },
-            async (accessToken, refreshToken, profile, done) => {
+            async (req, accessToken, refreshToken, profile, done) => {
                 try {
                     const { id, displayName, emails } = profile;
                     const email = emails[0].value;
@@ -23,7 +24,7 @@ export const initPassport = () => {
                     let user = await prisma.user.findUnique({
                         where: { email }
                     });
-
+                    const role = req.query.role || "PROVIDER";
 
 
                     if (!user) {
@@ -32,7 +33,8 @@ export const initPassport = () => {
                             email,
                             password_hash: 'no_password',
                             account_name: displayName,
-                            focus: ["Nothing"]
+                            focus: ["Nothing"],
+                            Role: role
                         }
                         user = await prisma.user.create({
                             data: userData

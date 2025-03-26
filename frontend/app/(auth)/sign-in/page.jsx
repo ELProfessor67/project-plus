@@ -135,10 +135,12 @@ export default function Login() {
             </div>
 
             <div className="text-center text-sm text-gray-700">
-              Don't have an account?{" "}
-              <Link href={`/sign-up${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">
-                Sign up
-              </Link>
+              Don't have an account?{" "} <span> <Link href={`/sign-up${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">
+                Sign up as provoder
+              </Link>/ <Link href={`/sign-up-as-client${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">
+                Sign up as cient
+              </Link></span>
+             
             </div>
           </div>
         </div>

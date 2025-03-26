@@ -324,6 +324,16 @@ export const updateTask = catchAsyncError(async (req, res, next) => {
         data: updateData,
     });
 
+    if (updatedTask) {
+        await prisma.taskProgress.create({
+            data: {
+                message: `User updated "${updatedTask.name}" task.`,
+                user_id: user_id,
+                task_id: updatedTask.task_id,
+            }
+        });
+    }
+
     res.status(200).json({
         success: true,
         task: updatedTask,
@@ -359,6 +369,15 @@ export const deleteTask = catchAsyncError(async (req, res, next) => {
 
     await prisma.task.delete({
         where: { task_id: parseInt(task_id) },
+    });
+
+
+    await prisma.taskProgress.create({
+        data: {
+            message: `User Delete ${task.name} Task.`,
+            user_id: user_id,
+            task_id: parseInt(task_id),
+        }
     });
 
     res.status(200).json({
@@ -522,7 +541,8 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
             task_id: parseInt(task_id),
             user_id: user_id,
             content: content,
-            subject: subject
+            subject: subject,
+            project_id: task.project_id
         }
     ]
 
@@ -535,7 +555,8 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
                 user_id: user_id,
                 content: content,
                 subject: subject,
-                to_user: assignees.user_id
+                to_user: assignees.user_id,
+                project_id: task.project_id
             }
         )
         
@@ -559,6 +580,51 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
     });
 });
 
+
+export const addMailClient = catchAsyncError(async (req, res, next) => {
+    let { client_id,task_id,subject,content } = req.body;
+    const user_id = req.user.user_id;
+    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    });
+
+
+
+    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+
+
+
+    if(!content || !subject) return next(new ErrorHandler(401,"Content and subject is required."));
+    
+    
+    await prisma.email.create({
+        data:  {
+            task_id: parseInt(task_id),
+            user_id: user_id,
+            content: content,
+            subject: subject,
+            to_user: parseInt(client_id),
+            project_id: task.project_id
+        }
+    });
+
+    await prisma.taskProgress.create({
+        data: {
+            message: `User Send a mail subject: ${subject}`,
+            user_id: user_id,
+            task_id: parseInt(task_id),
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Email Send  Successfully to all member.',
+    });
+});
 
 export const getMails = catchAsyncError(async (req, res, next) => {
     const user_id = req.user.user_id;

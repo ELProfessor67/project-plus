@@ -14,14 +14,16 @@ import RenderMeeting from "@/components/RenderMeeting"
 import CreateMeeting from "@/components/CreateMeeting"
 import { getsMeetingRequest } from "@/lib/http/meeting"
 import { useUser } from "@/providers/UserProvider"
+import CreateMeetingClient from "@/components/CreateMeetingClient"
 
 
 
 
 export default function Page() {
     const [createMeeting, setCreateMeeting] = useState(false);
+    const [createMeetingClient, setCreateMeetingClient] = useState(false);
     const [meetings, setMeetings] = useState([]);
-    const {user} = useUser();
+    const { user } = useUser();
 
     const getMeetings = useCallback(async () => {
 
@@ -48,12 +50,7 @@ export default function Page() {
                             <h1 className="text-2xl font-semibold">All Meetings</h1>
                             <Info className="h-4 w-4 text-gray-400" />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon">
-                                <Settings className="h-4 w-4" />
-                            </Button>
-                            <Button variant="outline">Customize</Button>
-                        </div>
+
                     </div>
 
                     {/* View Tabs */}
@@ -65,14 +62,24 @@ export default function Page() {
                                 <TabsTrigger value="joined">Joined</TabsTrigger>
                             </TabsList>
                             <div className="flex items-center gap-2">
-                                <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeeting(true)}>
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    New Meet
-                                </Button>
-                                <div className="relative">
+                                {
+                                    user?.Role != "CLIENT" &&
+                                    <>
+                                        <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeeting(true)}>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            New Meet For Team
+                                        </Button>
+                                        <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeetingClient(true)}>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            New Meet For Client
+                                        </Button>
+                                    </>
+                                }
+
+                                {/* <div className="relative">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                                     <Input className="w-64 pl-8" placeholder="Search" />
-                                </div>
+                                </div> */}
                                 <Select>
                                     <SelectTrigger className="w-[180px]">
                                         <SelectValue placeholder="Select a date" />
@@ -131,7 +138,8 @@ export default function Page() {
                     </Tabs>
                 </div>
             </div>
-            <CreateMeeting open={createMeeting} onClose={() => setCreateMeeting(false)} isScheduled={false} getMeetings={getMeetings}/>
+            <CreateMeeting open={createMeeting} onClose={() => setCreateMeeting(false)} isScheduled={false} getMeetings={getMeetings} />
+            <CreateMeetingClient open={createMeetingClient} onClose={() => setCreateMeetingClient(false)} isScheduled={false} getMeetings={getMeetings} />
         </>
     )
 }

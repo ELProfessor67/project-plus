@@ -21,6 +21,7 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
           hear_about_as: true,
           focus: true,
           account_name: true,
+          Role: true,
           connect_mail_hash: true,
           Projects: {
             select: {
@@ -35,7 +36,32 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
                   task_id: true,
                   name: true
                 }
-              }
+              },
+              Clients: {
+                select: {
+                  project_client_id: true,
+                  user: {
+                    select: {
+                      name: true,
+                      email: true,
+                      user_id: true
+                    }
+                  }
+                }
+              },
+
+              Members: {
+                select: {
+                  project_member_id: true,
+                  user: {
+                    select: {
+                      name: true,
+                      email: true,
+                      user_id: true
+                    }
+                  }
+                }
+              },
             },
           },
           Collaboration: {
@@ -53,9 +79,79 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
                       task_id: true,
                       name: true
                     }
-                  }
+                  },
+                  Clients: {
+                    select: {
+                      project_client_id: true,
+                      user: {
+                        select: {
+                          name: true,
+                          email: true,
+                          user_id: true
+                        }
+                      }
+                    }
+                  },
+
+                  Members: {
+                    select: {
+                      project_member_id: true,
+                      user: {
+                        select: {
+                          name: true,
+                          email: true,
+                          user_id: true
+                        }
+                      }
+                    }
+                  },
                 },
               
+              },
+            },
+          },
+          Services: {
+            select: {
+              project_client_id: true,
+              added_at: true,
+              project: {
+                select: {
+                  project_id: true,
+                  name: true,
+                  description: true,
+                  Tasks: {
+                    select: {
+                      task_id: true,
+                      name: true
+                    }
+                  },
+                  Clients: {
+                    select: {
+                      project_client_id: true,
+                      user: {
+                        select: {
+                          name: true,
+                          email: true,
+                          user_id: true
+                        }
+                      }
+                    }
+                  },
+
+                  Members: {
+                    select: {
+                      project_member_id: true,
+                      user: {
+                        select: {
+                          name: true,
+                          email: true,
+                          user_id: true
+                        }
+                      }
+                    }
+                  },
+                  
+                },
               },
             },
           },
@@ -70,7 +166,12 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
 
     let CollaborationProject = user.Collaboration.map((project) => ({is_collabration_project: true,...project.project}));
     CollaborationProject = CollaborationProject.filter(project => !projectIds.includes(project.project_id));
-    user.Projects = [...user.Projects,...CollaborationProject];
+
+
+    let ClientProject = user.Services.map((project) => ({is_clinet_project: true,...project.project}));
+    ClientProject = ClientProject.filter(project => !projectIds.includes(project.project_id));
+
+    user.Projects = [...user.Projects,...CollaborationProject,...ClientProject];
 
     req.user = user;
   

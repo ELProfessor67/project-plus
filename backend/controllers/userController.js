@@ -11,7 +11,7 @@ import { encrypt } from '../services/encryptionService.js';
 import { verifyMailPassword } from '../processors/verifyMailPasswordProcessor.js';
 
 export const register = catchAsyncError(async (req, res, next) => {
-    const { name, email, password, account_name, bring, teams_member_count,focus,hear_about_as } = req.body;
+    const { name, email, password, account_name, bring, teams_member_count,focus,hear_about_as,role } = req.body;
 
     // Validate request body using Zod
     const [err, isValidate] = await validateRequestBody(req.body, RegisterRequestBodySchema);
@@ -32,7 +32,8 @@ export const register = catchAsyncError(async (req, res, next) => {
             bring,
             teams_member_count,
             focus,
-            hear_about_as
+            hear_about_as,
+            Role: role || 'PROVIDER'
         }
     });
 
@@ -122,6 +123,7 @@ export const verify = catchAsyncError(async (req,res, next) => {
                     focus: true,
                     account_name: true,
                     Projects: true,
+                    Role: true
                 }
             }
         }

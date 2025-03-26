@@ -12,6 +12,7 @@ import {
     getMails,
     getProgress,
     getConnectMails,
+    addMailClient,
 } from "../controllers/taskController.js";
 import {authMiddleware} from '../middlewares/authMiddleware.js'
 import singleUpload from "../middlewares/multerMiddleware.js";
@@ -48,6 +49,8 @@ router
 
 router
     .route("/email").post(authMiddleware,addEmail);
+router
+    .route("/email/client").post(authMiddleware,addMailClient);
 
 router
     .route("/emails/get-emails").get(authMiddleware,getMails);

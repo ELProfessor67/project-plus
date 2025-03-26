@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import BigDialog from './Dialogs/BigDialog'
 import { Button } from './Button'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './ui/select';
@@ -9,9 +9,9 @@ import { generateInvitation } from '@/utils/createInvitation';
 import { useUser } from '@/providers/UserProvider';
 import { Input } from './ui/input';
 
-const InviteComponet = ({ open, onClose, project }) => {
-    // ADMIN,MEMBER,VIEWER
-    const [role, setRole] = useState('MEMBER');
+const InviteComponet = ({ open, onClose, project,isClient=false}) => {
+    // ADMIN,MEMBER,VIEWER,CLIENT
+    const [role, setRole] = useState("CLIENT");
     const [isLoading,setIsLoading] = useState(false);
     const [link,setLink] = useState(null);
     const [invitation,setInvitation] = useState('');
@@ -30,14 +30,14 @@ const InviteComponet = ({ open, onClose, project }) => {
             }
             const res = await invitePeopleRequest(formdata,project.project_id);
             setLink(res.data.link);
-            const invitation = generateInvitation(res.data.link,project.name,user?.name,'Project Admin',role);
+            const invitation = generateInvitation(res.data.link,project.name,user?.name,'Project Admin',role,isClient);
             setInvitation(invitation);
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         }finally{
             setIsLoading(false);
         }
-    },[role]);
+    },[role,isClient]);
 
 
     const handleCopy = useCallback(() => {
@@ -71,7 +71,14 @@ const InviteComponet = ({ open, onClose, project }) => {
 
 
 
+    useEffect(() => {
+        if(isClient){
+            setRole('CLIENT');
+        }else{
+            setRole('MEMBER');
+        }
 
+    },[isClient]);
 
     return (
         <BigDialog open={open} onClose={onClose}>
@@ -133,6 +140,7 @@ const InviteComponet = ({ open, onClose, project }) => {
                                     <SelectItem value="ADMIN">ADMIN</SelectItem>
                                     <SelectItem value="MEMBER">MEMBER</SelectItem>
                                     <SelectItem value="VIEWER">VIEWER</SelectItem>
+                                    <SelectItem value="CLIENT">CLIENT</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

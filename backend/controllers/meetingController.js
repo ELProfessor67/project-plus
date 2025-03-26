@@ -1,6 +1,6 @@
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 import ErrorHandler from '../utils/errorHandler.js';
-import { sendInviation, sendMailDetails, sendMailUpdate } from '../services/meetingService.js';
+import { sendInviation, sendMailDetails, sendMailUpdate, sendMeetingLink } from '../services/meetingService.js';
 import {prisma} from "../prisma/index.js";
 
 export const createMeeting = catchAsyncError(async (req, res, next) => {
@@ -46,6 +46,7 @@ export const createMeeting = catchAsyncError(async (req, res, next) => {
             isScheduled,
             date,
             time,
+            project_id: task.project_id,
             status: isScheduled ? "PENDING" : "SCHEDULED",
             participants: {
                 create: participantsData
@@ -70,6 +71,71 @@ export const createMeeting = catchAsyncError(async (req, res, next) => {
 });
 
 
+export const createClientMeeting = catchAsyncError(async (req, res, next) => {
+    const { heading,description,task_id,time,date,isScheduled,client_id } = req.body;
+    if(!heading || !description || !task_id) return next(new ErrorHandler("Heading and description and task_id is required"));
+    const user_id = req.user.user_id;
+
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    });
+
+    const client = await prisma.user.findUnique({
+        where: {
+            user_id: parseInt(client_id)
+        }
+    });
+
+
+    if(!task) return next(new ErrorHandler("Invalid task_id"));
+
+
+    const participantsData = [{
+        user_id: parseInt(client_id),
+        vote: 'PENDING'
+    }];
+    
+    const meeting = await prisma.meeting.create({
+        data: {
+            heading,
+            description,
+            task_id: parseInt(task_id),
+            user_id,
+            isScheduled,
+            date,
+            time,
+            project_id: task.project_id,
+            status: isScheduled ? "PENDING" : "SCHEDULED",
+            participants: {
+                create: participantsData
+            } 
+        }
+    });
+
+    
+    if(isScheduled){
+        sendInviation(task.assignees,heading,description,meeting.meeting_id,date,time,req.user.name,req.user.email);
+    }
+
+    if(!isScheduled){
+        sendMeetingLink(client.name,client.email,{
+            heading,
+            description,
+            meeting_id: meeting.meeting_id
+        });
+    }
+
+
+    // Return the conversation ID in the response
+    res.status(200).json({
+        success: true,
+        message:"Meeting Created Successfully",
+        meeting
+    });
+});
 
 
 export const handleVoting = catchAsyncError(async (req, res, next) => {
