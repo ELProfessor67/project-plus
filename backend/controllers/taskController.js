@@ -6,6 +6,7 @@ import { transcribeFile } from '../services/taskService.js';
 import {prisma} from "../prisma/index.js";
 import { decrypt } from '../services/encryptionService.js';
 import { fetchMail } from '../services/googleService.js';
+import dayjs from 'dayjs';
 
 async function getTaskDetailsByDate(taskId) {
     const emails = await prisma.email.findMany({
@@ -746,3 +747,86 @@ export const getConnectMails = catchAsyncError(async (req, res, next) => {
         mails
     });
 });
+
+
+
+export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
+    let date = req.query.date;
+
+    // Parse date properly
+    date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs();
+    
+    // Define the start and end of the day
+    const startOfDay = date.startOf("day").utc().toDate(); // Convert to UTC
+    const endOfDay = date.endOf("day").utc().toDate(); // Convert to UTC
+
+
+    const user_id = req.user.user_id;
+    let tasks = [];
+    req.user.Projects.forEach((p) => {
+        tasks = [...tasks, ...p.Tasks];
+    });
+    const task_ids = tasks.map(task => task.task_id);
+
+    
+
+    const progress = await prisma.taskProgress.findMany({
+        where: {
+            task_id: {
+                in: task_ids
+            },
+            created_at: {
+                gte: startOfDay, // Include all records from 00:00:00 UTC
+                lte: endOfDay    // Include all records up to 23:59:59 UTC
+            }
+        },
+        select: {
+            message: true,
+            created_at: true,
+            user: {
+                select: {
+                    name: true,
+                }
+            },
+            task: {
+                select: {
+                    name: true,
+                }
+            }
+        }
+    });
+
+
+    res.status(200).json({
+        success: true,
+        progress
+    });
+});
+
+
+// export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
+//     let date = req.query.date
+//     console.log(date)
+//     date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs();
+//     const user_id = req.user.user_id;
+//     let tasks = []
+//     req.user.Projects.forEach((p) => {
+//         tasks = [...tasks,...p.Tasks];
+//     });
+//     const task_ids = tasks.map(task => task.task_id);
+
+    
+//     const progress = await prisma.taskProgress.findMany({
+//         where: {
+//             task_id: {
+//                 in: task_ids
+//             },
+//             created_at: new Date(date)
+//         }
+//     })
+
+//     res.status(200).json({
+//         success: true,
+//         progress
+//     });
+// });
