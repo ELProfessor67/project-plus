@@ -24,9 +24,18 @@ export const updateStatusRequest = async (formdata) => api.post(`/client/status`
 
 
 
+
 export const getBillingRequest = async (id) => api.get(`/client/get-all-billing/${id}`);
 export const createBillingRequest = async (formdata) => api.post(`/client/create-billing`, formdata);
 export const updateBillingStatusRequest = async (formdata) => api.post(`/client/status-billing`, formdata);
+
+
+export const getFilledRequest = async (id) => api.get(`/client/get-all-filed/${id}`);
+export const updateFiledStatusRequest = async (formdata) => api.post(`/client/status-filed`, formdata);
+
+
+export const getSignedRequest = async (id) => api.get(`/client/get-all-signed/${id}`);
+export const updateSignedStatusRequest = async (formdata) => api.post(`/client/status-signed`, formdata);
 
 
 export const getPedingDocsRequest = async () => api.get(`/client/get-peding-documents`);
@@ -37,6 +46,28 @@ export const uploadDocumentRequest = async (formdata) => api.post(`/client/uploa
         "Content-Type": "multipart/form-data"
     }
 });
+
+
+export const createFiledRequest = async (formdata) => api.post(`/client/create-filed`, formdata, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+});
+
+
+export const createSignRequest = async (formdata) => api.post(`/client/create-signed`, formdata, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+});
+
+export const uploadSignRequest = async (formdata) => api.post(`/client/upload-signed`, formdata, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+});
+
+
 export const giveUpdateRequest = async (formdata) => api.post(`/client/give-update/`, formdata, {
     headers: {
         "Content-Type": "multipart/form-data"

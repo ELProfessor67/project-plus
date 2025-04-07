@@ -113,7 +113,7 @@ export default function SingUpAsClient() {
                             </Button>
                         </form>
 
-                        <div className="relative">
+                         {/*<div className="relative">
                             <div className="absolute inset-0 flex items-center">
                                 <span className="w-full border-t border-gray-300" />
                             </div>
@@ -122,13 +122,13 @@ export default function SingUpAsClient() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1">
+                       <div className="grid grid-cols-1">
                             <Button variant="outline" className="w-full" onClick={handleGoogleLogin}>
                                 <Image src="https://dapulse-res.cloudinary.com/image/upload/remote_logos/995426/google-icon.svg" alt="Google" width={20} height={20} className="mr-2" />
                                 <span className="text-gray-700">Continue with Google</span>
                             </Button>
 
-                        </div>
+                        </div>*/}
 
                         <div className="text-center text-sm text-gray-700">
                             Already have an account ?{" "} <Link href={`/sign-in${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">

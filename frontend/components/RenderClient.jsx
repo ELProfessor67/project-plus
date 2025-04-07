@@ -20,6 +20,11 @@ const RenderClient = ({ members }) => {
                         </div>
 
                         <div className='flex items-center gap-4 p-2'>
+                            <Link href={`/dashboard/filed/${member?.project_client_id}`}>
+                                <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
+                                    Filed
+                                </Button>
+                            </Link>
                             <Link href={`/dashboard/updates/${member?.project_client_id}`}>
                                 <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
                                     Updates
@@ -33,6 +38,11 @@ const RenderClient = ({ members }) => {
                             <Link href={`/dashboard/bills/${member?.project_client_id}`}>
                                 <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
                                     Bill
+                                </Button>
+                            </Link>
+                            <Link href={`/dashboard/sign/${member?.project_client_id}`}>
+                                <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
+                                    Signature
                                 </Button>
                             </Link>
                         </div>

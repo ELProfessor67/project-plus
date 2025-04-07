@@ -13,4 +13,5 @@ export const sendTaskEmailRequest = async (formdata) => api.post(`/task/email`,f
 export const sendEmailToClientRequest = async (formdata) => api.post(`/task/email/client`,formdata);
 export const getTaskEmailRequest = async (date) => api.get(`/task/emails/get-emails${date ? `?date=${date}`: ''}`);
 export const getTaskProgressRequest = async (id,date) => api.get(`/task/progress/get-progress/${id}${date ? `?date=${date}`: ''}`);
+export const getAllTaskProgressRequest = async (date) => api.get(`/task/progress/get-progress/${date ? `?date=${date}`: ''}`);
 export const getConnectMailsRequest = async () => api.get(`/task/get-connect-mails`);

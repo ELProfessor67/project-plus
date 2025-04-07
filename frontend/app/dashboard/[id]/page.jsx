@@ -16,31 +16,37 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import moment from 'moment';
+import Link from 'next/link';
 
-const ClientDashbaord = ({ params }) => {
+const ClientDashbaord = ({ params, searchParams }) => {
     const [updates, setUpdates] = useState([]);
     const [documents, setDocuments] = useState([]);
     const [pendingDocuments, setPendingDocuments] = useState([]);
     const [mails, setMails] = useState([]);
     const [meetings, setMeetings] = useState([]);
     const [calls, setCalls] = useState([]);
-    const [callDurations, setCallDurations] = useState([]);
+    const [callDurations, setCallDurations] = useState("0");
 
     const [dates, setDates] = useState(getRecentDatesWithLabels(20));
     const [selectedDate, setSelectedDate] = useState(dates[0].date);
 
     const { id } = use(params);
+    const { client_id } = use(searchParams);
     const { user } = useUser();
 
     const getOverview = useCallback(async () => {
         try {
-            const res = await getOverviewRequest(id);
+            const res = await getOverviewRequest(selectedDate, user.user_id, id);
             setUpdates(res.data.overview.updates);
             setDocuments(res.data.overview.documents);
+            setMails(res.data.overview.mails);
+            setMeetings(res.data.overview.meetings);
+            setCalls(res.data.overview.calls);
+            setCallDurations(res.data.overview.callDurations);
         } catch (error) {
             console.log(error.message, error?.response?.data?.message)
         }
-    }, [id]);
+    }, [id, selectedDate, user]);
 
     useEffect(() => {
         if (user) {
@@ -120,29 +126,37 @@ const ClientDashbaord = ({ params }) => {
             </div>
 
             <div className='grid grid-cols-2 lg:grid-cols-3 p-8 gap-8'>
-                <div className='h-[15rem] rounded-md bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center flex-col gap-3'>
-                    <h3 className='text-white text-xl opacity-80'>Total Updates</h3>
-                    <h1 className='text-white text-9xl'>{updates.length}</h1>
-                </div>
-                <div className='h-[15rem] rounded-md bg-gradient-to-r from-rose-400 to-red-500 flex items-center justify-center flex-col gap-3'>
-                    <h3 className='text-white text-xl opacity-80'>Total Documets</h3>
-                    <h1 className='text-white text-9xl'>{documents.length}</h1>
-                </div>
-                <div className='h-[15rem] rounded-md bg-gradient-to-r from-amber-500 to-pink-500 flex items-center justify-center flex-col gap-3'>
-                    <h3 className='text-white text-xl opacity-80'>Total Mails</h3>
-                    <h1 className='text-white text-9xl'>{mails.length}</h1>
-                </div>
-                <div className='h-[15rem] rounded-md bg-gradient-to-r from-fuchsia-500 to-pink-500 flex items-center justify-center flex-col gap-3'>
-                    <h3 className='text-white text-xl opacity-80'>Total Meetings</h3>
-                    <h1 className='text-white text-9xl'>{meetings.length}</h1>
-                </div>
+                <Link href={`/dashboard/updates/${client_id}`}>
+                    <div className='h-[15rem] rounded-md bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center flex-col gap-3 cursor-pointer'>
+                        <h3 className='text-white text-xl opacity-80'>Total Updates</h3>
+                        <h1 className='text-white text-9xl'>{updates.length}</h1>
+                    </div>
+                </Link>
+                <Link href={`/dashboard/documents/${client_id}`}>
+                    <div className='h-[15rem] rounded-md bg-gradient-to-r from-rose-400 to-red-500 flex items-center justify-center flex-col gap-3 cursor-pointer'>
+                        <h3 className='text-white text-xl opacity-80'>Total Documets</h3>
+                        <h1 className='text-white text-9xl'>{documents.length}</h1>
+                    </div>
+                </Link>
+                <Link href={`/dashboard/mail`}>
+                    <div className='h-[15rem] rounded-md bg-gradient-to-r from-amber-500 to-pink-500 flex items-center justify-center flex-col gap-3 cursor-pointer'>
+                        <h3 className='text-white text-xl opacity-80'>Total Mails</h3>
+                        <h1 className='text-white text-9xl'>{mails.length}</h1>
+                    </div>
+                </Link>
+                <Link href={`/dashboard/meeting`}>
+                    <div className='h-[15rem] rounded-md bg-gradient-to-r from-fuchsia-500 to-pink-500 flex items-center justify-center flex-col gap-3 cursor-pointer'>
+                        <h3 className='text-white text-xl opacity-80'>Total Meetings</h3>
+                        <h1 className='text-white text-9xl'>{meetings.length}</h1>
+                    </div>
+                </Link>
                 <div className='h-[15rem] rounded-md bg-gradient-to-r from-fuchsia-500 to-pink-500 flex items-center justify-center flex-col gap-3'>
                     <h3 className='text-white text-xl opacity-80'>Total Calls</h3>
                     <h1 className='text-white text-9xl'>{calls.length}</h1>
                 </div>
                 <div className='h-[15rem] rounded-md bg-gradient-to-r from-fuchsia-500 to-pink-500 flex items-center justify-center flex-col gap-3'>
                     <h3 className='text-white text-xl opacity-80'>Total Call Duration</h3>
-                    <h1 className='text-white text-9xl'>0</h1>
+                    <h1 className='text-white text-9xl flex items-end'>{callDurations} <span className='text-4xl mb-4'>min</span></h1>
                 </div>
             </div>
 

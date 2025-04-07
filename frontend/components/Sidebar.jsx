@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed } from 'lucide-react'
+import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed, FileDiff, CheckCheck } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
@@ -23,6 +23,8 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
     const [billingOpen, setBillingOpen] = useState(false);
     const [overviewOpen, setOverviewOpen] = useState(false);
     const [documentOpen, setDocumentOpen] = useState(false);
+    const [filedOpen, setFiledOpen] = useState(false);
+    const [signedOpen, setSignedOpen] = useState(false);
     const [projectDialogOpen, setProjectDialogOpen] = useState(false);
     const [openMeeting, setOpenMeeting] = useState(false);
     const pathname = usePathname();
@@ -231,7 +233,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                         <div className="flex flex-col gap-2">
                                             {
                                                 user?.Services?.map(service => (
-                                                    <Link href={`/dashboard/${service.project.project_id}`}>
+                                                    <Link href={`/dashboard/${service.project.project_id}?client_id=${service.project_client_id}`}>
                                                         <Button variant="ghost" className="justify-start flex items-center w-full">
                                                             <BookDashed className="mr-1" />
                                                             {service.project.name}
@@ -334,6 +336,62 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                             {
                                                 user?.Services?.map(service => (
                                                     <Link href={`/dashboard/bills/${service.project_client_id}`}>
+                                                        <Button variant="ghost" className="justify-start flex items-center w-full">
+                                                            <PanelLeft className="mr-1" />
+                                                            {service.project.name}
+                                                        </Button>
+                                                    </Link>
+                                                ))
+                                            }
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+
+
+
+                                <Collapsible open={filedOpen} onOpenChange={setFiledOpen}>
+                                    <CollapsibleTrigger asChild>
+                                        <Button variant="ghost" className="w-full justify-between">
+                                            <div className="flex items-center">
+                                                <FileDiff className="mr-2 h-4 w-4" />
+                                                Filed
+                                            </div>
+                                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${filedOpen ? "rotate-180" : ""}`} />
+                                        </Button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="px-4 py-2">
+                                        <div className="flex flex-col gap-2">
+                                            {
+                                                user?.Services?.map(service => (
+                                                    <Link href={`/dashboard/filed/${service.project_client_id}`}>
+                                                        <Button variant="ghost" className="justify-start flex items-center w-full">
+                                                            <PanelLeft className="mr-1" />
+                                                            {service.project.name}
+                                                        </Button>
+                                                    </Link>
+                                                ))
+                                            }
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+
+
+
+                                <Collapsible open={signedOpen} onOpenChange={setSignedOpen}>
+                                    <CollapsibleTrigger asChild>
+                                        <Button variant="ghost" className="w-full justify-between">
+                                            <div className="flex items-center">
+                                                <CheckCheck className="mr-2 h-4 w-4" />
+                                                Signature Document
+                                            </div>
+                                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${signedOpen ? "rotate-180" : ""}`} />
+                                        </Button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="px-4 py-2">
+                                        <div className="flex flex-col gap-2">
+                                            {
+                                                user?.Services?.map(service => (
+                                                    <Link href={`/dashboard/sign/${service.project_client_id}`}>
                                                         <Button variant="ghost" className="justify-start flex items-center w-full">
                                                             <PanelLeft className="mr-1" />
                                                             {service.project.name}

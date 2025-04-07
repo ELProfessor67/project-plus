@@ -47,10 +47,18 @@ export const sendMeetingLink = async (name,email,meetingInfo) => {
     sendMail("Meeting Invitation", recipient.email, html);
 }
 
-export const sendDocumentRequest = async (project_client_id,name,description) => {
+export const sendDocumentRequest = async (project_client_id,name,description,email) => {
     const submitLink =  `${process.env.FRONTEND_URL}/documents/${project_client_id}`
     const html = generateRequestDocumentHtml(submitLink,name,description);
-    sendMail("Submit Document", recipient.email, html);
+    sendMail("Submit Document", email, html);
+}
+
+
+
+export const sendSignatureRequest = async (project_client_id,name,description,email) => {
+    const submitLink =  `${process.env.FRONTEND_URL}/sign/${project_client_id}`
+    const html = generateRequestDocumentHtml(submitLink,name,description);
+    sendMail("Submit Document", email, html);
 }
 
 export const sendMailUpdate = async (meetingInfo, status) => {

@@ -83,8 +83,10 @@ model ProjectClient {
   project Project @relation(fields: [project_id], references: [project_id])
   user User     @relation(fields: [user_id], references: [user_id])
   Documents Documents[]
+  Filled Filled[]
   Updates Updates[]
   Billing Billing[]
+  signed signed[]
 }
 enum DocumentStatus {
   PENDING
@@ -106,8 +108,71 @@ model Documents {
   name String?
   key String?
   status DocumentStatus @default(PENDING)
+  projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id]) 
+}
+
+enum FilledStatus {
+  PENDING
+  COMPLETED
+  STUCK
+  PROCESSING
+  CANCELED
+}
+
+model Filled {
+  filled_id String @id @default(uuid())
+  project_client_id String
+  project_id Int
+  user_id Int
+  file_url String?
+  created_at      DateTime @default(now())
+  size Int?
+  mimeType String?
+  filename String?
+  description String?
+  progress String?
+  date DateTime?
+  name String?
+  key String?
+  status FilledStatus @default(PENDING)
   projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id])
-  
+}
+
+enum signedStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model signed {
+  signed_id String @id @default(uuid())
+  project_client_id String
+  project_id Int
+  user_id Int
+
+  name String?
+  description String?
+
+  file_url String?
+  size Int?
+  mimeType String?
+  filename String?
+  key String?
+
+
+  sign_file_url String?
+  sign_size Int?
+  sign_mimeType String?
+  sign_filename String?
+  sign_key String?
+  sign_date DateTime?
+
+  status signedStatus @default(PENDING)
+
+  created_at      DateTime @default(now())
+  projectClient ProjectClient @relation(fields: [project_client_id], references: [project_client_id])
+
+
 }
 
 model Updates {

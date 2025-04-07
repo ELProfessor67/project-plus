@@ -187,7 +187,7 @@ export default function Page({ params }) {
         <RenderMemberDetails members={project?.Members || []} />
       </BigDialog>
 
-      <BigDialog open={viewClient} onClose={() => setViewClient(false)} width={40}>
+      <BigDialog open={viewClient} onClose={() => setViewClient(false)} width={45}>
         <RenderClient members={project?.Clients || []} />
       </BigDialog>
     </>
