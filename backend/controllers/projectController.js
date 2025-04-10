@@ -41,7 +41,7 @@ export const createProject = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < members.length; i++) {
         const {user_id,role} = members[i];
         await prisma.projectMember.create({
             data: {
@@ -304,7 +304,7 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
         }
 
         //add user to team
-        const isAlreadyInTeam = await prisma.userTeam.findUnique({
+        const isAlreadyInTeam = await prisma.userTeam.findFirst({
             where: {
                 user_id: user_id
             }

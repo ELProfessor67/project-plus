@@ -59,7 +59,7 @@ model UserTeam {
   user_id Int
   leader_id Int
   leader User @relation(fields: [leader_id], references: [user_id])
-  user Role @default(MEMBER)
+  role Role @default(MEMBER)
 }
 
 
