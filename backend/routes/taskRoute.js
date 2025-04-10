@@ -14,6 +14,8 @@ import {
     getConnectMails,
     addMailClient,
     getAllTaskProgress,
+    createTime,
+    stopTime,
 } from "../controllers/taskController.js";
 import {authMiddleware} from '../middlewares/authMiddleware.js'
 import singleUpload from "../middlewares/multerMiddleware.js";
@@ -61,7 +63,10 @@ router
 router
     .route("/progress/get-progress").get(authMiddleware,getAllTaskProgress);
 
-
+router
+    .route("/time/:task_id").post(authMiddleware,createTime);
+router
+    .route("/time-stop/:time_id").post(authMiddleware,stopTime);
 
 
 export default router;

@@ -40,6 +40,7 @@ export const uploadMedia = catchAsyncError(async (req, res, next) => {
             message: `Add Media filename "${file.originalname}" size ${bytesToMB(file.buffer.length)} mimetype ${file.mimetype}`,
             user_id: user_id,
             task_id: parseInt(task_id),
+            type: "MEDIA"
         }
     });
 

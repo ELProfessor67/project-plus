@@ -3,98 +3,99 @@ import ErrorHandler from '../utils/errorHandler.js';
 import { validateRequestBody } from '../utils/validateRequestBody.js';
 import { CreateTaskRequestBodySchema } from '../schema/taskSchema.js';
 import { transcribeFile } from '../services/taskService.js';
-import {prisma} from "../prisma/index.js";
+import { prisma } from "../prisma/index.js";
 import { decrypt } from '../services/encryptionService.js';
 import { fetchMail } from '../services/googleService.js';
 import dayjs from 'dayjs';
+import { dmmfToRuntimeDataModel } from '@prisma/client/runtime/library';
 
 async function getTaskDetailsByDate(taskId) {
     const emails = await prisma.email.findMany({
-      where: { task_id: taskId },
-      select: {
-        created_at: true,
-        content: true,
-        subject: true,
-        user: {
-          select: { 
-            user_id: true,
-            name: true,
-            email: true 
+        where: { task_id: taskId },
+        select: {
+            created_at: true,
+            content: true,
+            subject: true,
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                },
+            },
         },
-        },
-      },
     });
-  
+
     const comments = await prisma.comment.findMany({
-      where: { task_id: taskId },
-      select: {
-        created_at: true,
-        content: true,
-        user: {
-          select: { 
-            user_id: true,
-            name: true,
-            email: true 
+        where: { task_id: taskId },
+        select: {
+            created_at: true,
+            content: true,
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                },
+            },
         },
-        },
-      },
     });
-  
+
     const transcriptions = await prisma.transcibtion.findMany({
-      where: { task_id: taskId },
-      select: {
-        created_at: true,
-        Transcibtion: true,
-        name: true,
-        user: {
-          select: { 
-            user_id: true,
+        where: { task_id: taskId },
+        select: {
+            created_at: true,
+            Transcibtion: true,
             name: true,
-            email: true 
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                },
+            },
         },
-        },
-      },
     });
-  
+
     // Combine and format data
     const combined = [
-      ...emails.map((email) => ({
-        type: 'email',
-        created_at: email.created_at,
-        content: email.content,
-        subject: email.subject,
-        user: email.user,
-      })),
-      ...comments.map((comment) => ({
-        type: 'comment',
-        created_at: comment.created_at,
-        content: comment.content,
-        user: comment.user,
-      })),
-      ...transcriptions.map((transcription) => ({
-        type: 'transcription',
-        created_at: transcription.created_at,
-        Transcibtion: transcription.Transcibtion,
-        name: transcription.name,
-        user: transcription.user,
-      })),
+        ...emails.map((email) => ({
+            type: 'email',
+            created_at: email.created_at,
+            content: email.content,
+            subject: email.subject,
+            user: email.user,
+        })),
+        ...comments.map((comment) => ({
+            type: 'comment',
+            created_at: comment.created_at,
+            content: comment.content,
+            user: comment.user,
+        })),
+        ...transcriptions.map((transcription) => ({
+            type: 'transcription',
+            created_at: transcription.created_at,
+            Transcibtion: transcription.Transcibtion,
+            name: transcription.name,
+            user: transcription.user,
+        })),
     ];
-  
+
     // Group data by date
     const grouped = combined.reduce((acc, curr) => {
-      const date = curr.created_at.toISOString().split('T')[0];
-      if (!acc[date]) {
-        acc[date] = { date, emails: [], comments: [], transcriptions: [] };
-      }
-      if (curr.type === 'email') acc[date].emails.push(curr);
-      if (curr.type === 'comment') acc[date].comments.push(curr);
-      if (curr.type === 'transcription') acc[date].transcriptions.push(curr);
-      return acc;
+        const date = curr.created_at.toISOString().split('T')[0];
+        if (!acc[date]) {
+            acc[date] = { date, emails: [], comments: [], transcriptions: [] };
+        }
+        if (curr.type === 'email') acc[date].emails.push(curr);
+        if (curr.type === 'comment') acc[date].comments.push(curr);
+        if (curr.type === 'transcription') acc[date].transcriptions.push(curr);
+        return acc;
     }, {});
-  
+
     // Convert grouped data to array format
-    return  Object.values(grouped) ;
-  }
+    return Object.values(grouped);
+}
 
 export const createTask = catchAsyncError(async (req, res, next) => {
     const { project_id, name, description, assigned_to, priority, last_date, otherMember, status } = req.body;
@@ -131,7 +132,7 @@ export const createTask = catchAsyncError(async (req, res, next) => {
         Project.Members.some(member => member.user_id === id)
     );
 
-    if(!isAllProviderMemberInProject){
+    if (!isAllProviderMemberInProject) {
         return next(new ErrorHandler("You provider member is not in project.", 403));
     }
 
@@ -173,7 +174,7 @@ export const createTask = catchAsyncError(async (req, res, next) => {
 });
 
 
-export const getTaskById = catchAsyncError(async (req,res,next) => {
+export const getTaskById = catchAsyncError(async (req, res, next) => {
     const task_id = req.params.task_id;
 
     const task = await prisma.task.findUnique({
@@ -181,10 +182,10 @@ export const getTaskById = catchAsyncError(async (req,res,next) => {
             task_id: parseInt(task_id)
         },
         include: {
-            assignees: { 
-                include: { 
-                    user: { 
-                        select: { 
+            assignees: {
+                include: {
+                    user: {
+                        select: {
                             name: true,
                             email: true,
                             user_id: true
@@ -224,7 +225,7 @@ export const getTaskById = catchAsyncError(async (req,res,next) => {
                 }
             },
 
-            
+
             Comments: {
                 select: {
                     comment_id: true,
@@ -242,7 +243,7 @@ export const getTaskById = catchAsyncError(async (req,res,next) => {
         }
     });
 
-    const progress = await getTaskDetailsByDate( parseInt(task_id));
+    const progress = await getTaskDetailsByDate(parseInt(task_id));
 
     res.status(200).json({
         success: true,
@@ -258,13 +259,13 @@ export const getTasksByProject = catchAsyncError(async (req, res, next) => {
     // Validate project existence
     const project = await prisma.project.findUnique({
         where: { project_id: parseInt(project_id) },
-        include: { 
-            Tasks: { 
-                include: { 
-                    assignees: { 
-                        include: { 
-                            user: { 
-                                select: { 
+        include: {
+            Tasks: {
+                include: {
+                    assignees: {
+                        include: {
+                            user: {
+                                select: {
                                     name: true,
                                     email: true,
                                     user_id: true
@@ -304,7 +305,7 @@ export const updateTask = catchAsyncError(async (req, res, next) => {
     }
 
     const isProjectAdmin = task.project.Members.some(
-        (member) => member.user_id === user_id && (member.role === "ADMIN" || member.role === "MEMBER" )
+        (member) => member.user_id === user_id && (member.role === "ADMIN" || member.role === "MEMBER")
     );
 
     if (task.created_by !== user_id && !isProjectAdmin) {
@@ -313,12 +314,12 @@ export const updateTask = catchAsyncError(async (req, res, next) => {
 
     // Update task
     const updateData = {};
-    if(name) updateData['name'] = name;
-    if(description) updateData['description'] = description;
-    if(status) updateData['status'] = status;
-    if(assigned_to) updateData['assigned_to'] = assigned_to;
-    if(priority) updateData['priority'] = priority;
-    if(last_date) updateData['last_date'] = last_date;
+    if (name) updateData['name'] = name;
+    if (description) updateData['description'] = description;
+    if (status) updateData['status'] = status;
+    if (assigned_to) updateData['assigned_to'] = assigned_to;
+    if (priority) updateData['priority'] = priority;
+    if (last_date) updateData['last_date'] = last_date;
 
     const updatedTask = await prisma.task.update({
         where: { task_id: parseInt(task_id) },
@@ -331,6 +332,7 @@ export const updateTask = catchAsyncError(async (req, res, next) => {
                 message: `User updated "${updatedTask.name}" task.`,
                 user_id: user_id,
                 task_id: updatedTask.task_id,
+                type: "OTHER"
             }
         });
     }
@@ -378,6 +380,7 @@ export const deleteTask = catchAsyncError(async (req, res, next) => {
             message: `User Delete ${task.name} Task.`,
             user_id: user_id,
             task_id: parseInt(task_id),
+            type: "OTHER"
         }
     });
 
@@ -388,7 +391,7 @@ export const deleteTask = catchAsyncError(async (req, res, next) => {
 });
 
 export const addMembersToTask = catchAsyncError(async (req, res, next) => {
-    const {task_id} = req.params
+    const { task_id } = req.params
     const { otherMember } = req.body;
 
     // Fetch task and project
@@ -430,9 +433,9 @@ export const addMembersToTask = catchAsyncError(async (req, res, next) => {
 
 
 export const addTranscibtion = catchAsyncError(async (req, res, next) => {
-    let { task_id,name } = req.body;
+    let { task_id, name } = req.body;
     const user_id = req.user.user_id;
-    if(!task_id || !name) return next(new ErrorHandler(401,"Task Id is required."));
+    if (!task_id || !name) return next(new ErrorHandler(401, "Task Id is required."));
 
     const task = await prisma.task.findUnique({
         where: {
@@ -442,11 +445,11 @@ export const addTranscibtion = catchAsyncError(async (req, res, next) => {
 
 
 
-    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
 
 
     const file = req.file;
-    if(!file || !name) return next(new ErrorHandler(401,"File And Name Required."));
+    if (!file || !name) return next(new ErrorHandler(401, "File And Name Required."));
     const fileBuffer = file.buffer;
     const Transcibtion = await transcribeFile(fileBuffer);
 
@@ -467,9 +470,9 @@ export const addTranscibtion = catchAsyncError(async (req, res, next) => {
 
 
 export const addComments = catchAsyncError(async (req, res, next) => {
-    let { task_id,content } = req.body;
+    let { task_id, content } = req.body;
     const user_id = req.user.user_id;
-    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
 
     const task = await prisma.task.findUnique({
         where: {
@@ -479,12 +482,12 @@ export const addComments = catchAsyncError(async (req, res, next) => {
 
 
 
-    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
 
 
 
-    if(!content) return next(new ErrorHandler(401,"Content is required."));
-   
+    if (!content) return next(new ErrorHandler(401, "Content is required."));
+
     await prisma.comment.create({
         data: {
             task_id: parseInt(task_id),
@@ -500,6 +503,7 @@ export const addComments = catchAsyncError(async (req, res, next) => {
             message: `User Add a comments: ${content}`,
             user_id: user_id,
             task_id: parseInt(task_id),
+            type: "COMMENT"
         }
     });
 
@@ -513,9 +517,9 @@ export const addComments = catchAsyncError(async (req, res, next) => {
 
 
 export const addEmail = catchAsyncError(async (req, res, next) => {
-    let { task_id,subject,content } = req.body;
+    let { task_id, subject, content } = req.body;
     const user_id = req.user.user_id;
-    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
 
     const task = await prisma.task.findUnique({
         where: {
@@ -532,11 +536,11 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
 
 
 
-    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
 
 
 
-    if(!content || !subject) return next(new ErrorHandler(401,"Content and subject is required."));
+    if (!content || !subject) return next(new ErrorHandler(401, "Content and subject is required."));
     const data = [
         {
             task_id: parseInt(task_id),
@@ -548,8 +552,8 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
     ]
 
     for (let index = 0; index < task.assignees.length; index++) {
-        const assignees =  task.assignees[index];
-        if(assignees.user_id == user_id) continue;
+        const assignees = task.assignees[index];
+        if (assignees.user_id == user_id) continue;
         data.push(
             {
                 task_id: parseInt(task_id),
@@ -560,9 +564,9 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
                 project_id: task.project_id
             }
         )
-        
+
     }
-    
+
     await prisma.email.createMany({
         data: data
     });
@@ -572,6 +576,7 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
             message: `User Send a mail subject: ${subject}`,
             user_id: user_id,
             task_id: parseInt(task_id),
+            type: "MAIL"
         }
     });
 
@@ -583,9 +588,9 @@ export const addEmail = catchAsyncError(async (req, res, next) => {
 
 
 export const addMailClient = catchAsyncError(async (req, res, next) => {
-    let { client_id,task_id,subject,content } = req.body;
+    let { client_id, task_id, subject, content } = req.body;
     const user_id = req.user.user_id;
-    if(!task_id) return next(new ErrorHandler(401,"Task Id is required."));
+    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
 
     const task = await prisma.task.findUnique({
         where: {
@@ -595,15 +600,15 @@ export const addMailClient = catchAsyncError(async (req, res, next) => {
 
 
 
-    if(!task) return next(new ErrorHandler(401,"Invalid Task Id"));
+    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
 
 
 
-    if(!content || !subject) return next(new ErrorHandler(401,"Content and subject is required."));
-    
-    
+    if (!content || !subject) return next(new ErrorHandler(401, "Content and subject is required."));
+
+
     await prisma.email.create({
-        data:  {
+        data: {
             task_id: parseInt(task_id),
             user_id: user_id,
             content: content,
@@ -618,6 +623,7 @@ export const addMailClient = catchAsyncError(async (req, res, next) => {
             message: `User Send a mail subject: ${subject}`,
             user_id: user_id,
             task_id: parseInt(task_id),
+            type: "MAIL"
         }
     });
 
@@ -629,25 +635,25 @@ export const addMailClient = catchAsyncError(async (req, res, next) => {
 
 export const getMails = catchAsyncError(async (req, res, next) => {
     const user_id = req.user.user_id;
-    const {date} = req.query;
+    const { date } = req.query;
     const whereCondition = {
         OR: [
-            {user_id: user_id},
-            {to_user: user_id},
+            { user_id: user_id },
+            { to_user: user_id },
         ],
     };
 
     // Check if both start and end dates are provided
     if (date) {
         const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0); 
+        startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
 
         whereCondition.created_at = {
-            gte: startOfDay, 
-            lte: endOfDay,   
+            gte: startOfDay,
+            lte: endOfDay,
         };
     }
     const emails = await prisma.email.findMany({
@@ -675,29 +681,29 @@ export const getMails = catchAsyncError(async (req, res, next) => {
 
 export const getProgress = catchAsyncError(async (req, res, next) => {
     const task_id = req.params.task_id;
-    const {date} = req.query;
+    const { date } = req.query;
 
     const whereCondition = {
         task_id: parseInt(task_id)
     };
 
-    
+
     if (date) {
         const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0); 
+        startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
 
         whereCondition.created_at = {
-            gte: startOfDay, 
-            lte: endOfDay,   
+            gte: startOfDay,
+            lte: endOfDay,
         };
     }
 
     const progresss = await prisma.taskProgress.findMany({
         where: whereCondition,
-        include:{
+        include: {
             user: {
                 select: {
                     user_id: true,
@@ -731,15 +737,15 @@ export const getConnectMails = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    if(!user.connect_mail_hash){
-        next(new ErrorHandler("Please Connect Mail First",401));
+    if (!user.connect_mail_hash) {
+        next(new ErrorHandler("Please Connect Mail First", 401));
         return
     }
 
-    const decryptData = decrypt(user.connect_mail_hash,user.encryption_key,user.encryption_vi);
-    const [mail,password] = decryptData.split('|');
-   
-    const mails = await fetchMail(mail,password);
+    const decryptData = decrypt(user.connect_mail_hash, user.encryption_key, user.encryption_vi);
+    const [mail, password] = decryptData.split('|');
+
+    const mails = await fetchMail(mail, password);
 
 
     res.status(200).json({
@@ -752,10 +758,12 @@ export const getConnectMails = catchAsyncError(async (req, res, next) => {
 
 export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     let date = req.query.date;
+    let type = req.query.type;
+  
 
     // Parse date properly
     date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs();
-    
+
     // Define the start and end of the day
     const startOfDay = date.startOf("day").utc().toDate(); // Convert to UTC
     const endOfDay = date.endOf("day").utc().toDate(); // Convert to UTC
@@ -768,29 +776,100 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     });
     const task_ids = tasks.map(task => task.task_id);
 
-    
+    const projectIds = req.user.Projects.map(project => project.project_id)
 
-    const progress = await prisma.taskProgress.findMany({
+
+    const where = {
+        created_at: {
+            gte: startOfDay,
+            lte: endOfDay
+        }
+    };
+
+    if (type) {
+        where["type"] = type
+    }
+
+
+
+    let progress = await prisma.project.findMany({
         where: {
-            task_id: {
-                in: task_ids
-            },
-            created_at: {
-                gte: startOfDay, // Include all records from 00:00:00 UTC
-                lte: endOfDay    // Include all records up to 23:59:59 UTC
+            project_id: {
+                in: projectIds
             }
         },
         select: {
-            message: true,
-            created_at: true,
-            user: {
+            name: true,
+            description: true,
+            Tasks: {
                 select: {
-                    name: true,
+                    Progress: {
+                        where: {
+                            ...where
+                        },
+                        select: {
+                            message: true,
+                            created_at: true,
+                            progress_id: true,
+                            type: true,
+                            task: {
+                                select: {
+                                    name: true,
+                                    assigned_to: true,
+                                    assignees: true,
+                                    description: true
+                                }
+                            },
+                            user: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                        }
+                    }
                 }
-            },
-            task: {
+            }
+        }
+    })
+
+
+
+
+    let times = await prisma.project.findMany({
+        where: {
+            project_id: {
+                in: projectIds
+            }
+        },
+        select: {
+            name: true,
+            description: true,
+            Time: {
+                where: {
+                    created_at: {
+                        gte: startOfDay,
+                        lte: endOfDay
+                    }
+                },
                 select: {
-                    name: true,
+                    created_at: true,
+                    end: true,
+                    start: true,
+                    status: true,
+                    work_description: true,
+                    task: {
+                        select: {
+                            name: true,
+                            description: true
+                        }
+                    },
+                    time_id: true,
+                    user: {
+                        select: {
+                            name: true,
+                            email: true
+                        }
+                    }
                 }
             }
         }
@@ -799,34 +878,60 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        progress
+        progress,
+        times
     });
 });
 
 
-// export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
-//     let date = req.query.date
-//     console.log(date)
-//     date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs();
-//     const user_id = req.user.user_id;
-//     let tasks = []
-//     req.user.Projects.forEach((p) => {
-//         tasks = [...tasks,...p.Tasks];
-//     });
-//     const task_ids = tasks.map(task => task.task_id);
 
+
+
+
+export const createTime = catchAsyncError(async (req, res, next) => {
+    const task_id = req.params.task_id;
+    const user_id = req.user.user_id;
+
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    })
+    const taskTime = await prisma.taskTime.create({
+        data: {
+            start: new Date(Date.now()),
+            status: "PROCESSING",
+            task_id: parseInt(task_id),
+            user_id: parseInt(user_id),
+            project_id: task.project_id
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Time start successfully"
+    });
+});
+
+
+export const stopTime = catchAsyncError(async (req, res, next) => {
+    const time_id = req.params.time_id;
+    const description = req.body.description;
     
-//     const progress = await prisma.taskProgress.findMany({
-//         where: {
-//             task_id: {
-//                 in: task_ids
-//             },
-//             created_at: new Date(date)
-//         }
-//     })
+    await prisma.taskTime.update({
+        where: {
+            time_id
+        },
+        data: {
+            end: new Date(Date.now()),
+            status: "ENDED",
+            work_description: description
+        }
+    });
 
-//     res.status(200).json({
-//         success: true,
-//         progress
-//     });
-// });
+    res.status(200).json({
+        success: true,
+        message: "Time Stop successfully"
+    });
+});
+

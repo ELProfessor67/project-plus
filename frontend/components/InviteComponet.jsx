@@ -140,6 +140,7 @@ const InviteComponet = ({ open, onClose, project,isClient=false}) => {
                                     <SelectItem value="ADMIN">ADMIN</SelectItem>
                                     <SelectItem value="MEMBER">MEMBER</SelectItem>
                                     <SelectItem value="VIEWER">VIEWER</SelectItem>
+                                    <SelectItem value="BILLER">BILLER</SelectItem>
                                     <SelectItem value="CLIENT">CLIENT</SelectItem>
                                 </SelectGroup>
                             </SelectContent>

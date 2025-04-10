@@ -33,19 +33,19 @@ export default function Dashboard() {
   const { user } = useUser();
   const [isLoading, setIsloading] = React.useState(false);
   const [pedingDocs, setPendingDocs] = React.useState([]);
-  const [progress, setProgress] = React.useState([]);
+  // const [progress, setProgress] = React.useState([]);
   const [dates, setDates] = React.useState(getRecentDatesWithLabels(20));
   const [selectedDate, setSelectedDate] = React.useState(dates[0].date);
 
 
-  const getProgress = React.useCallback(async () => {
-    try {
-      const res = await getAllTaskProgressRequest(selectedDate);
-      setProgress(res.data.progress)
-    } catch (error) {
-      console.log(error?.response?.data?.meesage || error?.meesage);
-    }
-  }, [selectedDate])
+  // const getProgress = React.useCallback(async () => {
+  //   try {
+  //     const res = await getAllTaskProgressRequest(selectedDate);
+  //     setProgress(res.data.progress)
+  //   } catch (error) {
+  //     console.log(error?.response?.data?.meesage || error?.meesage);
+  //   }
+  // }, [selectedDate])
 
   const getProjectAllProject = React.useCallback(async () => {
     setIsloading(true)
@@ -79,9 +79,9 @@ export default function Dashboard() {
     getMeetings();
   }, []);
 
-  React.useEffect(() => {
-    getProgress();
-  }, [selectedDate])
+  // React.useEffect(() => {
+  //   getProgress();
+  // }, [selectedDate])
 
   if (isLoading) {
     return <>
@@ -304,92 +304,7 @@ export default function Dashboard() {
 
 
 
-        <div className="mt-10">
-
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl text-black">Today Progress</h1>
-            <div className="flex items-center gap-2 justify-end">
-
-              <Select onValueChange={(value) => setSelectedDate(value)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a date" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Today</SelectLabel>
-                    {
-                      dates.map(date => (
-                        <SelectItem value={date.date} key={date.date}>{date.label}</SelectItem>
-                      ))
-                    }
-
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-
-
-          <div className="flex-1 overflow-auto mt-5">
-            <Table className="border-collapse border rounded-md">
-              <TableHeader className="border-b">
-                <TableRow>
-                  <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                  <TableHead className="w-[300px] border-r last:border-r-0">Task Name</TableHead>
-                  <TableHead className="border-r last:border-r-0">User Name</TableHead>
-                  <TableHead className="border-r last:border-r-0">Message</TableHead>
-                  <TableHead className="border-r last:border-r-0">Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              {
-                progress.length != 0 &&
-                <TableBody className="divide-y">
-                  {
-                    progress.map((progress, index) => (
-                      <TableRow>
-                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
-                          {index + 1}
-                        </TableCell>
-
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                          {progress.task?.name}
-                        </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                          {progress.user?.name}
-                        </TableCell>
-
-                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
-                          {progress?.message}
-                        </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                          {moment(progress.created_at).format("DD MMM YYYY")}
-                        </TableCell>
-
-                      </TableRow>
-                    ))
-                  }
-
-                </TableBody>
-              }
-
-              {
-                progress.length === 0 && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4">
-                        No Progress on {selectedDate}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )
-              }
-
-
-            </Table>
-          </div>
-        </div>
+        
 
 
       </div>

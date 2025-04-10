@@ -33,6 +33,25 @@ export const createProject = catchAsyncError(async (req, res, next) => {
         },
     });
 
+
+    //add team member in project
+    const members = await prisma.userTeam.findMany({
+        where: {
+            leader_id: userId
+        }
+    });
+
+    for (let i = 0; i < array.length; i++) {
+        const {user_id,role} = members[i];
+        await prisma.projectMember.create({
+            data: {
+                project_id: project.project_id,
+                user_id,
+                role,
+            },
+        });
+    }
+
     res.status(201).json({
         success: true,
         project,
@@ -242,7 +261,8 @@ export const generateInvitationLink = catchAsyncError(async (req, res, next) => 
             token,
             project_id: parseInt(project_id),
             expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            role
+            role,
+            user_id: user_id
         },
     });
 
@@ -277,18 +297,71 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
             },
         });
 
+
+
         if (existingMember) {
             return next(new ErrorHandler("You are already a member of this project", 400));
         }
 
-        // Add the user as a project member
-        const projectMember = await prisma.projectMember.create({
-            data: {
-                project_id: invitation.project_id,
-                user_id,
-                role: invitation.role || 'MEMBER',
-            },
+        //add user to team
+        const isAlreadyInTeam = await prisma.userTeam.findUnique({
+            where: {
+                user_id: user_id
+            }
         });
+
+        if (!isAlreadyInTeam) {
+            await prisma.userTeam.create({
+                data: {
+                    user_id: user_id,
+                    leader_id: invitation.user_id,
+                    role: invitation.role
+                }
+            })
+        }
+
+        //add all other project this member
+        const allProjects = await prisma.project.findMany({
+            where: {
+                created_by: invitation.user_id
+            },
+            select: {
+                project_id: true
+            }
+        });
+
+        for (let i = 0; i < allProjects.length; i++) {
+            const { project_id } = allProjects[i];
+
+            const existingMember = await prisma.projectMember.findFirst({
+                where: {
+                    project_id: project_id,
+                    user_id,
+                },
+            });
+
+
+
+            if (!existingMember) {
+                await prisma.projectMember.create({
+                    data: {
+                        project_id: project_id,
+                        user_id,
+                        role: invitation.role || 'MEMBER',
+                    },
+                });
+            }
+
+        }
+
+        // Add the user as a project member
+        // const projectMember = await prisma.projectMember.create({
+        //     data: {
+        //         project_id: invitation.project_id,
+        //         user_id,
+        //         role: invitation.role || 'MEMBER',
+        //     },
+        // });
 
         // Optionally delete the invitation (one-time use)
         await prisma.invitation.delete({
@@ -297,8 +370,7 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
 
         res.status(201).json({
             success: true,
-            message: "You have successfully joined the project",
-            projectMember,
+            message: "You have successfully joined the project"
         });
     } else {
         // Check if the user is already a member of the project

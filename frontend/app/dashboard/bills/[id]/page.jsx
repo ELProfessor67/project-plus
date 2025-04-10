@@ -33,6 +33,8 @@ const page = ({ params }) => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false)
+    const [hour, setHours] = useState([]);
+    const [totalHour, setTotalHour] = useState(0);
     const [formdata, setFormdata] = useState({
         description: '',
         project_client_id: id,
@@ -120,6 +122,8 @@ const page = ({ params }) => {
             setFormdata(prev => ({ ...prev, chats: { count: data.chats.length, amount: 0 } }));
             setFormdata(prev => ({ ...prev, documents: { count: data.documents.length, amount: 0 } }));
             setFormdata(prev => ({ ...prev, updates: { count: data.updates.length, amount: 0 } }));
+            setHours(res.data.info.workingHours)
+            setTotalHour(res.data.info.totalTimeStr)
         } catch (error) {
             console.log(error.response.data.message);
         }
@@ -214,7 +218,7 @@ const page = ({ params }) => {
                                         <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
                                             {bill.start_date} - {bill.end_date}
                                         </TableCell>
-                                       
+
                                         <TableCell className={`border-r last:border-r-0 !p-1 text-black text-center relative cursor-pointer group`}>
                                             {
                                                 user?.Role == "PROVIDER" &&
@@ -319,6 +323,23 @@ const page = ({ params }) => {
                         </div>
 
                         <h2>Total: ${formdata.total}</h2>
+                    </div>
+
+                    <div className='my-5'>
+                        <h2 className='text-2xl'>Working Hours</h2>
+                        {
+                            hour.map(h => (
+
+                                <div className='flex justify-between items-center mt-3'>
+                                    <h2 className='text-lg'>{h[0]}</h2>
+                                    <h2 className='text-lg'>{h[2]}</h2>
+                                </div>
+                            ))
+                        }
+                        <div className='flex justify-between items-center mt-3'>
+                            <h2 className='text-lg'>Total</h2>
+                            <h2 className='text-lg'>{totalHour}</h2>
+                        </div>
                     </div>
 
 

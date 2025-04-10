@@ -11,6 +11,7 @@ datasource db {
 enum Roles {
   CLIENT
   PROVIDER
+  BILLER
 }
 
 model User {
@@ -49,13 +50,22 @@ model User {
   Transcribtions MeetingTranscibtion[]
   Media Media[]
   Services ProjectClient[]
+  Time TaskTime[]
+  UserTeams UserTeam[]
 }
 
+model UserTeam {
+  team_member_id String @id @default(uuid())
+  user_id Int
+  leader_id Int
+  leader User @relation(fields: [leader_id], references: [user_id])
+  user Role @default(MEMBER)
+}
 
 
 model Project {
   project_id  Int      @id @default(autoincrement()) 
-  name        String   @db.VarChar(255)           
+  name        String   @db.VarChar(255)
   description String?  @db.Text                  
   created_by  Int                                  
   created_at  DateTime @default(now())              
@@ -66,6 +76,7 @@ model Project {
   Tasks Task[]
   invitations Invitation[]
   Media Media[]
+  Time TaskTime[]
 }
 
 enum Role {
@@ -73,6 +84,7 @@ enum Role {
   MEMBER
   VIEWER
   CLIENT
+  BILLER
 }
 
 model ProjectClient {
@@ -261,8 +273,28 @@ model Task {
   // Conversation Conversation[]
   Meetings Meeting[]
   Media Media[]
+  Time TaskTime[]
 }
 
+enum TimeStatus {
+  PROCESSING
+  ENDED
+}
+
+model TaskTime {
+  time_id String @id @default(uuid())
+  task_id Int
+  user_id Int
+  project_id Int @default(1)
+  start DateTime
+  end DateTime?
+  status TimeStatus @default(PROCESSING)
+  work_description String?
+  created_at      DateTime @default(now())
+  task Task @relation(fields: [task_id], references: [task_id]) 
+  user User @relation(fields: [user_id], references: [user_id])
+  project Project @relation(fields: [project_id], references: [project_id])
+}
 
 
 model TaskMember {
@@ -319,6 +351,7 @@ model Invitation {
   project_id  Int
   expires_at  DateTime
   role Role
+  user_id Int?
 
   project     Project   @relation(fields: [project_id], references: [project_id])
 }
@@ -352,6 +385,19 @@ model Email {
   user User @relation(fields: [user_id], references: [user_id])
 }
 
+enum ProgressTypes {
+  MAIL
+  MEETING
+  CHAT
+  CALL
+  COMMENT
+  TRANSCRIBTION
+  STATUS_CHANGED
+  MEDIA
+  OTHER
+}
+
+
 model TaskProgress {
   progress_id String @id @default(uuid())
   task_id Int
@@ -360,6 +406,7 @@ model TaskProgress {
   user_id Int
   task  Task @relation(fields: [task_id], references: [task_id])
   user User @relation(fields: [user_id], references: [user_id])
+  type ProgressTypes @default(OTHER)
 }
 
 model Comment {

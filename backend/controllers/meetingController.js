@@ -129,6 +129,17 @@ export const createClientMeeting = catchAsyncError(async (req, res, next) => {
     }
 
 
+
+    await prisma.taskProgress.create({
+        data: {
+            message: `User Send a mail subject: ${subject}`,
+            user_id: user_id,
+            task_id: parseInt(task_id),
+            type: "MEETING"
+        }
+    });
+
+
     // Return the conversation ID in the response
     res.status(200).json({
         success: true,

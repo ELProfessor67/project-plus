@@ -155,6 +155,18 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
               },
             },
           },
+          Time: {
+            where: {
+              status: "PROCESSING"
+            },
+            select: {
+              task_id: true,
+              start: true,
+              status: true,
+              end: true,
+              time_id: true
+            }
+          }
         },
     });
 

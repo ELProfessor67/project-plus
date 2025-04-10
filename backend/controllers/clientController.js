@@ -36,7 +36,7 @@ export const requestDocument = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    sendDocumentRequest(project_client,name,description,project_client.user.email);
+    sendDocumentRequest(project_client, name, description, project_client.user.email);
 
     res.status(200).json({
         success: true,
@@ -215,7 +215,7 @@ export const getUpdates = catchAsyncError(async (req, res, next) => {
 
 export const getOverview = catchAsyncError(async (req, res, next) => {
     let { date, project_id, user_id } = req.query;
-  
+
     // Parse the date correctly
     date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs(); // Ensure strict parsing
     if (!date.isValid()) {
@@ -224,7 +224,7 @@ export const getOverview = catchAsyncError(async (req, res, next) => {
 
     const formattedDate = date.format("YYYY-MM-DD");
     try {
-        
+
         // Fetch counts
         const updates = await prisma.updates.findMany({
             where: {
@@ -247,7 +247,7 @@ export const getOverview = catchAsyncError(async (req, res, next) => {
                 },
             },
         });
-       
+
 
         //fetch messages and calls
         const conversations = await prisma.conversation.findMany({
@@ -263,8 +263,8 @@ export const getOverview = catchAsyncError(async (req, res, next) => {
                 conversation_id: true
             }
         });
-        
-        
+
+
         const conversationIds = conversations.map(convo => convo.conversation_id);
 
         const messages = await prisma.message.findMany({
@@ -333,7 +333,7 @@ export const getOverview = catchAsyncError(async (req, res, next) => {
         res.status(200).json({
             success: true,
             date: formattedDate,
-            overview: { updates, documents,chats,calls,meetings,mails,callDurations: totalCallDuration },
+            overview: { updates, documents, chats, calls, meetings, mails, callDurations: totalCallDuration },
         });
 
     } catch (error) {
@@ -480,12 +480,67 @@ export const getInDateRange = catchAsyncError(async (req, res, next) => {
 
 
 
+        const taskTimes = await prisma.taskTime.findMany({
+            where: {
+                project_id: parseInt(project_id),
+                created_at: {
+                    gte: new Date(`${formattedStart}T00:00:00Z`),
+                    lt: new Date(`${formattedEnd}T23:59:59Z`),
+                },
+            },
+            select: {
+                start: true,
+                end: true,
+                user: {
+                    select: {
+                        name: true,
+                        email: true
+                    }
+                }
+            }
+        });
+
+
+        const userTimeMap = {};
+        let grandTotalMs = 0;
+      
+        for (const time of taskTimes) {
+            const { start, end, user } = time;
+            const durationMs = new Date(end).getTime() - new Date(start).getTime();
+            grandTotalMs += durationMs;
+            const key = user.email; // unique key per user
+            if (!userTimeMap[key]) {
+                userTimeMap[key] = {
+                    name: user.name,
+                    email: user.email,
+                    totalMs: 0
+                };
+            }
+
+            userTimeMap[key].totalMs += durationMs;
+        }
+
+        const workingHours = Object.values(userTimeMap).map(user => {
+            const totalMinutes = Math.floor(user.totalMs / 1000 / 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return [user.name, user.email, `${hours}h ${minutes}m`];
+        });
+
+        // Add grand total at the end
+        const totalMinutes = Math.floor(grandTotalMs / 1000 / 60);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const totalRemainingMinutes = totalMinutes % 60;
+        const totalTimeStr = `${totalHours}h ${totalRemainingMinutes}m`;
+
+
 
         res.status(200).json({
             success: true,
             startDate: formattedStart,
             endDate: formattedEnd,
-            info: { updates, documents, calls, chats, meetings, mails, callDurations: totalCallDuration },
+            info: { updates, documents, calls, chats, meetings, mails, callDurations: totalCallDuration,totalTimeStr,workingHours },
+            
         });
 
     } catch (error) {
@@ -593,9 +648,9 @@ export const getAllBilling = catchAsyncError(async (req, res, next) => {
 
 //filed statrt
 export const createFiled = catchAsyncError(async (req, res, next) => {
-    let { project_client_id, description, name, progress,date,project_id } = req.body;
+    let { project_client_id, description, name, progress, date, project_id } = req.body;
 
-    
+
     if (!project_client_id || !name || !progress || !date || !description) {
         return next(new ErrorHandler("Please fill all the fields", 400));
     }
@@ -609,7 +664,7 @@ export const createFiled = catchAsyncError(async (req, res, next) => {
     const file = req.file;
 
     const data = {};
-    if(file){
+    if (file) {
         const cloudRes = await uploadToCloud(file);
         data.file_url = cloudRes.url;
         data.key = cloudRes.key;
@@ -632,7 +687,7 @@ export const createFiled = catchAsyncError(async (req, res, next) => {
             ...data
         }
     });
-    
+
 
     res.status(200).json({
         success: true,
@@ -646,7 +701,7 @@ export const createFiled = catchAsyncError(async (req, res, next) => {
 export const updateFiledStatus = catchAsyncError(async (req, res, next) => {
     let { filled_id, status } = req.body;
 
- 
+
 
     if (!filled_id) {
         return next(new ErrorHandler("Please fill all the fields", 400));
@@ -811,7 +866,7 @@ export const createSign = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    sendSignatureRequest(project_client,name,description,project_client.user.email);
+    sendSignatureRequest(project_client, name, description, project_client.user.email);
 
     res.status(200).json({
         success: true,
@@ -862,7 +917,7 @@ export const uploadSign = catchAsyncError(async (req, res, next) => {
 
 export const updateSignStatus = catchAsyncError(async (req, res, next) => {
     let { signed_id, status } = req.body;
- 
+
 
     if (!signed_id) {
         return next(new ErrorHandler("Please fill all the fields", 400));

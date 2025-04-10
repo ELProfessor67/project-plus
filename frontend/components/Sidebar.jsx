@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed, FileDiff, CheckCheck } from 'lucide-react'
+import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed, FileDiff, CheckCheck, TimerReset } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
@@ -169,6 +169,12 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                 </Button>
                             </Link>
 
+                            <Link href={'/dashboard/timeline'}>
+                                <Button variant={pathname == '/dashboard/projects' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/dashboard/my-work' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800' : ''}`}>
+                                    <TimerReset className="mr-2 h-4 w-4" />
+                                    Timeline
+                                </Button>
+                            </Link>
 
 
                             <Link href={'/dashboard/projects'}>
