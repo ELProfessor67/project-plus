@@ -71,7 +71,7 @@ const page = () => {
       {
         times.map(project => (
           <div className='mt-5'>
-            <h1 className='text-2xl'>{project.name}</h1>
+            <h1 className='text-2xl text-red-500'>{project.name}</h1>
 
 
             <div className="flex-1 overflow-auto mt-2">
@@ -171,7 +171,7 @@ const page = () => {
       {
         progress.map(project => (
           <div className='mt-5'>
-            <h1 className='text-2xl'>{project.name}</h1>
+            <h1 className='text-2xl text-red-500'>{project.name}</h1>
 
 
             <div className="flex-1 overflow-auto mt-2">
