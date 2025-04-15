@@ -1,6 +1,6 @@
 import express from "express";
 import {authMiddleware} from '../middlewares/authMiddleware.js'
-import {getAllDocuments,requestDocument,updateDocument,updateStatus,getUpdates,giveUpdates, getOverview, getInDateRange, getAllBilling, createBill, updateBillingStatus, getPendingDocs, getPendingsDocsByProjectId, getAllFiled, createFiled, updateFiledStatus, getAllSign, createSign, uploadSign, updateSignStatus} from "../controllers/clientController.js";
+import {getAllDocuments,requestDocument,updateDocument,updateStatus,getUpdates,giveUpdates, getOverview, getInDateRange, getAllBilling, createBill, updateBillingStatus, getPendingDocs, getPendingsDocsByProjectId, getAllFiled, createFiled, updateFiledStatus, getAllSign, createSign, uploadSign, updateSignStatus, getClientHistory} from "../controllers/clientController.js";
 import singleUpload from "../middlewares/multerMiddleware.js";
 
 const router = express.Router();
@@ -37,3 +37,5 @@ router.route('/get-peding-documents').get(authMiddleware,getPendingDocs);
 router.route('/get-peding-documents/:project_id').get(authMiddleware,getPendingsDocsByProjectId);
 
 export default router;
+
+router.route('/history/:project_client_id').get(authMiddleware, getClientHistory);

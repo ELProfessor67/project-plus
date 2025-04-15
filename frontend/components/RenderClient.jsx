@@ -11,7 +11,7 @@ const RenderClient = ({ members }) => {
             {
                 members && members.map(member => (
                     <div className='flex items-center justify-between w-full shadow-md rounded-md border border-gray-50'>
-                        <div className='flex items-center gap-4 p-2'>
+                        <div className='flex items-center gap-4 p-2 w-[15rem]'>
                             <AvatarCompoment name={member?.user?.name} className="!w-[4rem] !h-[4rem] text-3xl" />
                             <div>
                                 <h2 className='opacity-80 text-lg'>{member?.user?.name}</h2>
@@ -19,7 +19,7 @@ const RenderClient = ({ members }) => {
                             </div>
                         </div>
 
-                        <div className='flex items-center gap-4 p-2'>
+                        <div className='flex items-center gap-4 p-2 flex-wrap'>
                             <Link href={`/dashboard/filed/${member?.project_client_id}`}>
                                 <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
                                     Filed
@@ -43,6 +43,11 @@ const RenderClient = ({ members }) => {
                             <Link href={`/dashboard/sign/${member?.project_client_id}`}>
                                 <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
                                     Signature
+                                </Button>
+                            </Link>
+                            <Link href={`/dashboard/history/${member?.project_client_id}`}>
+                                <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 '>
+                                    History
                                 </Button>
                             </Link>
                         </div>

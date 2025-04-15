@@ -960,3 +960,55 @@ export const getAllSign = catchAsyncError(async (req, res, next) => {
         signed
     });
 });
+
+
+
+
+export const getClientHistory = catchAsyncError(async (req, res, next) => {
+    let { project_client_id } = req.params;
+
+
+    if (!project_client_id) {
+        return next(new ErrorHandler("Please fill all the fields", 400));
+    }
+
+    const signed = await prisma.signed.findMany({
+        where: {
+            project_client_id
+        }
+    });
+
+    const documents = await prisma.documents.findMany({
+        where: {
+            project_client_id
+        }
+    });
+
+    const updates = await prisma.updates.findMany({
+        where: {
+            project_client_id
+        }
+    });
+
+    const billings = await prisma.billing.findMany({
+        where: {
+            project_client_id
+        }
+    });
+
+    const filed = await prisma.filled.findMany({
+        where: {
+            project_client_id
+        }
+    });
+
+
+    res.status(200).json({
+        success: true,
+        signed,
+        documents,
+        updates,
+        billings,
+        filed
+    });
+});

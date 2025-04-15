@@ -25,6 +25,7 @@ export const updateStatusRequest = async (formdata) => api.post(`/client/status`
 
 
 
+export const getHistoryRequest = async (id) => api.get(`/client/history/${id}`);
 export const getBillingRequest = async (id) => api.get(`/client/get-all-billing/${id}`);
 export const createBillingRequest = async (formdata) => api.post(`/client/create-billing`, formdata);
 export const updateBillingStatusRequest = async (formdata) => api.post(`/client/status-billing`, formdata);

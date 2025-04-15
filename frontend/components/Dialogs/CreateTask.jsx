@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { CalendarIcon, ChartNoAxesColumnIncreasing, ChevronDownIcon, FileIcon, Menu, TypeOutline, UserCircle, Users, UsersIcon, X } from 'lucide-react'
+import { CalendarIcon, ChartNoAxesColumnIncreasing, ChevronDownIcon, FileIcon, Menu, TypeOutline, User2, UserCircle, Users, UsersIcon, X } from 'lucide-react'
 import { Button } from "@/components/Button"
 import {
     Select,
@@ -90,7 +90,7 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
 
     const config = useMemo(() => ({
         placeholder: "Add description",
-    }),[]);
+    }), []);
 
 
     return (
@@ -98,14 +98,22 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
         <div className="sm:max-w-[500px]">
             <div className="flex flex-row items-center justify-between pb-2">
                 <Input
-                    onChange={(e) => setFormdata(prev => ({ ...prev, name: e.target.value }))}
+                    
                     value={formdata.name}
                     type="text"
                     defaultValue="New Task"
-                    className="!text-3xl font-semibold border-none p-0 focus:border-none focus:outline-none  focus-visible:ring-0 focus-visible:ring-transparent"
+                    className=" border-none !text-3xl font-semibold p-0 focus:border-none focus:outline-none  focus-visible:ring-0 focus-visible:ring-transparent"
                 />
             </div>
             <div className="grid gap-5 py-4 px-2">
+                <div className="grid grid-cols-[auto,1fr] gap-5 items-center">
+                    <div className='flex items-center gap-2 w-[6rem]'>
+                        <User2 className="h-5 w-5 text-gray-500" />
+                        <span className='text-black/80 text-sm'>Name</span>
+                    </div>
+                    <Input type="text" className="w-full focus-visible:ring-0 focus-visible:ring-transparent" onChange={(e) => setFormdata(prev => ({ ...prev, name: e.target.value }))}
+                        value={formdata.name} />
+                </div>
 
                 <div className="grid grid-cols-[auto,1fr] gap-5 items-center ">
                     <div className='flex items-center gap-2 w-[6rem]'>
@@ -186,12 +194,12 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
                             }
                         </SelectContent>
                     </Select>
-                </div> 
+                </div>
 
 
 
 
-                
+
 
 
                 <div className="grid grid-cols-[auto,1fr] gap-5 items-center ">

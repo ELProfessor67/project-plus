@@ -778,6 +778,7 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
 
     const projectIds = req.user.Projects.map(project => project.project_id)
 
+    
 
     const where = {
         created_at: {
@@ -789,6 +790,40 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     if (type) {
         where["type"] = type
     }
+
+    const projectsClients = await prisma.projectClient.findMany({
+        where: {
+            project_id: {
+                in: projectIds
+            }
+        },
+        select: {
+            project_client_id: true
+        }
+    });
+
+    const projectClientIds = projectsClients.map((p) => p.project_client_id);
+
+    let documents = await prisma.project.findMany({
+        where: {
+            project_id: {
+                in: projectIds
+            }
+        },
+        select: {
+            name: true,
+            Clients: {
+                select: {
+                    Documents: {
+                        where: {
+                            ...where
+                        },
+                        
+                    }
+                }
+            }
+        }
+    })
 
 
 
@@ -879,7 +914,8 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     res.status(200).json({
         success: true,
         progress,
-        times
+        times,
+        documents
     });
 });
 

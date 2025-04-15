@@ -36,12 +36,12 @@ const io = new Server({
 });
 io.attach(httpserver);
 
-// const chatIO = io.of('/chat');
-// initChatServer(chatIO);
+const chatIO = io.of('/chat');
+initChatServer(chatIO);
 
 
-// const transcribeIO = io.of('/transcribe');
-// initTranscribeServer(transcribeIO);
+const transcribeIO = io.of('/transcribe');
+initTranscribeServer(transcribeIO);
 
 httpserver.listen(PORT,() => {
     console.log(`server running: http://localhost:${PORT}`);

@@ -36,7 +36,11 @@ const page = ({ params }) => {
       };
       const res = await joinProjectRequest(formdata);
       toast.success(res.data.message);
-      router.push(`/dashboard/project/${res.data?.projectMember?.project_id}`);
+      if(res.data?.projectMember?.project_id){
+        router.push(`/dashboard/project/${res.data?.projectMember?.project_id}`);
+      }else{
+        router.push(`/dashboard`);
+      }
     } catch (error) {
       toast.error(error?.response?.data?.message || error?.message);
     }finally{
