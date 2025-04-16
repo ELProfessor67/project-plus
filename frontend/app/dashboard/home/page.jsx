@@ -200,7 +200,7 @@ export default function Page() {
             <div className="text-left">
               <div className="font-medium">Getting started</div>
               <div className="text-sm text-gray-600">
-                Learn how ProjectPlus.com works
+                Learn how flexytext.com works
               </div>
             </div>
           </Button>

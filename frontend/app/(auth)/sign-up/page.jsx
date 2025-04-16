@@ -137,7 +137,7 @@ export default function Page() {
         <div className="flex flex-col lg:flex-row min-h-screen">
             {/* Left Column */}
             <div className="w-full flex-1 p-8 lg:p-16 flex flex-col relative h-screen">
-                <Image src="/assets/logo-full-big.avif" alt="ProjectPlus.com Logo" width={200} height={70}  className="mb-12" />
+                <Image src="/assets/logo-full-big.avif" alt="flexytext.com Logo" width={200} height={70}  className="mb-12" />
                 <Step  selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} formdata={formdata} setFormdata={setFormdata} onFormDataChange={onFormDataChange} handleNextStep={handleNextStep} isContinueButtonDisable={isContinueButtonDisable}/>
                 
                 {

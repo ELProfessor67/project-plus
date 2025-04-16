@@ -6,7 +6,7 @@ import { UserProvider } from "@/providers/UserProvider";
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "ProjectPlus.com",
+  title: "flexytext.com",
   description: "Provider Project management service",
 };
 
