@@ -33,7 +33,7 @@ const TopNavigation = ({ setSidebarOpen }) => {
         <header className="bg-gray-100 shadow">
 
             <div className="flex h-16 items-center justify-between px-4">
-                <h2 className='font-medium text-2xl hidden lg:block'>flexytext.com</h2>
+                <h2 className='font-medium text-2xl hidden lg:block'>flexywexy.com</h2>
                 <Button
                     variant="ghost"
                     size="icon"

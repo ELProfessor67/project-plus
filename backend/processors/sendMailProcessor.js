@@ -12,7 +12,7 @@ export const sendMail = async (subject,mail,html) => {
             },
           });
         
-          const subject = "flexytext.com Project Inviation";
+          const subject = "flexywexy.com Project Inviation";
         
           await transporter.sendMail({
             to: "jeeshanr599@gmail.com",

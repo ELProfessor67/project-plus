@@ -48,7 +48,7 @@ export const sendInviation = async (message,mail) => {
     },
   });
 
-  const subject = "flexytext.com Project Inviation";
+  const subject = "flexywexy.com Project Inviation";
 
   await transporter.sendMail({
     to: mail,

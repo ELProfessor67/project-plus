@@ -49,7 +49,7 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
             ${className}
           `}>
                 <div className="flex items-center justify-between p-4 lg:hidden">
-                    <span className="text-xl font-bold">flexytext.com</span>
+                    <span className="text-xl font-bold">flexywexy.com</span>
                     <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                         <X className="h-6 w-6" />
                     </Button>

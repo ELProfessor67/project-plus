@@ -10,7 +10,7 @@ const Step0 = ({formdata,onFormDataChange,handleNextStep,isContinueButtonDisable
         <div className="flex-1 flex items-center justify-center px-4">
             <div className="w-full max-w-[400px] space-y-6">
                 <div className="space-y-2 text-center">
-                    <h1 className="text-3xl font-semibold text-gray-800">Welcome to flexytext.com</h1>
+                    <h1 className="text-3xl font-semibold text-gray-800">Welcome to flexywexy.com</h1>
                     <p className="text-gray-600">Get started - it's free. No credit card needed.</p>
                 </div>
 
