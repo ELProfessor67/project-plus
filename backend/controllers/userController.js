@@ -37,7 +37,10 @@ export const register = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    await sendOTPOnMail(newUser,async (OTP) => {
+    await sendOTPOnMail(newUser,async (OTP,err) => {
+        if (err) {
+            return next(new ErrorHandler(err, 401));
+        }
         const hash_otp = crypto.createHash('sha256').update(OTP.toString()).digest('hex');
         await prisma.oTP.create({
             data: {
@@ -81,7 +84,10 @@ export const login = catchAsyncError(async (req, res, next) => {
     }
 
     
-    await sendOTPOnMail(user,async (OTP) => {
+    await sendOTPOnMail(user,async (OTP,err) => {
+        if (err) {
+            return next(new ErrorHandler(err, 401));
+        }
         const hash_otp = crypto.createHash('sha256').update(OTP.toString()).digest('hex');
         await prisma.oTP.create({
             data: {
