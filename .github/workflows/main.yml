@@ -1,28 +1,49 @@
-name: Deploy to VPS
+name: Smart Deploy to VPS
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+      - 'docker/**'
 
 jobs:
-  deploy:
+  deploy-frontend:
+    if: ${{ github.event.head_commit.message != 'skip frontend' }}
     runs-on: ubuntu-latest
-
+    name: Deploy Frontend
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Install sshpass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
+      - name: Deploy frontend via SSH
+        env:
+          SSHPASS: ${{ secrets.VPS_PASSWORD }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            cd ~/project-plus
+            git pull origin main
+            docker-compose -f docker/docker-compose.yml build frontend-server
+            docker-compose -f docker/docker-compose.yml up -d frontend-server
+          EOF
 
-    - name: Deploy to VPS via SSH
-      env:
-        SSHPASS: ${{ secrets.VPS_PASSWORD }}
-      run: |
-        sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-          cd ~/project-plus
-          git pull origin main  # <-- This pulls the latest code from GitHub
-          docker-compose -f docker/docker-compose.yml down
-          docker-compose -f docker/docker-compose.yml up -d --build
-        EOF
+  deploy-backend:
+    if: ${{ github.event.head_commit.message != 'skip backend' }}
+    runs-on: ubuntu-latest
+    name: Deploy Backend
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy backend via SSH
+        env:
+          SSHPASS: ${{ secrets.VPS_PASSWORD }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            cd ~/project-plus
+            git pull origin main
+            docker-compose -f docker/docker-compose.yml build backend-server
+            docker-compose -f docker/docker-compose.yml up -d backend-server
+          EOF

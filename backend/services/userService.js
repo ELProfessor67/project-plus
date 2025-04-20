@@ -28,11 +28,11 @@ export const sendOTPOnMail = async (user, callback) => {
     const text = `your otp is ${OTP}`;
 
     console.log("Sending OTP to user email...");
-    await transporter.sendMail({
-      to: user.email,
-      subject,
-      text,
-    });
+    // await transporter.sendMail({
+    //   to: user.email,
+    //   subject,
+    //   text,
+    // });
 
     console.log(OTP)
 
