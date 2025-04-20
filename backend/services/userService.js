@@ -12,6 +12,7 @@ export const generateJWTToken = (user, callback) => {
 export const sendOTPOnMail = async (user, callback) => {
   try {
     console.log("Sending OTP to user email...");
+    console.log("generting transporter...");
     const transporter = createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -21,10 +22,12 @@ export const sendOTPOnMail = async (user, callback) => {
       },
     });
 
+    console.log("transporter generated successfully...");
     const subject = "OTP";
     const OTP = generateOTP();
     const text = `your otp is ${OTP}`;
 
+    console.log("Sending OTP to user email...");
     await transporter.sendMail({
       to: user.email,
       subject,
