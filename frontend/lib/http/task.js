@@ -15,10 +15,11 @@ export const getTaskEmailRequest = async (date) => api.get(`/task/emails/get-ema
 export const getTaskProgressRequest = async (id,date) => api.get(`/task/progress/get-progress/${id}${date ? `?date=${date}`: ''}`);
 export const createTimeRequest = async (id) => api.post(`/task/time/${id}`);
 export const stopTimeRequest = async (id,formdata) => api.post(`/task/time-stop/${id}`,formdata);
-export const getAllTaskProgressRequest = async (date, type) => {
+export const getAllTaskProgressRequest = async (date, type, project_id) => {
     const params = {};
     if (date) params.date = date;
     if (type) params.type = type;
+    if (project_id) params.project_id = project_id;
   
     return api.get('/task/progress/get-progress', { params });
   };

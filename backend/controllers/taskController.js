@@ -759,6 +759,7 @@ export const getConnectMails = catchAsyncError(async (req, res, next) => {
 export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     let date = req.query.date;
     let type = req.query.type;
+    const project_id = req.query.project_id ? parseInt(req.query.project_id) : null;
   
 
     // Parse date properly
@@ -769,12 +770,12 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     const endOfDay = date.endOf("day").utc().toDate(); // Convert to UTC
 
 
-    const user_id = req.user.user_id;
-    let tasks = [];
-    req.user.Projects.forEach((p) => {
-        tasks = [...tasks, ...p.Tasks];
-    });
-    const task_ids = tasks.map(task => task.task_id);
+    // const user_id = req.user.user_id;
+    // let tasks = [];
+    // req.user.Projects.forEach((p) => {
+    //     tasks = [...tasks, ...p.Tasks];
+    // });
+    // const task_ids = tasks.map(task => task.task_id);
 
     const projectIds = req.user.Projects.map(project => project.project_id)
 
@@ -791,23 +792,23 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
         where["type"] = type
     }
 
-    const projectsClients = await prisma.projectClient.findMany({
-        where: {
-            project_id: {
-                in: projectIds
-            }
-        },
-        select: {
-            project_client_id: true
-        }
-    });
+    // const projectsClients = await prisma.projectClient.findMany({
+    //     where: {
+    //         project_id: {
+    //             in: project_id ? [project_id] : projectIds
+    //         }
+    //     },
+    //     select: {
+    //         project_client_id: true
+    //     }
+    // });
 
-    const projectClientIds = projectsClients.map((p) => p.project_client_id);
+    // const projectClientIds = projectsClients.map((p) => p.project_client_id);
 
     let documents = await prisma.project.findMany({
         where: {
             project_id: {
-                in: projectIds
+                in: project_id ? [project_id] : projectIds
             }
         },
         select: {
@@ -830,7 +831,7 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     let progress = await prisma.project.findMany({
         where: {
             project_id: {
-                in: projectIds
+                in: project_id ? [project_id] : projectIds
             }
         },
         select: {
@@ -873,7 +874,7 @@ export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
     let times = await prisma.project.findMany({
         where: {
             project_id: {
-                in: projectIds
+                in: project_id ? [project_id] : projectIds
             }
         },
         select: {

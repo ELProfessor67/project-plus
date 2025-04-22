@@ -18,11 +18,14 @@ const page = () => {
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [times, setTimes] = useState([]);
-  const {user} = useUser()
+  const [selectedProject, setSelectedProject] = useState(null);
+  const { user } = useUser()
+
+
   const getProgress = React.useCallback(async () => {
     try {
       setLoading(true)
-      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedType);
+      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedType, selectedProject);
       setProgress(res.data.progress)
       setTimes(res.data.times);
       setDocuments(res.data.documents)
@@ -31,12 +34,12 @@ const page = () => {
     } finally {
       setLoading(false)
     }
-  }, [selectedDate?.date, selectedType]);
+  }, [selectedDate?.date, selectedType, selectedProject]);
 
 
   React.useEffect(() => {
     getProgress();
-  }, [selectedDate?.date, selectedType]);
+  }, [selectedDate?.date, selectedType,selectedProject]);
 
 
   console.log(selectedDate)
@@ -69,6 +72,23 @@ const page = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
+
+          <Select onValueChange={(value) => setSelectedProject(value)} value={selectedProject}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={"Select Project"} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select Project</SelectLabel>
+                <SelectItem value={null}>All</SelectItem>
+                {
+                  user?.Projects.map(project => (
+                    <SelectItem value={project.project_id} key={project.project_id}>{project.name}</SelectItem>
+                  ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -88,6 +108,7 @@ const page = () => {
                     <TableHead className="border-r last:border-r-0">User</TableHead>
                     <TableHead className="border-r last:border-r-0">START</TableHead>
                     <TableHead className="border-r last:border-r-0">DESCRIPTION</TableHead>
+                    <TableHead className="border-r last:border-r-0">Date</TableHead>
                     <TableHead className="border-r last:border-r-0">TOTAL</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -118,6 +139,9 @@ const page = () => {
                         </TableCell>
                         <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
                           {time.work_description || "NA"}
+                        </TableCell>
+                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                          {moment(time.created_at).format("DD MMM YYYY")}
                         </TableCell>
                         <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
 
@@ -237,7 +261,7 @@ const page = () => {
       {/* documents  */}
 
       <div className="flex justify-between flex-1 mt-16">
-        <h1 className="text-3xl text-black uppercase">{selectedDate?.label} Progress</h1>
+        <h1 className="text-3xl text-black uppercase">{selectedDate?.label} Documents</h1>
 
       </div>
 
