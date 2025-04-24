@@ -59,7 +59,23 @@ const page = () => {
         <div className="flex gap-2 justify-end">
           <Select onValueChange={(value) => setSelectedDate(value)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={selectedDate?.label} />
+              <SelectValue placeholder={"Start Date"} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Dates</SelectLabel>
+                {
+                  dates.map(date => (
+                    <SelectItem value={date} key={date.date}>{date.label}</SelectItem>
+                  ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={(value) => setSelectedDate(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={"End Date"} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
