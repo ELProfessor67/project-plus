@@ -514,7 +514,44 @@ export const addComments = catchAsyncError(async (req, res, next) => {
     });
 });
 
+export const getComments = catchAsyncError(async (req, res, next) => {
+    let { task_id } = req.params;
+    const user_id = req.user.user_id;
+    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
 
+    const task = await prisma.task.findUnique({
+        where: {
+            task_id: parseInt(task_id)
+        }
+    });
+
+
+
+    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
+
+    const comments = await prisma.comment.findMany({
+        where: {
+            task_id: parseInt(task_id)
+        },
+        select: {
+            content: true,
+            comment_id: true,
+            created_at: true,
+            user: {
+                select: {
+                    user_id: true,
+                    name: true,
+                    email: true
+                }
+            }
+        }
+    })
+
+    res.status(200).json({
+        success: true,
+        comments
+    });
+});
 
 export const addEmail = catchAsyncError(async (req, res, next) => {
     let { task_id, subject, content } = req.body;

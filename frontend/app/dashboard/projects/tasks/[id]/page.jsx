@@ -205,7 +205,7 @@ export default function Page({ params }) {
                 </div>
             </div>
 
-            <TaskComments open={opemComments} onClose={() => setOpenComments(false)} comments={selectedComments || task?.Comments} getTaskById={getTaskById} task={task} />
+            <TaskComments open={opemComments} onClose={() => setOpenComments(false)} task={task} />
             <TaskEmails open={openEmails} onClose={() => setOpenEmails(false)} getTaskById={getTaskById} task={task} emails={selectedEmails || task?.Emails} />
             <TaskTranscibe open={openTranscribe} onClose={() => setOpenTranscribe(false)} transcribtions={selectedTranscribtions || task?.Transcibtions} task={task} getTaskById={getTaskById} />
         </>

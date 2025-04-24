@@ -16,6 +16,7 @@ import {
     getAllTaskProgress,
     createTime,
     stopTime,
+    getComments,
 } from "../controllers/taskController.js";
 import {authMiddleware} from '../middlewares/authMiddleware.js'
 import singleUpload from "../middlewares/multerMiddleware.js";
@@ -49,6 +50,8 @@ router
 
 router
     .route("/comment").post(authMiddleware,addComments);
+router
+    .route("/comment/:task_id").get(authMiddleware,getComments);
 
 router
     .route("/email").post(authMiddleware,addEmail);

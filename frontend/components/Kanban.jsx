@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import Timer from './Timer'
 import BigDialog from './Dialogs/BigDialog'
 import AddWorkDescription from './AddWorkDescription'
+import TaskComments from './TaskComments'
 
 // 'TO_DO','IN_PROGRESS','STUCK','DONE'
 const statuses = [["TO_DO", "TO DO"], ["IN_PROGRESS", "IN PROGRESS"], ["STUCK", "STUCK"], ["DONE", "DONE"], ["OVER_DUE", "OVER DUE"]]
@@ -32,6 +33,7 @@ const Kanban = ({ project: projectsDetails }) => {
     const [stopTimeOpen, setStopTimeOpen] = useState(null);
     useEffect(() => setProject(projectsDetails), [projectsDetails]);
     const { user, loadUser } = useUser();
+    const [selectedTask, setSelectedTask] = useState(null);
 
     useEffect(() => {
         if (!user) return
@@ -82,7 +84,7 @@ const Kanban = ({ project: projectsDetails }) => {
         }
     }, []);
 
-    const handleStopTime = useCallback(async (task_id,description) => {
+    const handleStopTime = useCallback(async (task_id, description) => {
         try {
             setloadindStopTask(task_id)
             const time = user.Time.find(time => time.task_id == task_id);
@@ -90,8 +92,8 @@ const Kanban = ({ project: projectsDetails }) => {
             const formdata = {
                 description
             }
-          
-            const res = await stopTimeRequest(time.time_id,formdata);
+
+            const res = await stopTimeRequest(time.time_id, formdata);
             await loadUser();
             toast.success(res.data.message);
         } catch (error) {
@@ -103,10 +105,8 @@ const Kanban = ({ project: projectsDetails }) => {
 
 
 
-
     return (
         <>
-
             <div className="grid gap-4 md:grid-cols-5 relative">
                 {statuses.map(([value, status]) => (
                     <Card key={status} className="h-full bg-gray-100" onDrop={(e) => handleDrop(e, value)} onDragOver={(e) => e.preventDefault()}>
@@ -129,22 +129,29 @@ const Kanban = ({ project: projectsDetails }) => {
                                                     {task.priority}
                                                 </Button>
                                             </div>
+
                                             <div className='flex items-center justify-between mt-5'>
                                                 <div className="flex items-center justify-between ">
                                                     <RenderMembers members={task.assignees} />
                                                 </div>
 
-                                                {
-                                                    timesTasks.hasOwnProperty(task.task_id) ?
-                                                        <>
-                                                            <div>
-                                                                <Timer startTime={timesTasks[task.task_id]} />
-                                                                <Button size="icon" variant="ghost" className="rounded-full w-[2rem] h-[2rem] bg-gray-100" onClick={() => setStopTimeOpen(task.task_id)} disabled={loadindStopTask == task.task_id} isLoading={loadindStopTask == task.task_id}>{loadindStopTask != task.task_id && <Pause />}</Button>
-                                                            </div>
-                                                        </>
-                                                        :
-                                                        <Button size="icon" variant="ghost" className="rounded-full w-[2rem] h-[2rem] bg-gray-100" onClick={() => handleStartTime(task.task_id)} disabled={loadindTask == task.task_id} isLoading={loadindTask == task.task_id}>{loadindTask != task.task_id && <Play />}</Button>
-                                                }
+                                                <div className='flex items-center gap-2'>
+
+                                                    <Button className={'bg-gray-100 hover:bg-gray-300 text-black'} onClick={() => setSelectedTask(task.task_id)}>
+                                                        Notes
+                                                    </Button>
+                                                    {
+                                                        timesTasks.hasOwnProperty(task.task_id) ?
+                                                            <>
+                                                                <div>
+                                                                    <Timer startTime={timesTasks[task.task_id]} />
+                                                                    <Button size="icon" variant="ghost" className="rounded-full w-[2rem] h-[2rem] bg-gray-100" onClick={() => setStopTimeOpen(task.task_id)} disabled={loadindStopTask == task.task_id} isLoading={loadindStopTask == task.task_id}>{loadindStopTask != task.task_id && <Pause />}</Button>
+                                                                </div>
+                                                            </>
+                                                            :
+                                                            <Button size="icon" variant="ghost" className="rounded-full w-[2rem] h-[2rem] bg-gray-100" onClick={() => handleStartTime(task.task_id)} disabled={loadindTask == task.task_id} isLoading={loadindTask == task.task_id}>{loadindTask != task.task_id && <Play />}</Button>
+                                                    }
+                                                </div>
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -155,10 +162,13 @@ const Kanban = ({ project: projectsDetails }) => {
                     </Card>
                 ))}
             </div>
-
             <BigDialog open={!!stopTimeOpen} onClose={() => setStopTimeOpen(null)} width={34}>
-                <AddWorkDescription task_id={stopTimeOpen} handleStop={handleStopTime} close={() => setStopTimeOpen(null)}/>
+                <AddWorkDescription task_id={stopTimeOpen} handleStop={handleStopTime} close={() => setStopTimeOpen(null)} />
             </BigDialog>
+            {
+                selectedTask &&
+                <TaskComments open={selectedTask} onClose={() => setSelectedTask(null)} task={{ task_id: selectedTask }} />
+            }
         </>
     )
 }

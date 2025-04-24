@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import BigDialog from './Dialogs/BigDialog'
 import AvatarCompoment from './AvatarCompoment'
 import { useUser } from '@/providers/UserProvider'
@@ -7,11 +7,12 @@ import { Send } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { addTaskCommentsRequest } from '@/lib/http/task'
+import { addTaskCommentsRequest, getTaskCommentsRequest } from '@/lib/http/task'
 
-const TaskComments = ({ open, onClose, comments,getTaskById,task }) => {
+const TaskComments = ({ open, onClose, task }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [comments, setComments] = useState([]);
   const { user } = useUser();
 
   const handleComment = useCallback(async () => {
@@ -23,15 +24,29 @@ const TaskComments = ({ open, onClose, comments,getTaskById,task }) => {
       }
 
       const res = await addTaskCommentsRequest(formdata);
-      await getTaskById();
+      await getComments();
       setContent('');
       toast.success(res?.data?.message);
     } catch (error) {
       toast.error(error?.response?.data?.message || error?.message);
-    }finally{
+    } finally {
       setIsLoading(false)
     }
-  },[content,task])
+  }, [content, task]);
+
+
+  const getComments = useCallback(async () => {
+    try {
+      const res = await getTaskCommentsRequest(task.task_id);
+      setComments(res?.data?.comments);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error?.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    getComments();
+  }, [task]);
 
 
   return (
@@ -59,7 +74,7 @@ const TaskComments = ({ open, onClose, comments,getTaskById,task }) => {
       <div className='flex items-center gap-2 py-5'>
         <AvatarCompoment name={user?.name} className='!w-[2.5rem] !h-[2.5rem]' />
         <div className='border-b border-gray-400 flex-1 relative'>
-          <input className='w-full placeholder:text-gray-400 outline-none border-none bg-transparent px-2 py-2' placeholder='Write Something...' value={content} onChange={(e) => setContent(e.target.value)}/>
+          <input className='w-full placeholder:text-gray-400 outline-none border-none bg-transparent px-2 py-2' placeholder='Write Something...' value={content} onChange={(e) => setContent(e.target.value)} />
         </div>
 
         <Button className={' text-white bg-blue-500 hover:bg-blue-600 transition-all disabled:opacity-40'} disabled={isLoading || !content} isLoading={isLoading} onClick={handleComment}>

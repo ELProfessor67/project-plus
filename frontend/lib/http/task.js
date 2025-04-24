@@ -9,6 +9,7 @@ export const addTaskTranscribtionRequest = async (formdata) => api.post(`/task/t
     }
 });
 export const addTaskCommentsRequest = async (formdata) => api.post(`/task/comment`,formdata);
+export const getTaskCommentsRequest = async (task_id) => api.get(`/task/comment/${task_id}`);
 export const sendTaskEmailRequest = async (formdata) => api.post(`/task/email`,formdata);
 export const sendEmailToClientRequest = async (formdata) => api.post(`/task/email/client`,formdata);
 export const getTaskEmailRequest = async (date) => api.get(`/task/emails/get-emails${date ? `?date=${date}`: ''}`);
