@@ -25,8 +25,8 @@ jobs:
           sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd ~/project-plus
             git pull origin main
-            docker-compose -f docker/docker-compose.yml build frontend-server
-            docker-compose -f docker/docker-compose.yml up -d frontend-server
+            docker compose -f docker/docker-compose.yml build frontend-server
+            docker compose -f docker/docker-compose.yml up -d frontend-server
           EOF
 
   deploy-backend:
@@ -44,6 +44,6 @@ jobs:
           sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd ~/project-plus
             git pull origin main
-            docker-compose -f docker/docker-compose.yml build backend-server
-            docker-compose -f docker/docker-compose.yml up -d backend-server
+            docker compose -f docker/docker-compose.yml build backend-server
+            docker compose -f docker/docker-compose.yml up -d backend-server
           EOF
