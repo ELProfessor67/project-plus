@@ -12,8 +12,9 @@ import { useUser } from '@/providers/UserProvider';
 
 const page = () => {
   const [progress, setProgress] = React.useState([]);
-  const [dates, setDates] = React.useState(getRecentDatesWithLabels(20));
+  const [dates, setDates] = React.useState(getRecentDatesWithLabels(90));
   const [selectedDate, setSelectedDate] = React.useState(dates[0]);
+  const [selectedEndDate, setSelectedEndDate] = React.useState(dates[0]);
   const [selectedType, setSelectedType] = React.useState(null);
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState([]);
@@ -25,7 +26,7 @@ const page = () => {
   const getProgress = React.useCallback(async () => {
     try {
       setLoading(true)
-      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedType, selectedProject);
+      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedEndDate.date,selectedType, selectedProject);
       setProgress(res.data.progress)
       setTimes(res.data.times);
       setDocuments(res.data.documents)
@@ -34,15 +35,15 @@ const page = () => {
     } finally {
       setLoading(false)
     }
-  }, [selectedDate?.date, selectedType, selectedProject]);
+  }, [selectedDate?.date, selectedType, selectedProject,selectedEndDate?.date]);
 
 
   React.useEffect(() => {
     getProgress();
-  }, [selectedDate?.date, selectedType,selectedProject]);
+  }, [selectedDate?.date, selectedType,selectedProject,selectedEndDate?.date]);
 
 
-  console.log(selectedDate)
+  console.log(selectedDate, selectedEndDate)
   if (loading) {
     return <>
       <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
@@ -73,7 +74,7 @@ const page = () => {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={(value) => setSelectedDate(value)}>
+          <Select onValueChange={(value) => setSelectedEndDate(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={"End Date"} />
             </SelectTrigger>

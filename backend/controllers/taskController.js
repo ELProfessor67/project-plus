@@ -794,17 +794,19 @@ export const getConnectMails = catchAsyncError(async (req, res, next) => {
 
 
 export const getAllTaskProgress = catchAsyncError(async (req, res, next) => {
-    let date = req.query.date;
+    let sdate = req.query.sdate;
+    let edate = req.query.edate;
     let type = req.query.type;
     const project_id = req.query.project_id ? parseInt(req.query.project_id) : null;
   
 
     // Parse date properly
-    date = date ? dayjs(date, "DD-MM-YYYY", true) : dayjs();
+    sdate = sdate ? dayjs(sdate, "DD-MM-YYYY", true) : dayjs();
+    edate = edate ? dayjs(edate, "DD-MM-YYYY", true) : dayjs();
 
     // Define the start and end of the day
-    const startOfDay = date.startOf("day").utc().toDate(); // Convert to UTC
-    const endOfDay = date.endOf("day").utc().toDate(); // Convert to UTC
+    const startOfDay = sdate.startOf("day").utc().toDate(); // Convert to UTC
+    const endOfDay = edate.endOf("day").utc().toDate(); // Convert to UTC
 
 
     // const user_id = req.user.user_id;
