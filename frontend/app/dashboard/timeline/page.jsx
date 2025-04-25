@@ -43,7 +43,6 @@ const page = () => {
   }, [selectedDate?.date, selectedType,selectedProject,selectedEndDate?.date]);
 
 
-  
   console.log(selectedDate, selectedEndDate)
   if (loading) {
     return <>
