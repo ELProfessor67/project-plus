@@ -29,6 +29,10 @@ import InviteComponet from "@/components/InviteComponet"
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenu, DropdownMenuGroup, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import RenderMemberDetails from "@/components/RenderMemberDetails"
 import RenderClient from "@/components/RenderClient"
+import CreateMeeting from "@/components/CreateMeeting"
+import CreateMeetingClient from "@/components/CreateMeetingClient"
+import SendMail from "@/components/SendMail"
+import SendMailClient from "@/components/SendMailClient"
 
 const statusColors = {
   "Not Started": "bg-gray-100 text-gray-800",
@@ -46,6 +50,10 @@ export default function Page({ params }) {
   const [viewMember, setViewMember] = useState(false);
   const [viewClient, setViewClient] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [createMeeting, setCreateMeeting] = useState(false);
+  const [createMeetingClient, setCreateMeetingClient] = useState(false);
+  const [sendMail, setSendMail] = useState(false);
+  const [sendMailClient, setSendMailClient] = useState(false);
 
   const getProjectDetails = useCallback(async () => {
     setLoading(true);
@@ -82,14 +90,36 @@ export default function Page({ params }) {
         <div className="mb-8  flex items-center justify-between">
           <h1 className="text-3xl font-semibold text-gray-800">{project?.name}</h1>
           <div className="flex items-center gap-4">
-
+            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeeting(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Meet For Team
+            </Button>
+            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeetingClient(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Meet For Client
+            </Button>
+            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMail(true)}>
+              <Plus className="mr-0 h-4 w-4" />
+              Send Mail To Team
+            </Button>
+            <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setSendMailClient(true)}>
+              <Plus className="mr-0 h-4 w-4" />
+              Send Mail To Client
+            </Button>
+            <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200'>
+              <Link href={`/dashboard/create-document/${project?.project_id}`} className='flex items-center justify-start gap-2 w-full'>Template Document</Link>
+            </Button>
             <button onClick={() => setViewClient(true)}>
-                  <RenderMembers members={project?.Clients || []} />
-                </button>
+              <RenderMembers members={project?.Clients || []} />
+            </button>
 
-                <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => { setInviteOpen(true); setIsClient(true) }}>
-                  Add Client
-                </Button>
+
+
+            <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => { setInviteOpen(true); setIsClient(true) }}>
+              Add Client
+            </Button>
+
+
 
             <button onClick={() => setViewMember(true)}>
               <RenderMembers members={project?.Members || []} />
@@ -98,6 +128,8 @@ export default function Page({ params }) {
             <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => { setInviteOpen(true); setIsClient(false) }}>
               Invite/{project?.Members?.length}
             </Button>
+
+           
 
 
             <button className='bg-transparent hover:bg-gray-200 text-white p-2 rounded-sm'>
@@ -190,6 +222,15 @@ export default function Page({ params }) {
       <BigDialog open={viewClient} onClose={() => setViewClient(false)} width={45}>
         <RenderClient members={project?.Clients || []} />
       </BigDialog>
+
+
+
+      <CreateMeeting open={createMeeting} onClose={() => setCreateMeeting(false)} isScheduled={false} getMeetings={() => { }} project_id={params.id} />
+      <CreateMeetingClient open={createMeetingClient} onClose={() => setCreateMeetingClient(false)} isScheduled={false} getMeetings={() => { }} project_id={params.id} />
+
+
+      <SendMail open={sendMail} onClose={() => setSendMail(false)} getAllMail={() => { }} project_id={params.id} />
+      <SendMailClient open={sendMailClient} onClose={() => setSendMailClient(false)} getAllMail={() => { }} project_id={params.id} />
     </>
   )
 }

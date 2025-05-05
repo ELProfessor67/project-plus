@@ -9,9 +9,9 @@ import { useUser } from '@/providers/UserProvider'
 import { sendTaskEmailRequest } from '@/lib/http/task'
 import { toast } from 'react-toastify'
 
-const SendMail = ({ open, onClose,getAllMail }) => {
+const SendMail = ({ open, onClose,getAllMail,project_id=null }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [selectProject, setSelectProject] = useState(null);
+    const [selectProject, setSelectProject] = useState(project_id);
     const [selectTask, setSelectedTask] = useState(null);
     const [subject, setSubject] = useState('');
     const [content, setContent] = useState('');

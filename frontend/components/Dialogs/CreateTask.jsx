@@ -16,6 +16,7 @@ import AvatarCompoment from '../AvatarCompoment'
 import { toast } from 'react-toastify'
 import { createTaskRequest } from '@/lib/http/task'
 import dynamic from 'next/dynamic'
+import { useUser } from '@/providers/UserProvider'
 const JoditEditor = dynamic(
     () => import('jodit-react'),
     { ssr: false }
@@ -26,6 +27,7 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
     const [selectedMember, setSelectedMember] = useState([]);
     const [isDisabled, setIsDiabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { loadUser } = useUser()
     const [formdata, setFormdata] = useState({
         project_id: project?.project_id,
         name: "New Task",
@@ -66,6 +68,7 @@ const CreateTask = ({ project, onClose, getProjectDetails }) => {
                 status: "TO_DO"
             })
             toast.success(res?.data?.message);
+            loadUser();
             await getProjectDetails();
             onClose();
         } catch (error) {

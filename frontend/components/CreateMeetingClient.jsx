@@ -11,9 +11,9 @@ import { createMeetingClientRequest } from '@/lib/http/meeting'
 import { useRouter } from 'next/navigation'
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const CreateMeetingClient = ({ open, onClose, isScheduled, getMeetings }) => {
+const CreateMeetingClient = ({ open, onClose, isScheduled, getMeetings, project_id = null }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [selectProject, setSelectProject] = useState(null);
+    const [selectProject, setSelectProject] = useState(project_id);
     const [selectTask, setSelectedTask] = useState(null);
     const [selectClient, setSelectedClient] = useState(null);
     const [heading, setHeading] = useState('');

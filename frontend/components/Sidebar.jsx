@@ -408,7 +408,6 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                         </div>
                                     </CollapsibleContent>
                                 </Collapsible>
-
                             </>
                         )
                     }
