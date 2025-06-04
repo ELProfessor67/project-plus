@@ -72,20 +72,20 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
         <BigDialog open={open} onClose={onClose}>
             <div className='px-2 py-3'>
                 <div className="w-full px-10 space-y-6 mt-5">
-                    <h1 className="text-3xl font-semibold text-gray-800 text-center">Create A New Meeting</h1>
+                    <h1 className="text-3xl font-semibold text-foreground-primary text-center">Create A New Meeting</h1>
                     <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="space-y-2">
-                            <Label htmlFor="project">Project</Label>
+                            <Label htmlFor="project" className="text-foreground-primary">Project</Label>
                             <Select onValueChange={(value) => setSelectProject(value)} value={selectProject}>
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full bg-white border-primary text-black">
                                     <SelectValue placeholder="Select a project" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white border-primary">
                                     <SelectGroup>
-                                        <SelectLabel>Projects</SelectLabel>
+                                        <SelectLabel className="text-gray-400">Projects</SelectLabel>
                                         {
                                             user && user?.Projects?.map((project,index) => (
-                                                <SelectItem value={`${project.project_id}`}  key={`${project.project_id}-${index}`}>{project?.name}</SelectItem>
+                                                <SelectItem value={`${project.project_id}`} key={`${project.project_id}-${index}`} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">{project?.name}</SelectItem>
                                             ))
                                         }
                                     </SelectGroup>
@@ -95,17 +95,17 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
 
 
                         <div className="space-y-2">
-                            <Label htmlFor="description">Task</Label>
+                            <Label htmlFor="description" className="text-foreground-primary">Task</Label>
                             <Select onValueChange={(value) => setSelectedTask(value)} value={selectTask}>
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full bg-white border-primary text-black">
                                     <SelectValue placeholder="Select a task" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white border-primary">
                                     <SelectGroup>
-                                        <SelectLabel>Tasks</SelectLabel>
+                                        <SelectLabel className="text-gray-400">Tasks</SelectLabel>
                                         {
                                             user && user?.Projects?.find(project => project.project_id == selectProject)?.Tasks?.map((task,index) => (
-                                                <SelectItem value={`${task.task_id}`}  key={`${task.task_id}-${index}`}>{task?.name}</SelectItem>
+                                                <SelectItem value={`${task.task_id}`} key={`${task.task_id}-${index}`} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">{task?.name}</SelectItem>
                                             ))
                                         }
                                     </SelectGroup>
@@ -114,7 +114,7 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="heading">Heading</Label>
+                            <Label htmlFor="heading" className="text-foreground-primary">Heading</Label>
                             <Input
                                 id="heading"
                                 type="text"
@@ -123,6 +123,7 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
                                 required
                                 value={heading}
                                 onChange={(e) => setHeading(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400"
                             />
                         </div>
                         
@@ -132,7 +133,7 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
                             <>
                             
                                 <div className="space-y-2">
-                                    <Label htmlFor="date">Date</Label>
+                                    <Label htmlFor="date" className="text-foreground-primary">Date</Label>
                                     <Input
                                         id="date"
                                         type="date"
@@ -141,11 +142,12 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
                                         required
                                         value={date}
                                         onChange={(e) => setDate(e.target.value)}
+                                        className="bg-white border-primary text-black placeholder:text-gray-400"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="time">Time</Label>
+                                    <Label htmlFor="time" className="text-foreground-primary">Time</Label>
                                     <Input
                                         id="time"
                                         type="time"
@@ -154,21 +156,29 @@ const CreateMeeting = ({ open, onClose,isScheduled,getMeetings,project_id=null }
                                         required
                                         value={time}
                                         onChange={(e) => setTime(e.target.value)}
+                                        className="bg-white border-primary text-black placeholder:text-gray-400"
                                     />
                                 </div>
                             </>
                         }
 
                         <div className="space-y-2">
-                            <Label htmlFor="description">Describtion</Label>
-                            <Textarea name='description' id='description' o placeholder="add description..." value={description}  onChange={(e) => setDescription(e.target.value)}/>
+                            <Label htmlFor="description" className="text-foreground-primary">Describtion</Label>
+                            <Textarea 
+                                name='description' 
+                                id='description' 
+                                placeholder="add description..." 
+                                value={description}  
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400 resize-none"
+                            />
                         </div>
 
 
 
                         <Button
                             type="submit"
-                            className="w-full h-12 bg-blue-500 text-white disabled:opacity-40 hover:bg-blue-600"
+                            className="w-full h-12 bg-tbutton-bg text-tbutton-text disabled:opacity-40 hover:bg-tbutton-hover hover:text-tbutton-text transition-all"
                             disabled={isLoading || !selectProject || !selectTask || !heading || !description}
                             isLoading={isLoading}
                         >

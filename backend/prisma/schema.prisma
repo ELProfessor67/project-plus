@@ -69,7 +69,8 @@ model Project {
   description String?  @db.Text                  
   created_by  Int                                  
   created_at  DateTime @default(now())              
-  updated_at  DateTime @updatedAt         
+  updated_at  DateTime @updatedAt
+  opposing String?    
   user User @relation(fields: [created_by], references: [user_id])
   Members ProjectMember[]
   Clients ProjectClient[]
@@ -77,6 +78,7 @@ model Project {
   invitations Invitation[]
   Media Media[]
   Time TaskTime[]
+  Comments Comment[]
 }
 
 enum Role {
@@ -268,7 +270,6 @@ model Task {
   creator User @relation(fields: [created_by], references: [user_id]) 
   Transcibtions Transcibtion[]
   Emails Email[]
-  Comments Comment[]
   Progress TaskProgress[]
   // Conversation Conversation[]
   Meetings Meeting[]
@@ -411,11 +412,11 @@ model TaskProgress {
 
 model Comment {
   comment_id String @id @default(uuid())
-  task_id Int
+  project_id Int?
   user_id Int
   content String @db.Text
   created_at      DateTime @default(now())
-  task  Task @relation(fields: [task_id], references: [task_id])
+  project  Project? @relation(fields: [project_id], references: [project_id])
   user User @relation(fields: [user_id], references: [user_id])
 }
 

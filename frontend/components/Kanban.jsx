@@ -14,6 +14,7 @@ import Timer from './Timer'
 import BigDialog from './Dialogs/BigDialog'
 import AddWorkDescription from './AddWorkDescription'
 import TaskComments from './TaskComments'
+import moment from 'moment'
 
 // 'TO_DO','IN_PROGRESS','STUCK','DONE'
 const statuses = [["TO_DO", "TO DO"], ["IN_PROGRESS", "IN PROGRESS"], ["STUCK", "STUCK"], ["DONE", "DONE"], ["OVER_DUE", "OVER DUE"]]
@@ -33,7 +34,7 @@ const Kanban = ({ project: projectsDetails }) => {
     const [stopTimeOpen, setStopTimeOpen] = useState(null);
     useEffect(() => setProject(projectsDetails), [projectsDetails]);
     const { user, loadUser } = useUser();
-    const [selectedTask, setSelectedTask] = useState(null);
+    
 
     useEffect(() => {
         if (!user) return
@@ -117,16 +118,16 @@ const Kanban = ({ project: projectsDetails }) => {
                                     <Card key={task} className="mb-2 bg-white" draggable onDragStart={(e) => onDragStart(e, task.task_id)}>
                                         <CardContent className="p-2 cursor-pointer">
 
-                                            <span className='text-black/80 mb-2 '>{task.name}</span>
+                                            <span className='text-lg font-medium mb-2 text-accent'>{task.name}</span>
                                             <div className='my-2 flex items-center gap-2 flex-wrap'>
                                                 <Button variant="ghost" className="!text-xs px-[10px] h-[30px] bg-gray-100 text-gray-700 relative">
-                                                    {task.status}
+                                                    Created: {moment(task.created_at).format("YYYY-MM-DD")}
                                                 </Button>
                                                 <Button variant="ghost" className="!text-xs px-[10px] h-[30px] bg-gray-100 text-gray-700 relative">
-                                                    {formatDate(task.last_date)}
+                                                   Due: {moment(task.last_date).format("YYYY-MM-DD")}
                                                 </Button>
                                                 <Button variant="ghost" className="!text-xs px-[10px] h-[30px] bg-gray-100 text-gray-700 relative">
-                                                    {task.priority}
+                                                   {task.priority}
                                                 </Button>
                                             </div>
 
@@ -136,10 +137,6 @@ const Kanban = ({ project: projectsDetails }) => {
                                                 </div>
 
                                                 <div className='flex items-center gap-2'>
-
-                                                    <Button className={'bg-gray-100 hover:bg-gray-300 text-black'} onClick={() => setSelectedTask(task.task_id)}>
-                                                        Notes
-                                                    </Button>
                                                     {
                                                         timesTasks.hasOwnProperty(task.task_id) ?
                                                             <>
@@ -165,10 +162,6 @@ const Kanban = ({ project: projectsDetails }) => {
             <BigDialog open={!!stopTimeOpen} onClose={() => setStopTimeOpen(null)} width={34}>
                 <AddWorkDescription task_id={stopTimeOpen} handleStop={handleStopTime} close={() => setStopTimeOpen(null)} />
             </BigDialog>
-            {
-                selectedTask &&
-                <TaskComments open={selectedTask} onClose={() => setSelectedTask(null)} task={{ task_id: selectedTask }} />
-            }
         </>
     )
 }

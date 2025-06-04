@@ -9,13 +9,13 @@ import { useUser } from '@/providers/UserProvider'
 import { sendTaskEmailRequest } from '@/lib/http/task'
 import { toast } from 'react-toastify'
 
-const SendMail = ({ open, onClose,getAllMail,project_id=null }) => {
+const SendMail = ({ open, onClose, getAllMail, project_id = null }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectProject, setSelectProject] = useState(project_id);
     const [selectTask, setSelectedTask] = useState(null);
     const [subject, setSubject] = useState('');
     const [content, setContent] = useState('');
-    const {user} = useUser();
+    const { user } = useUser();
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
@@ -33,18 +33,19 @@ const SendMail = ({ open, onClose,getAllMail,project_id=null }) => {
             onClose();
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
-    },[selectTask,selectProject,subject,content]);
+    }, [selectTask, selectProject, subject, content]);
+
     return (
         <BigDialog open={open} onClose={onClose}>
             <div className='px-2 py-3'>
                 <div className="w-full px-10 space-y-6 mt-5">
-                    <h1 className="text-3xl font-semibold text-gray-800 text-center">Send A Mail</h1>
+                    <h1 className="text-3xl font-semibold text-foreground-primary text-center">Send A Mail</h1>
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-2">
-                            <Label htmlFor="subject">Subject</Label>
+                            <Label htmlFor="subject" className="text-foreground-primary">Subject</Label>
                             <Input
                                 id="subject"
                                 type="text"
@@ -53,63 +54,28 @@ const SendMail = ({ open, onClose,getAllMail,project_id=null }) => {
                                 required
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="content">Content</Label>
-                            <Textarea name='content' id='content' placeholder="add content..." value={content} onChange={(e) => setContent(e.target.value)}/>
+                            <Label htmlFor="content" className="text-foreground-primary">Content</Label>
+                            <Textarea 
+                                name='content' 
+                                id='content' 
+                                placeholder="add content..." 
+                                value={content} 
+                                onChange={(e) => setContent(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400"
+                            />
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="project">Project</Label>
-                            <Select onValueChange={(value) => setSelectProject(value)} value={selectProject}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select a project" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Projects</SelectLabel>
-                                        {
-                                            user && user?.Projects?.map((project,index) => (
-                                                <SelectItem value={`${project.project_id}`}  key={`${project.project_id}-${index}`}>{project?.name}</SelectItem>
-                                            ))
-                                        }
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Task</Label>
-                            <Select onValueChange={(value) => setSelectedTask(value)} value={selectTask}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select a task" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Tasks</SelectLabel>
-                                        {
-                                            user && user?.Projects?.find(project => project.project_id == selectProject)?.Tasks?.map((task,index) => (
-                                                <SelectItem value={`${task.task_id}`}  key={`${task.task_id}-${index}`}>{task?.name}</SelectItem>
-                                            ))
-                                        }
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-
-                        <Button
-                            type="submit"
-                            className="w-full h-12 bg-blue-500 text-white disabled:opacity-40 hover:bg-blue-600"
-                            disabled={isLoading || !selectProject || !selectTask || !subject || !content}
-                            isLoading={isLoading}
+                        <Button 
+                            type="submit" 
+                            className="w-full bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all"
+                            disabled={isLoading}
                         >
-                            Send Now
+                            {isLoading ? 'Sending...' : 'Send Mail'}
                         </Button>
                     </form>
-
                 </div>
             </div>
         </BigDialog>

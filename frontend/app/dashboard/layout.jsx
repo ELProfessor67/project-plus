@@ -14,7 +14,7 @@ const layout = ({ children }) => {
         <ProtectedRouteProvider>
             <div>
                 <TopNavigation setSidebarOpen={setSidebarOpen} sidebarOpen={sidebarOpen} />
-                <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-100">
+                <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-primary">
                     <Sibebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                     <div className="flex flex-1 flex-col overflow-hidden">
 

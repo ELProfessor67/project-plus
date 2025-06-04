@@ -9,7 +9,19 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
-  			'foreground-black': '#323338'
+  			'foreground-black': '#323338',
+			"primary": "#090818",
+			"secondary": "#1f1b32",
+			"foreground-primary": "#ffffff",
+			"foreground-secondary": "#b0b0c3",  
+  			
+			"tbutton-bg": "#7e22ce",        
+			"tbutton-hover": "#a855f7",     
+			"tbutton-text": "#ffffff",
+
+			"accent": "#a855f7",         
+			"accent-hover": "#9333ea"    
+ 
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

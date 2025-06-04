@@ -110,21 +110,20 @@ export default function Page() {
   }, [])
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
+    <div className="flex min-h-screen bg-primary">
       {/* Left Column */}
-      <div className="w-full flex-1 p-8 lg:p-16 flex flex-col relative">
-        <Image src="/assets/logo-full-big.avif" alt="flexywexy.com Logo" width={150} height={40} className="mb-12" />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <div className="w-full max-w-[400px] space-y-6">
-            <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-semibold text-gray-800">Verify Your Account</h1>
-              <p className="text-gray-600">We've sent a 6-digit code to your email. Enter it below to confirm your account.</p>
+      <div className="w-full flex-1 p-16 flex relative">
+        <div className="flex items-center justify-center px-4 mx-auto bg-secondary rounded-md h-[35rem] mt-10">
+          <div className="w-[30rem] space-y-8 rounded-md p-8">
+            <div className="space-y-3 text-center">
+              <h1 className="text-3xl font-semibold text-foreground-primary">Verify Your Account</h1>
+              <p className="text-foreground-secondary">We've sent a 6-digit code to your email. Enter it below to confirm your account.</p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between space-x-2">
+            <div className="space-y-6">
+              <div className="flex justify-center gap-3">
                 {otp.map((digit, index) => (
-                  <Input
+                  <input
                     key={index}
                     id={`otp-${index}`}
                     type="text"
@@ -133,14 +132,14 @@ export default function Page() {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={e => handleBackspace(e, index)}
-                    className="w-12 h-12 text-center text-2xl"
+                    className="w-14 h-14 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                     onPaste={handlePaste}
                   />
                 ))}
               </div>
 
               <Button 
-                className="w-full h-12 bg-blue-500 text-white disabled:opacity-40 hover:bg-blue-600" 
+                className="w-full h-12 bg-tbutton-bg text-white disabled:opacity-40 hover:bg-tbutton-hover" 
                 onClick={handleVerify} 
                 disabled={otp.join('').length !== 6 || isLoading}
                 isLoading={isLoading}
@@ -149,14 +148,14 @@ export default function Page() {
               </Button>
 
               <div className="text-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-foreground-secondary">
                   Didn't receive the code? 
                   {isResendDisabled ? (
-                    <span className="ml-1 text-gray-700">Resend in {timeLeft}s</span>
+                    <span className="ml-1 text-foreground-primary">Resend in {timeLeft}s</span>
                   ) : (
                     <Button 
                       variant="link" 
-                      className="ml-1 p-0 h-auto text-[#0073ea]" 
+                      className="ml-1 p-0 h-auto text-accent hover:text-accent-hover" 
                       onClick={handleResendOtp}
                     >
                       Resend OTP
@@ -166,37 +165,26 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="text-center text-sm text-gray-500">
-              By verifying, you agree to the{" "}
-              <Link href="#" className="text-[#0073ea] hover:underline">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link href="#" className="text-[#0073ea] hover:underline">
-                Privacy Policy
-              </Link>
-            </div>
+            <div className="space-y-4 pt-4">
+              <div className="text-center text-sm text-foreground-secondary">
+                By verifying, you agree to the{" "}
+                <Link href="#" className="text-accent hover:text-accent-hover">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="#" className="text-accent hover:text-accent-hover">
+                  Privacy Policy
+                </Link>
+              </div>
 
-            <div className="text-center text-sm text-gray-700">
-              Need help?{" "}
-              <Link href="/contact-support" className="text-[#0073ea] hover:underline">
-                Contact Support
-              </Link>
+              <div className="text-center text-sm text-foreground-secondary">
+                Need help?{" "}
+                <Link href="/contact-support" className="text-accent hover:text-accent-hover">
+                  Contact Support
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Right Column */}
-      <div className="hidden lg:block w-[40%] relative">
-        <div className="h-full flex items-center justify-center">
-          <Image 
-            src="/assets/step-4.avif" 
-            alt="Decorative Image" 
-            layout="fill" 
-            objectFit="cover" 
-            className="rounded-l-2xl"
-          />
         </div>
       </div>
     </div>

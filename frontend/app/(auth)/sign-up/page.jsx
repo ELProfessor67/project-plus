@@ -36,21 +36,21 @@ export default function Page() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedStep, setSelectedStep] = useState(0);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    const [isContinueButtonDisable,setIsContinueButtonDisable] = useState(false);
+    const [isContinueButtonDisable, setIsContinueButtonDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const next_to = searchParams.get('next_to');
-    
-    const [formdata,setFormdata] = useState({
+
+    const [formdata, setFormdata] = useState({
         email: '',
         name: '',
         password: '',
-        account_name: '',
-        bring: '',
-        teams_member_count: '',
-        focus: [],
-        hear_about_as: ''
+        account_name: 'test',
+        bring: 'test',
+        teams_member_count: '10',
+        focus: ["focus"],
+        hear_about_as: 'A'
     });
 
     const Step = useMemo(() => Steps[selectedStep], [selectedStep]);
@@ -61,117 +61,48 @@ export default function Page() {
         try {
             const res = await registerRequest(formdata);
             toast.success(res?.data?.message);
-            if(typeof window != 'undefined'){
-                window.localStorage.setItem('email',formdata.email);
+            if (typeof window != 'undefined') {
+                window.localStorage.setItem('email', formdata.email);
             }
-          
+
             router.push(`/verify${next_to ? `?next_to=${next_to}` : ''}`);
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
-    },[formdata]);
+    }, [formdata]);
 
     const handleNextStep = useCallback(() => {
-        if (selectedStep < 5) {
-            setSelectedStep(prev => prev + 1);
-            return;
-        }
-
         handleSubmit();
-    }, [selectedStep])
-
-    const handlePrevStep = useCallback(() => {
-        if (selectedStep > 0) {
-            setSelectedStep(prev => prev - 1);
-            return;
-        }
-    }, [selectedStep]);
+    }, [selectedStep,formdata])
 
 
     const onFormDataChange = useCallback((e) => {
-        setFormdata(prev => ({...prev,[e.target.name]: e.target.value}));
-    },[]);
+        setFormdata(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    }, [formdata]);
 
 
     //continue button check
     useEffect(() => {
-        if(selectedStep == 0 && !formdata.email){
+        if (selectedStep == 0 && (!formdata.name || !formdata.password || !formdata.email)) {
             setIsContinueButtonDisable(true);
             return
         }
-
-        if(selectedStep == 1 && (!formdata.name || !formdata.password || !formdata.account_name)){
-            setIsContinueButtonDisable(true);
-            return
-        }
-
-        if(selectedStep == 2 && !formdata.bring){
-            setIsContinueButtonDisable(true);
-            return
-        }
-
-        if(selectedStep == 3 && !formdata.teams_member_count){
-            setIsContinueButtonDisable(true);
-            return
-        }
-
-        if(selectedStep == 4 && formdata.focus.length == 0){
-            setIsContinueButtonDisable(true);
-            return
-        }
-
-        if(selectedStep == 5 && !formdata.hear_about_as){
-            setIsContinueButtonDisable(true);
-            return
-        }
-
         setIsContinueButtonDisable(false);
-    },[selectedStep,JSON.stringify(formdata)]);
+
+    }, [selectedStep, JSON.stringify(formdata)]);
 
 
 
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen">
+        <div className="flex min-h-screen bg-primary">
             {/* Left Column */}
-            <div className="w-full flex-1 p-8 lg:p-16 flex flex-col relative h-screen">
-                <Image src="/assets/logo-full-big.avif" alt="flexywexy.com Logo" width={200} height={70}  className="mb-12" />
-                <Step  selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} formdata={formdata} setFormdata={setFormdata} onFormDataChange={onFormDataChange} handleNextStep={handleNextStep} isContinueButtonDisable={isContinueButtonDisable}/>
-                
-                {
-                    selectedStep != 0 && 
-                    <div className="mt-6 flex justify-between absolute bottom-16 right-16 left-16">
-                        <Button 
-                            className="py-2 px-4 border border-gray-300 rounded text-sm bg-transparent text-black hover:bg-transparent hover:border-black"
-                            onClick={handlePrevStep}
-                        >
-                            ← Back
-                        </Button>
-
-                        <Button
-                            className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-40"
-                            onClick={handleNextStep}
-                            disabled={isContinueButtonDisable}
-                            isLoading={isLoading}
-                        >
-                            Continue
-                        </Button>
-
-                    </div>
-                }
+            <div className="w-full flex-1 p-16 flex  relative">
+                <Step selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} formdata={formdata} setFormdata={setFormdata} onFormDataChange={onFormDataChange} handleNextStep={handleNextStep} isContinueButtonDisable={isContinueButtonDisable} />
             </div>
 
-            {/* Right Column */}
-            
-            <div className="hidden lg:block w-[40%] relative">
-                <div className="h-full flex items-center justify-center">
-                    <Image src={StepsImages[selectedStep]} alt="Decorative Image" width={400} height={400} className='h-screen w-full object-fill'/>
-                </div>
-            </div>
-            
-            
         </div>
     )
 }

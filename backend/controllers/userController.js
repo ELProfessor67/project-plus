@@ -15,12 +15,25 @@ export const register = catchAsyncError(async (req, res, next) => {
 
     // Validate request body using Zod
     const [err, isValidate] = await validateRequestBody(req.body, RegisterRequestBodySchema);
+
     if (!isValidate) {
-        return next(new ErrorHandler(err, 401));
+        return next(new ErrorHandler(JSON.parse(err)[0]?.message, 401));
+    }
+
+
+    const existingUser = await prisma.user.findUnique({
+        where: {
+            email: email
+        }
+    });
+
+    if (existingUser) {
+        return next(new ErrorHandler("User already exists with this email", 400));
     }
 
     // Hash the password
     const password_hash = await bcrypt.hash(password, 10);
+
 
     // Create a new user
     const newUser = await prisma.user.create({

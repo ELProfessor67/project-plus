@@ -42,13 +42,13 @@ export default function Page() {
 
     return (
         <>
-            <div className="flex h-screen flex-col bg-white m-2 rounded-md overflow-y-auto">
+            <div className="flex h-screen flex-col bg-secondary m-2 rounded-md overflow-y-auto">
                 <div className="flex flex-col gap-4 p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <h1 className="text-2xl font-semibold">All Meetings</h1>
-                            <Info className="h-4 w-4 text-gray-400" />
+                            <h1 className="text-2xl font-semibold text-foreground-primary">All Meetings</h1>
+                            <Info className="h-4 w-4 text-foreground-secondary" />
                         </div>
 
                     </div>
@@ -56,20 +56,20 @@ export default function Page() {
                     {/* View Tabs */}
                     <Tabs defaultValue="all" className="w-full">
                         <div className="flex items-center justify-between">
-                            <TabsList>
-                                <TabsTrigger value="all">All</TabsTrigger>
-                                <TabsTrigger value="created">Created</TabsTrigger>
-                                <TabsTrigger value="joined">Joined</TabsTrigger>
+                            <TabsList className="bg-secondary border border-primary">
+                                <TabsTrigger value="all" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">All</TabsTrigger>
+                                <TabsTrigger value="created" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">Created</TabsTrigger>
+                                <TabsTrigger value="joined" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">Joined</TabsTrigger>
                             </TabsList>
                             <div className="flex items-center gap-2">
                                 {
                                     user?.Role != "CLIENT" &&
                                     <>
-                                        <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeeting(true)}>
+                                        <Button className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all" onClick={() => setCreateMeeting(true)}>
                                             <Plus className="mr-2 h-4 w-4" />
                                             New Meet For Team
                                         </Button>
-                                        <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeetingClient(true)}>
+                                        <Button className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all" onClick={() => setCreateMeetingClient(true)}>
                                             <Plus className="mr-2 h-4 w-4" />
                                             New Meet For Client
                                         </Button>
@@ -81,17 +81,17 @@ export default function Page() {
                                     <Input className="w-64 pl-8" placeholder="Search" />
                                 </div> */}
                                 <Select>
-                                    <SelectTrigger className="w-[180px]">
+                                    <SelectTrigger className="w-[180px] bg-secondary border-primary text-foreground-primary">
                                         <SelectValue placeholder="Select a date" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-secondary border-primary">
                                         <SelectGroup>
-                                            <SelectLabel>Today</SelectLabel>
-                                            <SelectItem value="apple">Yeaterday</SelectItem>
-                                            <SelectItem value="banana">03-12-2024</SelectItem>
-                                            <SelectItem value="blueberry">02-12-2024</SelectItem>
-                                            <SelectItem value="grapes">01-12-2024</SelectItem>
-                                            <SelectItem value="pineapple">31-11-2024</SelectItem>
+                                            <SelectLabel className="text-foreground-secondary">Today</SelectLabel>
+                                            <SelectItem value="apple" className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">Yeaterday</SelectItem>
+                                            <SelectItem value="banana" className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">03-12-2024</SelectItem>
+                                            <SelectItem value="blueberry" className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">02-12-2024</SelectItem>
+                                            <SelectItem value="grapes" className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">01-12-2024</SelectItem>
+                                            <SelectItem value="pineapple" className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">31-11-2024</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -105,7 +105,7 @@ export default function Page() {
                             }
                             {
                                 meetings.length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Calendar view coming soon
                                 </div>
                             }
@@ -118,7 +118,7 @@ export default function Page() {
                             }
                             {
                                 meetings?.filter(meeting => meeting.user_id == user?.user_id).length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Calendar view coming soon
                                 </div>
                             }
@@ -130,7 +130,7 @@ export default function Page() {
                             }
                             {
                                 meetings?.filter(meeting => meeting.user_id != user?.user_id).length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Calendar view coming soon
                                 </div>
                             }

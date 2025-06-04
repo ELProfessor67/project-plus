@@ -1,4 +1,3 @@
-
 'use client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -154,49 +153,86 @@ export default function Page() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-5rem)]  md:flex-row bg-white m-2 rounded-md relative">
+      <div className="flex flex-col h-[calc(100vh-5rem)] md:flex-row bg-secondary m-2 rounded-md relative">
         {/* Sidebar */}
-        <div className="w-full md:w-80 bg-white p-4 border-r">
+        <div className="w-full md:w-80 bg-secondary p-4 border-r border-primary">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold">Users</h1>
-
+            <h1 className="text-xl font-bold text-foreground-primary">Users</h1>
           </div>
           <div className="relative mb-4">
-            <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
-            <Input className="pl-8" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <Search className="absolute left-2 top-3 h-4 w-4 text-foreground-secondary" />
+            <Input 
+              className="pl-8 focus:ring-accent-hover border-gray-300 rounded focus:border-accent" 
+              placeholder="Search" 
+              value={query} 
+              onChange={(e) => setQuery(e.target.value)} 
+            />
           </div>
           <div className="space-y-2 overflow-auto h-[85%]">
             {
               loading && 
-              [1,2,3,4,5,6,7].map(() => (
-                <div className="flex items-center space-x-3 p-2 bg-gray-100 rounded-lg py-10 px-2">
-                        
-                  </div>
+              [1,2,3,4,5,6,7].map((_, index) => (
+                <div key={index} className="flex items-center space-x-3 p-2 bg-secondary-hover rounded-lg py-10 px-2">
+                </div>
               ))
             }
-            <RenderUserComponent searchLoading={searchLoading} users={users} searchUser={searchUser} handleSelectChat={handleSelectChat} query={query} setUser={setUser} setQuery={setQuery}/>
+            <RenderUserComponent 
+              searchLoading={searchLoading} 
+              users={users} 
+              searchUser={searchUser} 
+              handleSelectChat={handleSelectChat} 
+              query={query} 
+              setUser={setUser} 
+              setQuery={setQuery}
+            />
           </div>
         </div>
 
         {/* Main Chat */}
         {
           selectedChat &&
-          <RenderChats selectedChat={selectedChat} setSelectTask={setSelectTask} selectedTask={selectedTask} handleSendMessage={handleSendMessage} socketRef={socketRef} messages={messages} setMessages={setMessages} conversationId={conversationId} setConversationId={setConversationId} handleCall={handleSetCall} />
+          <RenderChats 
+            selectedChat={selectedChat} 
+            setSelectTask={setSelectTask} 
+            selectedTask={selectedTask} 
+            handleSendMessage={handleSendMessage} 
+            socketRef={socketRef} 
+            messages={messages} 
+            setMessages={setMessages} 
+            conversationId={conversationId} 
+            setConversationId={setConversationId} 
+            handleCall={handleSetCall} 
+          />
         }
 
         {
           !selectedChat &&
-          <div className="flex-1 flex items-center justify-center bg-gray-200">
-            <img src="/assets/Internet-Chat-Rooms.svg" />
+          <div className="flex-1 flex items-center justify-center bg-secondary-hover">
+            <img src="/assets/Internet-Chat-Rooms.svg" alt="Chat illustration" />
           </div>
         }
       </div>
 
       {
         currentCallUser &&
-        <CallDialog setCurrentCallUser={setCurrentCallUser} handelNoResponse={handelNoResponse} setIsCallByMe={setIsCallByMe} setCallMessageId={setCallMessageId} callMessageId={callMessageId} handleCallAnswer={handleCallAnswer} currentCallUser={currentCallUser} isCallByMe={isCallByMe} conversationId={conversationId} socketRef={socketRef} handleCall={handleCall} selectedTask={selectedTask} setMessages={setMessages} handleSendSignal={handleSendSignal} handleCallEnd={handleCallEnd} />
+        <CallDialog 
+          setCurrentCallUser={setCurrentCallUser} 
+          handelNoResponse={handelNoResponse} 
+          setIsCallByMe={setIsCallByMe} 
+          setCallMessageId={setCallMessageId} 
+          callMessageId={callMessageId} 
+          handleCallAnswer={handleCallAnswer} 
+          currentCallUser={currentCallUser} 
+          isCallByMe={isCallByMe} 
+          conversationId={conversationId} 
+          socketRef={socketRef} 
+          handleCall={handleCall} 
+          selectedTask={selectedTask} 
+          setMessages={setMessages} 
+          handleSendSignal={handleSendSignal} 
+          handleCallEnd={handleCallEnd} 
+        />
       }
     </>
-
   )
 }

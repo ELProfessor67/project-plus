@@ -40,15 +40,14 @@ const SendMailClient = ({ open, onClose, getAllMail, project_id = null }) => {
         }
     }, [selectTask, selectProject, subject, content, selectClient]);
 
-
     return (
         <BigDialog open={open} onClose={onClose}>
             <div className='px-2 py-3'>
                 <div className="w-full px-10 space-y-6 mt-5">
-                    <h1 className="text-3xl font-semibold text-gray-800 text-center">Send A Mail To Client</h1>
+                    <h1 className="text-3xl font-semibold text-foreground-primary text-center">Send A Mail To Client</h1>
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-2">
-                            <Label htmlFor="subject">Subject</Label>
+                            <Label htmlFor="subject" className="text-foreground-primary">Subject</Label>
                             <Input
                                 id="subject"
                                 type="text"
@@ -57,108 +56,52 @@ const SendMailClient = ({ open, onClose, getAllMail, project_id = null }) => {
                                 required
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="content">Content</Label>
-                            <Textarea name='content' id='content' placeholder="add content..." value={content} onChange={(e) => setContent(e.target.value)} />
+                            <Label htmlFor="content" className="text-foreground-primary">Content</Label>
+                            <Textarea 
+                                name='content' 
+                                id='content' 
+                                placeholder="add content..." 
+                                value={content} 
+                                onChange={(e) => setContent(e.target.value)}
+                                className="bg-white border-primary text-black placeholder:text-gray-400"
+                            />
                         </div>
-
                         <div className="space-y-2">
-                            <Label htmlFor="project">Project</Label>
-                            <Select onValueChange={(value) => setSelectProject(value)} value={selectProject}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select a project" />
+                            <Label htmlFor="client" className="text-foreground-primary">Client</Label>
+                            <Select onValueChange={(value) => setSelectedClient(value)} value={selectClient}>
+                                <SelectTrigger className="w-full bg-white border-primary text-black">
+                                    <SelectValue placeholder="Select a client" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white border-primary">
                                     <SelectGroup>
-                                        <SelectLabel>Projects</SelectLabel>
+                                        <SelectLabel className="text-gray-400">Clients</SelectLabel>
                                         {
-                                            user && user?.Projects?.map((project, index) => (
-                                                <SelectItem value={`${project.project_id}`} key={`${project.project_id}-${index}`}>{project?.name}</SelectItem>
+                                            user && user?.Clients?.map((client, index) => (
+                                                <SelectItem 
+                                                    value={`${client.client_id}`} 
+                                                    key={`${client.client_id}-${index}`}
+                                                    className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                                                >
+                                                    {client?.name}
+                                                </SelectItem>
                                             ))
                                         }
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
                         </div>
-
-
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Task</Label>
-                            <Select onValueChange={(value) => setSelectedTask(value)} value={selectTask}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select a task" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Tasks</SelectLabel>
-                                        {
-                                            user && user?.Projects?.find(project => project.project_id == selectProject)?.Tasks?.map((task, index) => (
-                                                <SelectItem value={`${task.task_id}`} key={`${task.task_id}-${index}`}>{task?.name}</SelectItem>
-                                            ))
-                                        }
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {
-                            user?.Role != "CLIENT" &&
-                            <div className="space-y-2">
-                                <Label htmlFor="description">Client</Label>
-                                <Select onValueChange={(value) => setSelectedClient(value)} value={selectClient}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a task" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Clients</SelectLabel>
-                                            {
-                                                user && user?.Projects?.find(project => project.project_id == selectProject)?.Clients?.map((client, index) => (
-                                                    <SelectItem value={client.user.user_id.toString()} key={`${client.user_id}`}>{client?.user.name}</SelectItem>
-                                                ))
-                                            }
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        }
-
-                        {
-                            user?.Role == "CLIENT" &&
-                            <div className="space-y-2">
-                                <Label htmlFor="description">Member</Label>
-                                <Select onValueChange={(value) => setSelectedClient(value)} value={selectClient}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a task" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Members</SelectLabel>
-                                            {
-                                                user && user?.Projects?.find(project => project.project_id == selectProject)?.Members?.map((member, index) => (
-                                                    <SelectItem value={member.user.user_id.toString()} key={`${member.user_id}`}>{member?.user.name}</SelectItem>
-                                                ))
-                                            }
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        }
-
-
-
-                        <Button
-                            type="submit"
-                            className="w-full h-12 bg-blue-500 text-white disabled:opacity-40 hover:bg-blue-600"
-                            disabled={isLoading || !selectProject || !selectTask || !subject || !content}
-                            isLoading={isLoading}
+                        <Button 
+                            type="submit" 
+                            className="w-full bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all"
+                            disabled={isLoading}
                         >
-                            Send Now
+                            {isLoading ? 'Sending...' : 'Send Mail'}
                         </Button>
                     </form>
-
                 </div>
             </div>
         </BigDialog>

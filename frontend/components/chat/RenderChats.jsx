@@ -91,41 +91,49 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
     return (
         <>
             <div className="flex-1 flex flex-col relative">
-                <div className="bg-white p-4 border-b flex justify-between items-center">
+                <div className="bg-secondary p-4 border-b border-primary flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                         <AvatarCompoment name={selectedChat.name} />
                         <div>
-                            <p className="font-medium">{selectedChat.name} - {selectedTask?.name}</p>
-                            <p className="text-sm text-gray-500">{selectedChat.active_status}</p>
+                            <p className="font-medium text-foreground-primary">{selectedChat.name} - {selectedTask?.name}</p>
+                            <p className="text-sm text-foreground-secondary">{selectedChat.active_status}</p>
                         </div>
                     </div>
                     <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleCall(selectedChat)} disabled={!conversationId}><PhoneCall className="h-5 w-5" /></Button>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleCall(selectedChat)} 
+                            disabled={!conversationId}
+                            className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text cursor-pointer"
+                        >
+                            <PhoneCall className="h-5 w-5" />
+                        </Button>
                     </div>
                 </div>
-                <div className="h-[72vh]  overflow-y-auto p-2 space-y-4 overflow-x-hidden" ref={containerRef}>
+                <div className="h-[72vh] overflow-y-auto p-2 space-y-4 overflow-x-hidden bg-secondary" ref={containerRef}>
                     {
                         loading &&
                         Array(8).fill(0).map((_, index) => (
-                            <Skeleton className={`h-12 ${index & 1 ? 'ml-auto' : ''}`} style={{ width: `${200 + (index * 10)}px` }} />
+                            <Skeleton key={index} className={`h-12 ${index & 1 ? 'ml-auto' : ''}`} style={{ width: `${200 + (index * 10)}px` }} />
                         ))
                     }
                     {
                         !loading && messages.length != 0 &&
-                        messages.map((message) => (
-                            <>
+                        messages.map((message, index) => (
+                            <React.Fragment key={index}>
                                 {
                                     message.sender_id == user?.user_id
                                         ?
                                         (
-                                            <Card className="p-3 w-fit  bg-purple-500 ml-auto text-white px-7 flex-row mr-1 mb-2 !flex gap-2  items-center">
+                                            <Card className="p-3 w-fit bg-tbutton-bg ml-auto text-tbutton-text px-7 flex-row mr-1 mb-2 !flex gap-2 items-center">
                                                 {
                                                     message.content_type == "CALL" &&
                                                     <div className='flex items-center gap-5'>
                                                         <PhoneOutgoing />
                                                         <div>
-                                                            <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
-                                                            <p className='break-words max-w-md text-xs text-muted mt-1 text-white/70'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
+                                                            <p className='break-words max-w-md text-xs text-tbutton-text/80 uppercase'>Voice Call</p>
+                                                            <p className='break-words max-w-md text-xs text-tbutton-text/70 mt-1'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
                                                         </div>
                                                     </div>
                                                 }
@@ -134,37 +142,35 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                                                     message.content_type == "PLAIN_TEXT" &&
                                                     <>
                                                         <p className='break-words max-w-md'>{message.content}</p>
-                                                        <time className='text-white/70 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
+                                                        <time className='text-tbutton-text/70 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
                                                     </>
                                                 }
-
-
                                             </Card>
                                         )
                                         :
                                         (
-                                            <Card className="p-3 w-fit px-7 flex-row mr-1 mb-2 !flex gap-2  items-center">
+                                            <Card className="p-3 w-fit px-7 flex-row mr-1 mb-2 !flex gap-2 items-center bg-secondary-hover">
                                                 {
                                                     message.content_type == "CALL" &&
                                                     <>
                                                         {
                                                             message.call_status != "NO_RESPONSE" &&
                                                             <div className='flex items-center gap-5'>
-                                                                <PhoneIncoming />
+                                                                <PhoneIncoming className="text-foreground-primary" />
                                                                 <div>
-                                                                    <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
-                                                                    <p className='break-words max-w-md text-xs text-muted mt-1 text-black/70'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
+                                                                    <p className='break-words max-w-md text-xs text-foreground-secondary uppercase'>Voice Call</p>
+                                                                    <p className='break-words max-w-md text-xs text-foreground-secondary mt-1'>{message.call_status !== 'ENDED' ? message.call_status : message.duration}</p>
                                                                 </div>
                                                             </div>
                                                         }
 
                                                         {
                                                             message.call_status == "NO_RESPONSE" &&
-                                                            <div className='flex items-center gap-5 text-red-500 cursor-pointer' onClick={() => handleCall(selectedChat)}>
+                                                            <div className='flex items-center gap-5 text-red-500 cursor-pointer hover:text-red-600' onClick={() => handleCall(selectedChat)}>
                                                                 <PhoneIncoming />
                                                                 <div>
-                                                                    <p className='break-words max-w-md text-xs text-muted uppercase'>Voice Call</p>
-                                                                    <p className='break-words max-w-md text-xs text-muted mt-1 text-red-500'>You Missed Call Click To Callback</p>
+                                                                    <p className='break-words max-w-md text-xs uppercase'>Voice Call</p>
+                                                                    <p className='break-words max-w-md text-xs mt-1'>You Missed Call Click To Callback</p>
                                                                 </div>
                                                             </div>
                                                         }
@@ -174,50 +180,56 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                                                 {
                                                     message.content_type == "PLAIN_TEXT" &&
                                                     <>
-                                                        <time className='text-gray-400 text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
-                                                        <p className='break-words max-w-md'>{message.content}</p>
+                                                        <time className='text-foreground-secondary text-xs font-normal'>{moment(message.createdAt).format("LT")}</time>
+                                                        <p className='break-words max-w-md text-foreground-primary'>{message.content}</p>
                                                     </>
                                                 }
                                             </Card>
                                         )
                                 }
-                            </>
-
+                            </React.Fragment>
                         ))
                     }
 
                     {
                         !loading && messages.length == 0 &&
                         <div className='h-full w-full flex items-center justify-center'>
-                            <img src='/assets/no-message.png'/>
+                            <img src='/assets/no-message.png' alt="No messages" />
                         </div>  
                     }
                 </div>
-                <div className="bg-white p-4 border-t">
+                <div className="bg-secondary p-4 border-t border-primary">
                     <div className="flex items-center space-x-2">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button size="icon" className="bg-blue-500 hover:bg-blue-600 transition-all"><Text className="h-4 w-4" /></Button>
+                                <Button 
+                                    size="icon" 
+                                    className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all"
+                                >
+                                    <Text className="h-4 w-4" />
+                                </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>Projects</DropdownMenuLabel>
+                            <DropdownMenuContent className="w-56 bg-secondary border-primary">
+                                <DropdownMenuLabel className="text-foreground-primary">Projects</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
                                     {
                                         user && user?.Projects?.map(project => (
-                                            <DropdownMenuSub>
-                                                <DropdownMenuSubTrigger>
-                                                    <PanelsTopLeft />
+                                            <DropdownMenuSub key={project.project_id}>
+                                                <DropdownMenuSubTrigger className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">
+                                                    <PanelsTopLeft className="mr-2 h-4 w-4" />
                                                     <span>{project.name}</span>
                                                 </DropdownMenuSubTrigger>
                                                 <DropdownMenuPortal>
-                                                    <DropdownMenuSubContent>
-
+                                                    <DropdownMenuSubContent className="bg-secondary border-primary">
                                                         {
                                                             project?.Tasks?.map((task) => (
-                                                                <DropdownMenuItem onClick={() => setSelectTask(task)}>
-
-                                                                    <ListTodo />
+                                                                <DropdownMenuItem 
+                                                                    key={task.task_id}
+                                                                    onClick={() => setSelectTask(task)}
+                                                                    className="text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                                                                >
+                                                                    <ListTodo className="mr-2 h-4 w-4" />
                                                                     <span>{task.name}</span>
                                                                 </DropdownMenuItem>
                                                             ))
@@ -230,8 +242,19 @@ const RenderChats = ({ selectedChat, setSelectTask, selectedTask, messages, setM
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Input className="flex-1" placeholder="Type a message here" value={messageValue} onChange={(e) => setMessageValue(e.target.value)} />
-                        <Button size="icon" className="bg-blue-500 hover:bg-blue-600 transition-all" onClick={handleSend}><Send className="h-4 w-4" /></Button>
+                        <Input 
+                            className="flex-1 bg-secondary text-foreground-primary border-primary focus:ring-accent-hover focus:border-accent" 
+                            placeholder="Type a message here" 
+                            value={messageValue} 
+                            onChange={(e) => setMessageValue(e.target.value)} 
+                        />
+                        <Button 
+                            size="icon" 
+                            className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all" 
+                            onClick={handleSend}
+                        >
+                            <Send className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
             </div>

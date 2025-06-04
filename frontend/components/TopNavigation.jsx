@@ -1,4 +1,3 @@
-
 'use client'
 import React, { useCallback } from 'react'
 import { Button } from "@/components/ui/button"
@@ -30,22 +29,20 @@ const TopNavigation = ({ setSidebarOpen }) => {
         }
     },[]);
     return (
-        <header className="bg-gray-100 shadow">
-
+        <header className="bg-secondary shadow">
             <div className="flex h-16 items-center justify-between px-4">
-                <h2 className='font-medium text-2xl hidden lg:block'>flexywexy.com</h2>
+                <h2 className='font-medium text-2xl hidden lg:block text-foreground-primary'>flexywexy.com</h2>
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setSidebarOpen(true)}
-                    className="lg:hidden"
+                    className="lg:hidden text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text"
                 >
                     <Menu className="h-6 w-6" />
                 </Button>
 
-
                 <div className="flex items-center space-x-4">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text">
                         <Brain className="h-5 w-5" />
                     </Button>
                     {/* <Button variant="ghost" size="icon">
@@ -54,20 +51,20 @@ const TopNavigation = ({ setSidebarOpen }) => {
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Avatar>
+                            <Avatar className="cursor-pointer">
                                 <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                                <AvatarFallback className="bg-orange-500 text-white cursor-pointer">{userAvatar}</AvatarFallback>
+                                <AvatarFallback className="bg-tbutton-bg text-white cursor-pointer">{userAvatar}</AvatarFallback>
                             </Avatar>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56 mr-2">
+                        <DropdownMenuContent className="w-56 mr-2 bg-secondary border border-secondary">
                             <DropdownMenuGroup>
-                                <DropdownMenuItem className="cursor-pointer">
-                                    <User />
-                                    <span className='text-black/70'>Profile</span>
+                                <DropdownMenuItem className="cursor-pointer text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text">
+                                    <User className="mr-2 h-4 w-4" />
+                                    <span>Profile</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer" onClick={handleClick}>
-                                    <DoorOpen />
-                                    <span className='text-black/70'>Logout</span>
+                                <DropdownMenuItem className="cursor-pointer text-foreground-primary hover:!bg-tbutton-bg hover:!text-tbutton-text" onClick={handleClick}>
+                                    <DoorOpen className="mr-2 h-4 w-4" />
+                                    <span>Logout</span>
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
                         </DropdownMenuContent>

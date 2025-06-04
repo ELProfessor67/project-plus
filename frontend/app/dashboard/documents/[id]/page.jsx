@@ -109,8 +109,7 @@ const page = ({ params }) => {
 
     if (loading) {
         return <>
-            <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
-
+            <div className="h-screen bg-secondary m-2 rounded-md flex items-center justify-center">
                 <Loader />
             </div>
         </>
@@ -119,12 +118,12 @@ const page = ({ params }) => {
 
     return (
         <>
-            <main className="flex-1 overflow-auto p-8 bg-white m-2 rounded-md">
+            <main className="flex-1 overflow-auto p-8 bg-secondary m-2 rounded-md">
                 {
                     user?.Role == "PROVIDER" &&
-                    <div className="mb-8  flex items-center justify-between">
-                        <h1 className="text-3xl font-semibold text-gray-800">Projects Documents</h1>
-                        <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => setOpen(true)}>
+                    <div className="mb-8 flex items-center justify-between">
+                        <h1 className="text-3xl font-semibold text-foreground-primary">Projects Documents</h1>
+                        <Button className='bg-tbutton-bg text-white hover:bg-tbutton-hover hover:text-tbutton-text' onClick={() => setOpen(true)}>
                             Request Document
                         </Button>
                     </div>
@@ -132,53 +131,48 @@ const page = ({ params }) => {
 
                 <div className="flex-1 overflow-auto">
                     <Table className="border-collapse border rounded-md">
-                        <TableHeader className="border-b">
+                        <TableHeader className="border-b bg-secondary">
                             <TableRow>
-                                <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                                <TableHead className="w-[300px] border-r last:border-r-0">Name</TableHead>
-                                <TableHead className="border-r last:border-r-0">Description</TableHead>
-                                <TableHead className="border-r last:border-r-0">Date</TableHead>
-                                <TableHead className="border-r last:border-r-0">Status</TableHead>
-                                <TableHead className="border-r last:border-r-0">Action</TableHead>
+                                <TableHead className="!w-[80px] border-r last:border-r-0 text-foreground-primary">#</TableHead>
+                                <TableHead className="w-[300px] border-r last:border-r-0 text-foreground-primary">Name</TableHead>
+                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Description</TableHead>
+                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Date</TableHead>
+                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Status</TableHead>
+                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y">
                             {
                                 documents.map((document, index) => (
-                                    <TableRow>
-                                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
+                                    <TableRow key={document.document_id}>
+                                        <TableCell className='border-r last:border-r-0 cursor-pointer text-foreground-primary'>
                                             {index + 1}
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer`}>
                                             {document.name}
                                         </TableCell>
 
-                                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
+                                        <TableCell className="border-r last:border-r-0 !p-1 text-center text-foreground-primary">
                                             {document.description}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer`}>
                                             {moment(document.created_at).format("DD MMM YYYY")}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center`}>
-
-
-
-
+                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center text-foreground-primary`}>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
                                                     <Select onValueChange={(status) => handleUpdateStatus(status,document.document_id)} value={document.status} className='w-full'>
-                                                        <SelectTrigger className="w-full">
+                                                        <SelectTrigger className="w-full bg-secondary text-foreground-primary">
                                                             <SelectValue placeholder="Select a status" />
                                                         </SelectTrigger>
-                                                        <SelectContent>
+                                                        <SelectContent className="bg-secondary">
                                                             <SelectGroup>
-                                                                <SelectLabel>Status</SelectLabel>
-                                                                <SelectItem value="PENDING">PENDING</SelectItem>
-                                                                <SelectItem value="REJECTED">REJECTED</SelectItem>
-                                                                <SelectItem value="APPROVED">APPROVED</SelectItem>
+                                                                <SelectLabel className="text-foreground-primary">Status</SelectLabel>
+                                                                <SelectItem value="PENDING" className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text">PENDING</SelectItem>
+                                                                <SelectItem value="REJECTED" className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text">REJECTED</SelectItem>
+                                                                <SelectItem value="APPROVED" className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text">APPROVED</SelectItem>
                                                             </SelectGroup>
                                                         </SelectContent>
                                                     </Select>
@@ -187,19 +181,18 @@ const page = ({ params }) => {
                                             {
                                                 user?.Role == "CLIENT" &&
                                                 (
-                                                    <span>{document.status}</span>
+                                                    <span className="text-foreground-primary">{document.status}</span>
                                                 )
                                             }
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-black text-center relative cursor-pointer group`}>
+                                        <TableCell className={`border-r last:border-r-0 !p-1 text-foreground-primary text-center relative cursor-pointer group`}>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
                                                     <>
                                                         {
-
                                                             document.filename &&
-                                                            <a target='__black' href={document.file_url} className='text-blue-500 underline'>{document.filename}</a>
+                                                            <a target='__black' href={document.file_url} className='text-accent hover:text-accent-hover underline'>{document.filename}</a>
                                                         }
 
                                                         {
@@ -215,11 +208,12 @@ const page = ({ params }) => {
                                                     <div className='flex items-center gap-3'>
                                                         {
                                                             document.filename &&
-                                                            <a target='__black' href={document.file_url} className='text-blue-500 underline'>{document.filename}</a>
+                                                            <a target='__black' href={document.file_url} className='text-accent hover:text-accent-hover underline'>{document.filename}</a>
                                                         }
                                                         <Input
                                                             type="file"
                                                             onChange={(e) => hadleUpload(e, document.document_id)}
+                                                            className="bg-secondary text-foreground-primary"
                                                         />
                                                     </div>
                                                 )
@@ -228,7 +222,6 @@ const page = ({ params }) => {
                                     </TableRow>
                                 ))
                             }
-
                         </TableBody>
                     </Table>
                 </div>
@@ -240,7 +233,7 @@ const page = ({ params }) => {
                 <form className='space-y-8 mt-20 px-5' onSubmit={handleDocumentRequest}>
 
                     <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" className="text-foreground-primary">Name</Label>
                         <Input
                             id="name"
                             type="text"
@@ -249,11 +242,12 @@ const page = ({ params }) => {
                             value={formdata.name}
                             onChange={handleFormChange}
                             required
+                            className="bg-secondary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description" className="text-foreground-primary">Description</Label>
                         <Textarea
                             id="description"
                             type="text"
@@ -262,9 +256,10 @@ const page = ({ params }) => {
                             value={formdata.description}
                             onChange={handleFormChange}
                             required
+                            className="bg-secondary text-foreground-primary"
                         />
                     </div>
-                    <Button className={`bg-blue-500 hover:bg-blue-600 w-full disabled:opacity-40`} isLoading={submitLoading} disabled={submitLoading}>
+                    <Button className="bg-tbutton-bg text-white hover:bg-tbutton-hover hover:text-tbutton-text w-full disabled:opacity-40" isLoading={submitLoading} disabled={submitLoading}>
                         {submitLoading ? "Loading..." : "Request"}
                     </Button>
                 </form>

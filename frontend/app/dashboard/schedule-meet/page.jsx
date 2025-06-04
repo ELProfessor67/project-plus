@@ -18,20 +18,14 @@ import CreateMeeting from "@/components/CreateMeeting"
 import { getsMeetingRequest } from "@/lib/http/meeting"
 import { useUser } from "@/providers/UserProvider"
 
-
-
-
 export default function Page() {
     const [createMeeting,setCreateMeeting] = useState(false);
     const [meetings, setMeetings] = useState([]);
     const {user} = useUser();
 
-
     const getMeetings = useCallback(async () => {
-       
         try {
             const res = await getsMeetingRequest(true);
-          
             setMeetings(res.data.meetings);
         } catch (error) {
             console.log(error?.response?.data?.message || error.message);
@@ -43,50 +37,50 @@ export default function Page() {
     },[])
     return (
         <>
-            <div className="flex h-screen flex-col bg-white m-2 rounded-md overflow-y-auto">
+            <div className="flex h-screen flex-col bg-secondary m-2 rounded-md overflow-y-auto">
                 <div className="flex flex-col gap-4 p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <h1 className="text-2xl font-semibold">Schedule Meetings</h1>
-                            <Info className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon">
-                                <Settings className="h-4 w-4" />
-                            </Button>
-                            <Button variant="outline">Customize</Button>
+                            <h1 className="text-2xl font-semibold text-foreground-primary">Schedule Meetings</h1>
+                            <Info className="h-4 w-4 text-foreground-secondary" />
                         </div>
                     </div>
 
                     {/* View Tabs */}
                     <Tabs defaultValue="pending" className="w-full">
                         <div className="flex items-center justify-between">
-                            <TabsList>
-                                <TabsTrigger value="pending">Pending</TabsTrigger>
-                                <TabsTrigger value="canceled">Canceled</TabsTrigger>
-                                <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+                            <TabsList className="bg-secondary border border-primary">
+                                <TabsTrigger value="pending" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">Pending</TabsTrigger>
+                                <TabsTrigger value="canceled" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">Canceled</TabsTrigger>
+                                <TabsTrigger value="scheduled" className="data-[state=active]:bg-tbutton-bg data-[state=active]:text-tbutton-text">Scheduled</TabsTrigger>
                             </TabsList>
                             <div className="flex items-center gap-2">
-                                <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setCreateMeeting(true)}>
+                                <Button 
+                                    className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all" 
+                                    onClick={() => setCreateMeeting(true)}
+                                >
                                     Schedule Meet
                                 </Button>
                                 <div className="relative">
-                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                                    <Input className="w-64 pl-8" placeholder="Search" />
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-foreground-secondary" />
+                                    <Input 
+                                        className="w-64 pl-8 bg-white border-primary text-black placeholder:text-gray-400" 
+                                        placeholder="Search" 
+                                    />
                                 </div>
                                 <Select>
-                                    <SelectTrigger className="w-[180px]">
+                                    <SelectTrigger className="w-[180px] bg-white border-primary text-black">
                                         <SelectValue placeholder="Select a date" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-white border-primary">
                                         <SelectGroup>
-                                            <SelectLabel>Today</SelectLabel>
-                                            <SelectItem value="apple">Yeaterday</SelectItem>
-                                            <SelectItem value="banana">03-12-2024</SelectItem>
-                                            <SelectItem value="blueberry">02-12-2024</SelectItem>
-                                            <SelectItem value="grapes">01-12-2024</SelectItem>
-                                            <SelectItem value="pineapple">31-11-2024</SelectItem>
+                                            <SelectLabel className="text-gray-400">Today</SelectLabel>
+                                            <SelectItem value="apple" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">Yeaterday</SelectItem>
+                                            <SelectItem value="banana" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">03-12-2024</SelectItem>
+                                            <SelectItem value="blueberry" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">02-12-2024</SelectItem>
+                                            <SelectItem value="grapes" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">01-12-2024</SelectItem>
+                                            <SelectItem value="pineapple" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">31-11-2024</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -100,11 +94,10 @@ export default function Page() {
                             }
                             {
                                 meetings?.filter(meeting => meeting.status == "PENDING").length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Empty
                                 </div>
                             }
-
                         </TabsContent>
                         <TabsContent value="canceled">
                             {
@@ -113,7 +106,7 @@ export default function Page() {
                             }
                             {
                                 meetings?.filter(meeting => meeting.status == "CANCELED").length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Empty
                                 </div>
                             }
@@ -125,7 +118,7 @@ export default function Page() {
                             }
                             {
                                 meetings?.filter(meeting => meeting.status == "SCHEDULED").length == 0 &&
-                                <div className="flex h-[500px] items-center justify-center text-gray-500">
+                                <div className="flex h-[500px] items-center justify-center text-foreground-secondary">
                                     Empty
                                 </div>
                             }

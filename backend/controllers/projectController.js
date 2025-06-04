@@ -8,7 +8,7 @@ import { sendInviation } from '../services/userService.js';
 import { prisma } from "../prisma/index.js";
 
 export const createProject = catchAsyncError(async (req, res, next) => {
-    const { name, description } = req.body;
+    const { name, description,opposing } = req.body;
 
     const [err, isValidate] = await validateRequestBody(req.body, AddProjectRequestBodySchema);
     if (!isValidate) {
@@ -22,6 +22,7 @@ export const createProject = catchAsyncError(async (req, res, next) => {
             name,
             description,
             created_by: userId,
+            opposing
         },
     });
 

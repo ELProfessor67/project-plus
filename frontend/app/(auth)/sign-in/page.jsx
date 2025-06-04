@@ -53,39 +53,40 @@ export default function Login() {
   },[]);
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
+    <div className="flex min-h-screen bg-primary ">
       {/* Left Column */}
-      <div className="w-full flex-1 p-8 lg:p-16 flex flex-col relative">
-        <Image src="/assets/logo-full-big.avif" alt="flexywexy.com Logo" width={200} height={70} className="mb-12" />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <div className="w-full max-w-[400px] space-y-6">
+      <div className="w-full flex-1 p-16 flex  relative">
+        <div className="flex items-center justify-center px-4 mx-auto bg-secondary rounded-md h-[45rem] mt-10">
+          <div className="w-[35rem] space-y-6  rounded-md p-4">
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-semibold text-gray-800">Log in to your account</h1>
-              <p className="text-gray-600">Welcome back! Please enter your details.</p>
+              <h1 className="text-3xl font-semibold text-foreground-primary">Log in to your account</h1>
+              <p className="text-foreground-secondary">Welcome back! Please enter your details.</p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4 text-foreground-primary">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
+                <input
                   id="email"
                   type="email"
                   name="email"
                   placeholder="Enter your email"
                   value={formdata.email}
                   onChange={onFormDataChange}
+                  className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
+                <input
                   id="password"
                   type="password"
                   name="password"
                   placeholder="Enter your password"
                   value={formdata.password}
                   onChange={onFormDataChange}
+                  className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
@@ -95,21 +96,21 @@ export default function Login() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-[#0073ea] focus:ring-[#0073ea] border-gray-300 rounded"
+                    className="h-4 w-4 text-purple-600 focus:ring-purple-600 border-gray-300 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-foreground-secondary">
                     Remember me
                   </label>
                 </div>
                 <div className="text-sm">
-                  <Link href="/forgot-password" className="text-[#0073ea] hover:underline">
+                  <Link href="/forgot-password" className="text-accent hover:text-accent-hover">
                     Forgot password?
                   </Link>
                 </div>
               </div>
               <Button
                 type="submit"
-                className="w-full h-12 bg-blue-500 text-white disabled:opacity-40 hover:bg-blue-600"
+                className="w-full h-12 bg-tbutton-bg text-white disabled:opacity-40 hover:bg-tbutton-hover"
                 disabled={(!formdata.email || !formdata.password) || isLoading}
                 isLoading={isLoading}
               >
@@ -122,7 +123,7 @@ export default function Login() {
                 <span className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-secondary text-foreground-secondary">Or continue with</span>
               </div>
             </div>
 
@@ -134,28 +135,15 @@ export default function Login() {
               
             </div>
 
-            <div className="text-center text-sm text-gray-700">
-              Don't have an account?{" "} <span> <Link href={`/sign-up${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">
+            <div className="text-center text-sm text-foreground-secondary">
+              Don't have an account?{" "} <span> <Link href={`/sign-up${next_to ? `?next_to=${next_to}` : ''}`} className="text-accent hover:text-accent-hover">
                 Sign up as provoder
-              </Link>/ <Link href={`/sign-up-as-client${next_to ? `?next_to=${next_to}` : ''}`} className="text-[#0073ea] hover:underline">
+              </Link>/ <Link href={`/sign-up-as-client${next_to ? `?next_to=${next_to}` : ''}`} className="text-accent hover:text-accent-hover">
                 Sign up as cient
               </Link></span>
              
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Right Column */}
-      <div className="hidden lg:block w-[40%] relative">
-        <div className="h-full flex items-center justify-center">
-          <Image
-            src="/assets/step-4.avif"
-            alt="Decorative Image"
-            layout="fill"
-            objectFit="cover"
-            className="rounded-l-2xl"
-          />
         </div>
       </div>
     </div>

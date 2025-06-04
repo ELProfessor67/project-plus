@@ -470,19 +470,9 @@ export const addTranscibtion = catchAsyncError(async (req, res, next) => {
 
 
 export const addComments = catchAsyncError(async (req, res, next) => {
-    let { task_id, content } = req.body;
+    let { project_id, content } = req.body;
     const user_id = req.user.user_id;
-    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
-
-    const task = await prisma.task.findUnique({
-        where: {
-            task_id: parseInt(task_id)
-        }
-    });
-
-
-
-    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
+    if (!project_id) return next(new ErrorHandler(401, "Task Id is required."));
 
 
 
@@ -490,7 +480,7 @@ export const addComments = catchAsyncError(async (req, res, next) => {
 
     await prisma.comment.create({
         data: {
-            task_id: parseInt(task_id),
+            project_id: parseInt(project_id),
             user_id: user_id,
             content: content
         }
@@ -498,14 +488,14 @@ export const addComments = catchAsyncError(async (req, res, next) => {
 
 
 
-    await prisma.taskProgress.create({
-        data: {
-            message: `User Add a comments: ${content}`,
-            user_id: user_id,
-            task_id: parseInt(task_id),
-            type: "COMMENT"
-        }
-    });
+    // await prisma.taskProgress.create({
+    //     data: {
+    //         message: `User Add a comments: ${content}`,
+    //         user_id: user_id,
+    //         task_id: parseInt(task_id),
+    //         type: "COMMENT"
+    //     }
+    // });
 
 
     res.status(200).json({
@@ -515,23 +505,17 @@ export const addComments = catchAsyncError(async (req, res, next) => {
 });
 
 export const getComments = catchAsyncError(async (req, res, next) => {
-    let { task_id } = req.params;
+    let { task_id: project_id } = req.params;
     const user_id = req.user.user_id;
-    if (!task_id) return next(new ErrorHandler(401, "Task Id is required."));
+    if (!project_id) return next(new ErrorHandler(401, "Task Id is required."));
 
-    const task = await prisma.task.findUnique({
-        where: {
-            task_id: parseInt(task_id)
-        }
-    });
+ 
 
 
-
-    if (!task) return next(new ErrorHandler(401, "Invalid Task Id"));
 
     const comments = await prisma.comment.findMany({
         where: {
-            task_id: parseInt(task_id)
+            project_id: parseInt(project_id)
         },
         select: {
             content: true,

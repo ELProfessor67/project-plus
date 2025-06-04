@@ -22,11 +22,10 @@ const page = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const { user } = useUser()
 
-
   const getProgress = React.useCallback(async () => {
     try {
       setLoading(true)
-      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedEndDate.date,selectedType, selectedProject);
+      const res = await getAllTaskProgressRequest(selectedDate?.date, selectedEndDate.date, selectedType, selectedProject);
       setProgress(res.data.progress)
       setTimes(res.data.times);
       setDocuments(res.data.documents)
@@ -35,39 +34,41 @@ const page = () => {
     } finally {
       setLoading(false)
     }
-  }, [selectedDate?.date, selectedType, selectedProject,selectedEndDate?.date]);
-
+  }, [selectedDate?.date, selectedType, selectedProject, selectedEndDate?.date]);
 
   React.useEffect(() => {
     getProgress();
-  }, [selectedDate?.date, selectedType,selectedProject,selectedEndDate?.date]);
+  }, [selectedDate?.date, selectedType, selectedProject, selectedEndDate?.date]);
 
-
-  console.log(selectedDate, selectedEndDate)
   if (loading) {
     return <>
-      <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
-
+      <div className="h-screen bg-secondary m-2 rounded-md flex items-center justify-center">
         <Loader />
       </div>
     </>
   }
 
   return (
-    <div className="h-screen bg-white m-2 rounded-md overflow-y-auto p-2">
+    <div className="h-screen bg-secondary m-2 rounded-md overflow-y-auto p-8">
       <div className="flex justify-between flex-1 mt-5">
-        <h1 className="text-3xl text-black uppercase">{selectedDate?.label} Working Hour</h1>
+        <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Working Hour</h1>
         <div className="flex gap-2 justify-end">
           <Select onValueChange={(value) => setSelectedDate(value)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white border-primary text-black">
               <SelectValue placeholder={"Start Date"} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-primary">
               <SelectGroup>
-                <SelectLabel>Dates</SelectLabel>
+                <SelectLabel className="text-gray-400">Dates</SelectLabel>
                 {
                   dates.map(date => (
-                    <SelectItem value={date} key={date.date}>{date.label}</SelectItem>
+                    <SelectItem 
+                      value={date} 
+                      key={date.date}
+                      className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                    >
+                      {date.label}
+                    </SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -75,15 +76,21 @@ const page = () => {
           </Select>
 
           <Select onValueChange={(value) => setSelectedEndDate(value)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white border-primary text-black">
               <SelectValue placeholder={"End Date"} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-primary">
               <SelectGroup>
-                <SelectLabel>Dates</SelectLabel>
+                <SelectLabel className="text-gray-400">Dates</SelectLabel>
                 {
                   dates.map(date => (
-                    <SelectItem value={date} key={date.date}>{date.label}</SelectItem>
+                    <SelectItem 
+                      value={date} 
+                      key={date.date}
+                      className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                    >
+                      {date.label}
+                    </SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -91,16 +98,27 @@ const page = () => {
           </Select>
 
           <Select onValueChange={(value) => setSelectedProject(value)} value={selectedProject}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white border-primary text-black">
               <SelectValue placeholder={"Select Project"} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-primary">
               <SelectGroup>
-                <SelectLabel>Select Project</SelectLabel>
-                <SelectItem value={null}>All</SelectItem>
+                <SelectLabel className="text-gray-400">Select Project</SelectLabel>
+                <SelectItem 
+                  value={null}
+                  className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                >
+                  All
+                </SelectItem>
                 {
                   user?.Projects.map(project => (
-                    <SelectItem value={project.project_id} key={project.project_id}>{project.name}</SelectItem>
+                    <SelectItem 
+                      value={project.project_id} 
+                      key={project.project_id}
+                      className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text"
+                    >
+                      {project.name}
+                    </SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -112,39 +130,35 @@ const page = () => {
       {
         times.map(project => (
           <div className='mt-5'>
-            <h1 className='text-2xl text-red-500'>{project.name}</h1>
-
+            <h1 className='text-2xl text-foreground-primary'>{project.name}</h1>
 
             <div className="flex-1 overflow-auto mt-2">
-              <Table className="border-collapse border rounded-md">
-                <TableHeader className="border-b">
+              <Table className="border-collapse border border-primary rounded-md">
+                <TableHeader className="border-b border-primary bg-primary/10">
                   <TableRow>
-                    <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                    <TableHead className="border-r last:border-r-0">Task</TableHead>
-                    <TableHead className="border-r last:border-r-0">User</TableHead>
-                    <TableHead className="border-r last:border-r-0">START</TableHead>
-                    <TableHead className="border-r last:border-r-0">DESCRIPTION</TableHead>
-                    <TableHead className="border-r last:border-r-0">Date</TableHead>
-                    <TableHead className="border-r last:border-r-0">TOTAL</TableHead>
+                    <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary font-semibold">#</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Task</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">User</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">START</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">DESCRIPTION</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Date</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">TOTAL</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableHeader>
+                <TableBody>
                   {
                     project.Time.map((time, index) => (
-                      <TableRow>
-                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
+                      <TableRow key={index}>
+                        <TableCell className='border-r border-primary last:border-r-0 text-foreground-secondary'>
                           {index + 1}
                         </TableCell>
-
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {time.task?.name}
                         </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {time.user?.name}
                         </TableCell>
-
-                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {
                             time.status != "PROCESSING" &&
                             <>{moment(time.start).format("h:mm A")} - {moment(time?.end).format("h:mm A")}</>
@@ -154,14 +168,13 @@ const page = () => {
                             <>{moment(time.start).format("h:mm A")} - Working...</>
                           }
                         </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {time.work_description || "NA"}
                         </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {moment(time.created_at).format("DD MMM YYYY")}
                         </TableCell>
-                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-
+                        <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
                           {
                             time.status != "PROCESSING" &&
                             <>{getHourMinDiff(time.start, time.end)}</>
@@ -171,235 +184,212 @@ const page = () => {
                             <span className='text-green-500'><Timer startTime={time.start} /></span>
                           }
                         </TableCell>
-
                       </TableRow>
                     ))
                   }
-                </TableHeader>
-
-
+                </TableBody>
               </Table>
             </div>
           </div>
         ))
       }
-      {/* progress  */}
 
       <div className="flex justify-between flex-1 mt-16">
-        <h1 className="text-3xl text-black uppercase">{selectedDate?.label} Progress</h1>
+        <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Progress</h1>
         <div className="flex gap-2 justify-end">
           <Select onValueChange={(value) => setSelectedType(value)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white border-primary text-black">
               <SelectValue placeholder="Select a Type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-primary">
               <SelectGroup>
-                <SelectLabel>Type</SelectLabel>
-                <SelectItem value={null}>ALL</SelectItem>
-                <SelectItem value={"MAIL"}>MAIL</SelectItem>
-                <SelectItem value={"MEETING"}>MEETING</SelectItem>
-                <SelectItem value={"CHAT"}>CHAT</SelectItem>
-                <SelectItem value={"CALL"}>CALL</SelectItem>
-                <SelectItem value={"COMMENT"}>COMMENT</SelectItem>
-                <SelectItem value={"TRANSCRIBTION"}>TRANSCRIBTION</SelectItem>
-                <SelectItem value={"STATUS_CHANGED"}>STATUS_CHANGED</SelectItem>
-                <SelectItem value={"MEDIA"}>MEDIA</SelectItem>
-                <SelectItem value={"OTHER"}>OTHER</SelectItem>
+                <SelectLabel className="text-gray-400">Type</SelectLabel>
+                <SelectItem value={null} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">ALL</SelectItem>
+                <SelectItem value={"MAIL"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">MAIL</SelectItem>
+                <SelectItem value={"MEETING"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">MEETING</SelectItem>
+                <SelectItem value={"CHAT"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">CHAT</SelectItem>
+                <SelectItem value={"CALL"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">CALL</SelectItem>
+                <SelectItem value={"COMMENT"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">COMMENT</SelectItem>
+                <SelectItem value={"TRANSCRIBTION"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">TRANSCRIBTION</SelectItem>
+                <SelectItem value={"STATUS_CHANGED"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">STATUS_CHANGED</SelectItem>
+                <SelectItem value={"MEDIA"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">MEDIA</SelectItem>
+                <SelectItem value={"OTHER"} className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">OTHER</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-
-
         </div>
       </div>
 
       {
         progress.map(project => (
           <div className='mt-5'>
-            <h1 className='text-2xl text-red-500'>{project.name}</h1>
-
+            <h1 className='text-2xl text-foreground-primary'>{project.name}</h1>
 
             <div className="flex-1 overflow-auto mt-2">
-              <Table className="border-collapse border rounded-md">
-                <TableHeader className="border-b">
+              <Table className="border-collapse border border-primary rounded-md">
+                <TableHeader className="border-b border-primary bg-primary/10">
                   <TableRow>
-                    <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                    <TableHead className="w-[300px] border-r last:border-r-0">Task Name</TableHead>
-                    <TableHead className="border-r last:border-r-0">User Name</TableHead>
-                    <TableHead className="border-r last:border-r-0">Message</TableHead>
-                    <TableHead className="border-r last:border-r-0">Type</TableHead>
-                    <TableHead className="border-r last:border-r-0">Date</TableHead>
+                    <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary font-semibold">#</TableHead>
+                    <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Task Name</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">User Name</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Message</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Type</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Date</TableHead>
                   </TableRow>
                 </TableHeader>
-                {
-                  project.Tasks.map(task => (
-                    <>
-                      {
-                        task.Progress.map((progress, index) => (
-                          <TableRow>
-                            <TableCell className=' border-r last:border-r-0 cursor-pointer'>
-                              {index + 1}
-                            </TableCell>
-
-                            <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                              {progress.task?.name}
-                            </TableCell>
-                            <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                              {progress.user?.name}
-                            </TableCell>
-
-                            <TableCell className="border-r last:border-r-0 !p-1 text-center">
-                              {progress?.message}
-                            </TableCell>
-                            <TableCell className="border-r last:border-r-0 !p-1 text-center">
-                              {progress?.type}
-                            </TableCell>
-                            <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                              {moment(progress.created_at).format("DD MMM YYYY")}
-                            </TableCell>
-
-                          </TableRow>
-                        ))
-                      }
-                    </>
-                  ))
-                }
-
-
+                <TableBody>
+                  {
+                    project.Tasks.map(task => (
+                      <>
+                        {
+                          task.Progress.map((progress, index) => (
+                            <TableRow key={index}>
+                              <TableCell className='border-r border-primary last:border-r-0 text-foreground-secondary'>
+                                {index + 1}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {progress.task?.name}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {progress.user?.name}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {progress?.message}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {progress?.type}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {moment(progress.created_at).format("DD MMM YYYY")}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        }
+                      </>
+                    ))
+                  }
+                </TableBody>
               </Table>
             </div>
           </div>
         ))
       }
 
-
-
-      {/* documents  */}
-
       <div className="flex justify-between flex-1 mt-16">
-        <h1 className="text-3xl text-black uppercase">{selectedDate?.label} Documents</h1>
-
+        <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Documents</h1>
       </div>
 
       {
         documents.map(project => (
           <div className='mt-5'>
-            <h1 className='text-2xl text-red-500'>{project.name}</h1>
-
+            <h1 className='text-2xl text-foreground-primary'>{project.name}</h1>
 
             <div className="flex-1 overflow-auto mt-2">
-              <Table className="border-collapse border rounded-md">
-                <TableHeader className="border-b">
+              <Table className="border-collapse border border-primary rounded-md">
+                <TableHeader className="border-b border-primary bg-primary/10">
                   <TableRow>
-                    <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                    <TableHead className="w-[300px] border-r last:border-r-0">Name</TableHead>
-                    <TableHead className="border-r last:border-r-0">Description</TableHead>
-                    <TableHead className="border-r last:border-r-0">Date</TableHead>
-                    <TableHead className="border-r last:border-r-0">Status</TableHead>
-                    <TableHead className="border-r last:border-r-0">Action</TableHead>
+                    <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary font-semibold">#</TableHead>
+                    <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Name</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Description</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Date</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Status</TableHead>
+                    <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary font-semibold">Action</TableHead>
                   </TableRow>
                 </TableHeader>
-                {
-                  project.Clients.map(client => (
-                    <>
-                      {
-                        client.Documents.map((document, index) => (
-                          <TableRow>
-                            <TableCell className=' border-r last:border-r-0 cursor-pointer'>
-                              {index + 1}
-                            </TableCell>
-
-                            <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                              {document.name}
-                            </TableCell>
-
-                            <TableCell className="border-r last:border-r-0 !p-1 text-center">
-                              {document.description}
-                            </TableCell>
-                            <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
-                              {moment(document.created_at).format("DD MMM YYYY")}
-                            </TableCell>
-                            <TableCell className={`border-r last:border-r-0 !p-1 text-center`}>
-
-
-
-
-                              {
-                                user?.Role == "PROVIDER" &&
-                                (
-                                  <Select onValueChange={(status) => handleUpdateStatus(status, document.document_id)} value={document.status} className='w-full'>
-                                    <SelectTrigger className="w-full">
-                                      <SelectValue placeholder="Select a status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectGroup>
-                                        <SelectLabel>Status</SelectLabel>
-                                        <SelectItem value="PENDING">PENDING</SelectItem>
-                                        <SelectItem value="REJECTED">REJECTED</SelectItem>
-                                        <SelectItem value="APPROVED">APPROVED</SelectItem>
-                                      </SelectGroup>
-                                    </SelectContent>
-                                  </Select>
-                                )
-                              }
-                              {
-                                user?.Role == "CLIENT" &&
-                                (
-                                  <span>{document.status}</span>
-                                )
-                              }
-                            </TableCell>
-                            <TableCell className={`border-r last:border-r-0 !p-1 text-black text-center relative cursor-pointer group`}>
-                              {
-                                user?.Role == "PROVIDER" &&
-                                (
-                                  <>
-                                    {
-
-                                      document.filename &&
-                                      <a target='__black' href={document.file_url} className='text-blue-500 underline'>{document.filename}</a>
-                                    }
-
-                                    {
-                                      !document.filename &&
-                                      <span>No Document Uploaded</span>
-                                    }
-                                  </>
-                                )
-                              }
-                              {
-                                user?.Role == "CLIENT" &&
-                                (
-                                  <div className='flex items-center gap-3'>
-                                    {
-                                      document.filename &&
-                                      <a target='__black' href={document.file_url} className='text-blue-500 underline'>{document.filename}</a>
-                                    }
-                                    <Input
-                                      type="file"
-                                      onChange={(e) => hadleUpload(e, document.document_id)}
-                                    />
-                                  </div>
-                                )
-                              }
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      }
-                    </>
-                  ))
-                }
-
-
+                <TableBody>
+                  {
+                    project.Clients.map(client => (
+                      <>
+                        {
+                          client.Documents.map((document, index) => (
+                            <TableRow key={index}>
+                              <TableCell className='border-r border-primary last:border-r-0 text-foreground-secondary'>
+                                {index + 1}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {document.name}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {document.description}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {moment(document.created_at).format("DD MMM YYYY")}
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {
+                                  user?.Role == "PROVIDER" &&
+                                  (
+                                    <Select 
+                                      onValueChange={(status) => handleUpdateStatus(status, document.document_id)} 
+                                      value={document.status} 
+                                      className='w-full'
+                                    >
+                                      <SelectTrigger className="w-full bg-white border-primary text-black">
+                                        <SelectValue placeholder="Select a status" />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-white border-primary">
+                                        <SelectGroup>
+                                          <SelectLabel className="text-gray-400">Status</SelectLabel>
+                                          <SelectItem value="PENDING" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">PENDING</SelectItem>
+                                          <SelectItem value="REJECTED" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">REJECTED</SelectItem>
+                                          <SelectItem value="APPROVED" className="text-black hover:!bg-tbutton-bg hover:!text-tbutton-text">APPROVED</SelectItem>
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  )
+                                }
+                                {
+                                  user?.Role == "CLIENT" &&
+                                  (
+                                    <span>{document.status}</span>
+                                  )
+                                }
+                              </TableCell>
+                              <TableCell className="border-r border-primary last:border-r-0 text-foreground-secondary">
+                                {
+                                  user?.Role == "PROVIDER" &&
+                                  (
+                                    <>
+                                      {
+                                        document.filename &&
+                                        <a target='__black' href={document.file_url} className='text-primary hover:text-primary/80 underline'>{document.filename}</a>
+                                      }
+                                      {
+                                        !document.filename &&
+                                        <span>No Document Uploaded</span>
+                                      }
+                                    </>
+                                  )
+                                }
+                                {
+                                  user?.Role == "CLIENT" &&
+                                  (
+                                    <div className='flex items-center gap-3'>
+                                      {
+                                        document.filename &&
+                                        <a target='__black' href={document.file_url} className='text-primary hover:text-primary/80 underline'>{document.filename}</a>
+                                      }
+                                      <Input
+                                        type="file"
+                                        onChange={(e) => hadleUpload(e, document.document_id)}
+                                        className="bg-white border-primary text-black"
+                                      />
+                                    </div>
+                                  )
+                                }
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        }
+                      </>
+                    ))
+                  }
+                </TableBody>
               </Table>
             </div>
           </div>
         ))
       }
-
-
     </div>
   )
 }

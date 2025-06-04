@@ -277,15 +277,15 @@ const CallDialog = ({ open, setCurrentCallUser, currentCallUser, selectedTask, i
     return (
         <div className={`absolute top-0 left-0 right-0 bottom-0 overflow-y-auto z-50 p-5 bg-black/10 transition-all flex items-center justify-center`}>
             <audio ref={audioRef} hidden={true}></audio>
-            <div className={`bg-white shadow-sm rounded-md min-h-[16rem] mx-auto p-4 relative w-[20rem]`}>
+            <div className={`bg-secondary shadow-sm rounded-md min-h-[16rem] mx-auto p-4 relative w-[20rem] border border-primary`}>
                 <div className='flex items-center justify-center flex-col gap-4'>
                     <Avatar className={`w-[5rem] h-[5rem]`}>
                         <AvatarImage alt="User" />
-                        <AvatarFallback className={`text-white text-4xl`} style={{ background: getColorByFirstLetter(currentCallUser?.name || "A A") }}>
+                        <AvatarFallback className={`text-tbutton-text text-4xl`} style={{ background: getColorByFirstLetter(currentCallUser?.name || "A A") }}>
                             {getNameAvatar(currentCallUser?.name || "A A")}
                         </AvatarFallback>
                     </Avatar>
-                    <h3 className='text-3xl'>{currentCallUser?.name}</h3>
+                    <h3 className='text-3xl text-foreground-primary'>{currentCallUser?.name}</h3>
 
                     {
                         status == CallStatus.ringing &&
@@ -316,22 +316,25 @@ const CallDialog = ({ open, setCurrentCallUser, currentCallUser, selectedTask, i
                         status == CallStatus.line_busy &&
                         <p className='text-red-500'>User Busy On Another Call</p>
                     }
-
-
                 </div>
-
 
                 {/* when call coming  */}
                 {
                     (status == CallStatus.call_coming) &&
                     <div className='mt-4 flex items-center gap-20 justify-center'>
-
-                        <Button className={'bg-green-500 rounded-full hover:bg-green-600'} size='icon' onClick={() => handleAnswer('picked_up')}>
+                        <Button 
+                            className='bg-tbutton-bg text-tbutton-text rounded-full hover:bg-tbutton-hover hover:text-tbutton-text transition-all' 
+                            size='icon' 
+                            onClick={() => handleAnswer('picked_up')}
+                        >
                             <Phone />
                         </Button>
 
-
-                        <Button className={'bg-red-500 rounded-full hover:bg-red-600'} size='icon' onClick={() => handleAnswer('rejected')}>
+                        <Button 
+                            className='bg-red-500 text-white rounded-full hover:bg-red-600 transition-all' 
+                            size='icon' 
+                            onClick={() => handleAnswer('rejected')}
+                        >
                             <Phone />
                         </Button>
                     </div>
@@ -341,7 +344,11 @@ const CallDialog = ({ open, setCurrentCallUser, currentCallUser, selectedTask, i
                 {
                     (status == CallStatus.ringing || status == CallStatus.processing) &&
                     <div className='mt-4 flex items-center gap-20 justify-center'>
-                        <Button className={'bg-red-500 rounded-full hover:bg-red-600'} size='icon' onClick={handleEnd}>
+                        <Button 
+                            className='bg-red-500 text-white rounded-full hover:bg-red-600 transition-all' 
+                            size='icon' 
+                            onClick={handleEnd}
+                        >
                             <Phone />
                         </Button>
                     </div>
@@ -350,16 +357,31 @@ const CallDialog = ({ open, setCurrentCallUser, currentCallUser, selectedTask, i
                 {/* when when call  timeout or rejected */}
                 {
                     (status == CallStatus.no_response || status == CallStatus.rejected || status == CallStatus.ended || status == CallStatus.missed_call) &&
-                    <div className='mt-8 flex items-center  justify-between gap-5'>
-                        <Button className="bg-gray-500 hover:bg-gray-600 flex-1" onClick={() => setCurrentCallUser(null)}>Go Back</Button>
-                        <Button className="bg-blue-500 hover:bg-blue-600 flex-1" onClick={handleCallAgain}>Call Again!</Button>
+                    <div className='mt-8 flex items-center justify-between gap-5'>
+                        <Button 
+                            className="bg-secondary text-foreground-primary hover:bg-secondary-hover flex-1 transition-all" 
+                            onClick={() => setCurrentCallUser(null)}
+                        >
+                            Go Back
+                        </Button>
+                        <Button 
+                            className="bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text flex-1 transition-all" 
+                            onClick={handleCallAgain}
+                        >
+                            Call Again!
+                        </Button>
                     </div>
                 }
 
                 {
                     status == CallStatus.line_busy &&
-                    <div className='mt-8 flex items-center  justify-between gap-5'>
-                        <Button className="bg-gray-500 hover:bg-gray-600 flex-1" onClick={() => setCurrentCallUser(null)}>Go Back</Button>
+                    <div className='mt-8 flex items-center justify-between gap-5'>
+                        <Button 
+                            className="bg-secondary text-foreground-primary hover:bg-secondary-hover flex-1 transition-all" 
+                            onClick={() => setCurrentCallUser(null)}
+                        >
+                            Go Back
+                        </Button>
                     </div>
                 }
             </div>

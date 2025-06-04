@@ -8,19 +8,21 @@ import { Card, CardContent } from './ui/card'
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { addTaskCommentsRequest, getTaskCommentsRequest } from '@/lib/http/task'
+import Loader from './Loader'
 
-const TaskComments = ({ open, onClose, task }) => {
+const TaskComments = ({ open, onClose, project_id }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState('');
   const [comments, setComments] = useState([]);
   const { user } = useUser();
+  const [loading, setLoading] = useState(false)
 
   const handleComment = useCallback(async () => {
     setIsLoading(true)
     try {
       const formdata = {
         content,
-        task_id: task.task_id
+        project_id
       }
 
       const res = await addTaskCommentsRequest(formdata);
@@ -32,28 +34,31 @@ const TaskComments = ({ open, onClose, task }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [content, task]);
+  }, [content, project_id]);
 
 
   const getComments = useCallback(async () => {
+    setLoading(true)
     try {
-      const res = await getTaskCommentsRequest(task.task_id);
+      const res = await getTaskCommentsRequest(project_id);
       setComments(res?.data?.comments);
     } catch (error) {
       toast.error(error?.response?.data?.message || error?.message);
+    } finally {
+      setLoading(false)
     }
   }, []);
 
   useEffect(() => {
     getComments();
-  }, [task]);
+  }, [project_id]);
 
 
   return (
     <BigDialog open={open} onClose={onClose}>
-      <div className='h-[30rem] overflow-y-auto space-y-6'>
+      <div className='h-[30rem] overflow-y-auto space-y-6 relative'>
         {
-          comments?.map((comment) => (
+          !loading && comments?.map((comment) => (
             <Card className='cursor-pointer border-none shadow-gray-50' key={comment?.comment_id}>
               <CardContent className='px-4 py-3'>
                 <div className='flex items-center justify-between'>
@@ -70,11 +75,16 @@ const TaskComments = ({ open, onClose, task }) => {
             </Card>
           ))
         }
+        {
+          loading && <div className='w-full h-full flex items-center justify-center absolute top-0 left-0 right-0 bottom-0'>
+            <Loader />
+          </div>
+        }
       </div>
       <div className='flex items-center gap-2 py-5'>
         <AvatarCompoment name={user?.name} className='!w-[2.5rem] !h-[2.5rem]' />
         <div className='border-b border-gray-400 flex-1 relative'>
-          <input className='w-full placeholder:text-gray-400 outline-none border-none bg-transparent px-2 py-2' placeholder='Write Something...' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input className='w-full text-white placeholder:text-gray-400 outline-none border-none bg-transparent px-2 py-2' placeholder='Write Something...' value={content} onChange={(e) => setContent(e.target.value)} />
         </div>
 
         <Button className={' text-white bg-blue-500 hover:bg-blue-600 transition-all disabled:opacity-40'} disabled={isLoading || !content} isLoading={isLoading} onClick={handleComment}>

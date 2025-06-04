@@ -1,8 +1,6 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
 import jwt from "jsonwebtoken";
-
-
 import {prisma} from "../prisma/index.js";
 
 export const authMiddleware = catchAsyncError(async (req,res,next) => {
