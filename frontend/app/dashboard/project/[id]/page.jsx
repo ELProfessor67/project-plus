@@ -177,32 +177,32 @@ export default function Page({ params }) {
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-xl p-8 mb-8 border border-gray-200">
-          <h2 className="text-2xl font-bold text-purple-800 mb-6">Cases Overview</h2>
+        <div className="bg-primary shadow-lg rounded-xl p-8 mb-8 border border-primary">
+          <h2 className="text-2xl font-bold text-foreground-primary mb-6">Cases Overview</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-foreground-secondary">
             <div>
-              <p className="text-sm text-gray-500">Title</p>
-              <p className="text-lg font-medium">{project?.name}</p>
+              <p className="text-sm text-foreground-secondary">Title</p>
+              <p className="text-lg font-medium text-foreground-primary">{project?.name}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Case Number</p>
-              <p className="text-lg font-medium">{project?.project_id}</p>
+              <p className="text-sm text-foreground-secondary">Case Number</p>
+              <p className="text-lg font-medium text-foreground-primary">{project?.project_id}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Client</p>
-              <p className="text-lg font-medium">{project?.Clients[0]?.user?.name || "NA"}</p>
+              <p className="text-sm text-foreground-secondary">Client</p>
+              <p className="text-lg font-medium text-foreground-primary">{project?.Clients[0]?.user?.name || "NA"}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Opposing Party</p>
-              <p className="text-lg font-medium">{project?.opposing}</p>
+              <p className="text-sm text-foreground-secondary">Opposing Party</p>
+              <p className="text-lg font-medium text-foreground-primary">{project?.opposing || "NA"}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Filing Date</p>
-              <p className="text-lg font-medium">{moment(project?.created_at).format("DD-MM-YYYY")}</p>
+              <p className="text-sm text-foreground-secondary">Filing Date</p>
+              <p className="text-lg font-medium text-foreground-primary">{moment(project?.created_at).format("DD-MM-YYYY")}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Case Status</p>
+              <p className="text-sm text-foreground-secondary">Case Status</p>
               <p
                 className={`text-lg font-medium ${true === "Open" ? "text-green-600" : "text-red-600"
                   }`}
@@ -213,8 +213,8 @@ export default function Page({ params }) {
           </div>
 
           <div className="mt-6">
-            <p className="text-sm text-gray-500 mb-1">Description</p>
-            <p className="text-base text-gray-700">{project?.description || "NA"}</p>
+            <p className="text-sm text-foreground-secondary mb-1">Description</p>
+            <p className="text-base text-foreground-primary">{project?.description || "NA"}</p>
           </div>
         </div>
 

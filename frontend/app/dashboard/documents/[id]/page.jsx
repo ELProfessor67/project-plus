@@ -123,51 +123,51 @@ const page = ({ params }) => {
                     user?.Role == "PROVIDER" &&
                     <div className="mb-8 flex items-center justify-between">
                         <h1 className="text-3xl font-semibold text-foreground-primary">Projects Documents</h1>
-                        <Button className='bg-tbutton-bg text-white hover:bg-tbutton-hover hover:text-tbutton-text' onClick={() => setOpen(true)}>
+                        <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all' onClick={() => setOpen(true)}>
                             Request Document
                         </Button>
                     </div>
                 }
 
                 <div className="flex-1 overflow-auto">
-                    <Table className="border-collapse border rounded-md">
-                        <TableHeader className="border-b bg-secondary">
+                    <Table className="border-collapse border border-primary rounded-md">
+                        <TableHeader className="border-b border-primary">
                             <TableRow>
-                                <TableHead className="!w-[80px] border-r last:border-r-0 text-foreground-primary">#</TableHead>
-                                <TableHead className="w-[300px] border-r last:border-r-0 text-foreground-primary">Name</TableHead>
-                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Description</TableHead>
-                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Date</TableHead>
-                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Status</TableHead>
-                                <TableHead className="border-r last:border-r-0 text-foreground-primary">Action</TableHead>
+                                <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary">#</TableHead>
+                                <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary">Name</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Description</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Date</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Status</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Action</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="divide-y">
+                        <TableBody className="divide-y divide-primary">
                             {
                                 documents.map((document, index) => (
                                     <TableRow key={document.document_id}>
-                                        <TableCell className='border-r last:border-r-0 cursor-pointer text-foreground-primary'>
+                                        <TableCell className='border-r border-primary last:border-r-0 cursor-pointer text-foreground-primary'>
                                             {index + 1}
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {document.name}
                                         </TableCell>
 
-                                        <TableCell className="border-r last:border-r-0 !p-1 text-center text-foreground-primary">
+                                        <TableCell className="border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary">
                                             {document.description}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {moment(document.created_at).format("DD MMM YYYY")}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center text-foreground-primary`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary'>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
                                                     <Select onValueChange={(status) => handleUpdateStatus(status,document.document_id)} value={document.status} className='w-full'>
-                                                        <SelectTrigger className="w-full bg-secondary text-foreground-primary">
+                                                        <SelectTrigger className="w-full bg-primary text-foreground-primary">
                                                             <SelectValue placeholder="Select a status" />
                                                         </SelectTrigger>
-                                                        <SelectContent className="bg-secondary">
+                                                        <SelectContent className="bg-primary">
                                                             <SelectGroup>
                                                                 <SelectLabel className="text-foreground-primary">Status</SelectLabel>
                                                                 <SelectItem value="PENDING" className="text-foreground-primary hover:bg-tbutton-bg hover:text-tbutton-text">PENDING</SelectItem>
@@ -185,14 +185,14 @@ const page = ({ params }) => {
                                                 )
                                             }
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-foreground-primary text-center relative cursor-pointer group`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-foreground-primary text-center relative cursor-pointer group'>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
                                                     <>
                                                         {
                                                             document.filename &&
-                                                            <a target='__black' href={document.file_url} className='text-accent hover:text-accent-hover underline'>{document.filename}</a>
+                                                            <a target='__black' href={document.file_url} className='text-tbutton-bg hover:text-tbutton-hover underline'>{document.filename}</a>
                                                         }
 
                                                         {
@@ -208,12 +208,12 @@ const page = ({ params }) => {
                                                     <div className='flex items-center gap-3'>
                                                         {
                                                             document.filename &&
-                                                            <a target='__black' href={document.file_url} className='text-accent hover:text-accent-hover underline'>{document.filename}</a>
+                                                            <a target='__black' href={document.file_url} className='text-tbutton-bg hover:text-tbutton-hover underline'>{document.filename}</a>
                                                         }
                                                         <Input
                                                             type="file"
                                                             onChange={(e) => hadleUpload(e, document.document_id)}
-                                                            className="bg-secondary text-foreground-primary"
+                                                            className="bg-primary text-foreground-primary"
                                                         />
                                                     </div>
                                                 )
@@ -242,7 +242,7 @@ const page = ({ params }) => {
                             value={formdata.name}
                             onChange={handleFormChange}
                             required
-                            className="bg-secondary text-foreground-primary"
+                            className="bg-primary text-foreground-primary"
                         />
                     </div>
 
@@ -256,10 +256,10 @@ const page = ({ params }) => {
                             value={formdata.description}
                             onChange={handleFormChange}
                             required
-                            className="bg-secondary text-foreground-primary"
+                            className="bg-primary text-foreground-primary"
                         />
                     </div>
-                    <Button className="bg-tbutton-bg text-white hover:bg-tbutton-hover hover:text-tbutton-text w-full disabled:opacity-40" isLoading={submitLoading} disabled={submitLoading}>
+                    <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all w-full disabled:opacity-40' isLoading={submitLoading} disabled={submitLoading}>
                         {submitLoading ? "Loading..." : "Request"}
                     </Button>
                 </form>

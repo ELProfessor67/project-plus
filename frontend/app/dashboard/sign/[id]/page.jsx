@@ -116,8 +116,7 @@ const page = ({ params }) => {
 
     if (loading) {
         return <>
-            <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
-
+            <div className="h-screen bg-secondary m-2 rounded-md flex items-center justify-center">
                 <Loader />
             </div>
         </>
@@ -126,54 +125,48 @@ const page = ({ params }) => {
 
     return (
         <>
-            <main className="flex-1 overflow-auto p-8 bg-white m-2 rounded-md">
+            <main className="flex-1 overflow-auto p-8 bg-secondary m-2 rounded-md">
                 {
                     user?.Role == "PROVIDER" &&
-                    <div className="mb-8  flex items-center justify-between">
-                        <h1 className="text-3xl font-semibold text-gray-800">Signature Document</h1>
-                        <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => setOpen(true)}>
+                    <div className="mb-8 flex items-center justify-between">
+                        <h1 className="text-3xl font-semibold text-foreground-primary">Signature Document</h1>
+                        <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all' onClick={() => setOpen(true)}>
                             Request Signature
                         </Button>
                     </div>
                 }
 
                 <div className="flex-1 overflow-auto">
-                    <Table className="border-collapse border rounded-md">
-                        <TableHeader className="border-b">
+                    <Table className="border-collapse border border-primary rounded-md">
+                        <TableHeader className="border-b border-primary">
                             <TableRow>
-                                <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                                <TableHead className="w-[300px] border-r last:border-r-0">Name</TableHead>
-                                <TableHead className="border-r last:border-r-0">Description</TableHead>
-                                <TableHead className="border-r last:border-r-0">Date</TableHead>
-                                <TableHead className="border-r last:border-r-0">Status</TableHead>
-                                <TableHead className="border-r last:border-r-0">Action</TableHead>
-
+                                <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary">#</TableHead>
+                                <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary">Name</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Description</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Date</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Status</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Action</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="divide-y">
+                        <TableBody className="divide-y divide-primary">
                             {
                                 documents.map((document, index) => (
                                     <TableRow>
-                                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
+                                        <TableCell className='border-r border-primary last:border-r-0 cursor-pointer text-foreground-primary'>
                                             {index + 1}
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {document.name}
                                         </TableCell>
 
-                                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
+                                        <TableCell className="border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary">
                                             {document.description}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {moment(document.created_at).format("DD MMM YYYY")}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center`}>
-
-
-
-
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary'>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
@@ -199,17 +192,16 @@ const page = ({ params }) => {
                                                 )
                                             }
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-black text-center relative cursor-pointer group`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-foreground-primary text-center relative cursor-pointer group'>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
                                                     <>
                                                         {
-
                                                             document.sign_file_url &&
                                                             <>
-                                                                <a target='__black' href={document.sign_file_url} className='text-blue-500 underline mr-3'>OPEN</a>
-                                                                <Link href={`/dashboard/signature/${document.signed_id}?file=${document.sign_file_url ? document.sign_file_url : document.file_url}&type=${document.mimeType}`} className='text-blue-500 underline'>Signature</Link>
+                                                                <a target='__black' href={document.sign_file_url} className='text-tbutton-bg hover:text-tbutton-hover underline mr-3'>OPEN</a>
+                                                                <Link href={`/dashboard/signature/${document.signed_id}?file=${document.sign_file_url ? document.sign_file_url : document.file_url}&type=${document.mimeType}`} className='text-tbutton-bg hover:text-tbutton-hover underline'>Signature</Link>
                                                             </>
                                                         }
 
@@ -226,9 +218,9 @@ const page = ({ params }) => {
                                                     <div className='flex items-center gap-3'>
                                                         {
                                                             document.sign_file_url &&
-                                                            <a target='__black' href={document.sign_file_url} className='text-blue-500 underline'>OPEN</a>
+                                                            <a target='__black' href={document.sign_file_url} className='text-tbutton-bg hover:text-tbutton-hover underline'>OPEN</a>
                                                         }
-                                                        <Link href={`/dashboard/signature/${document.signed_id}?file=${document.sign_file_url ? document.sign_file_url : document.file_url}&type=${document.mimeType}`} className='text-blue-500 underline'>Signature</Link>
+                                                        <Link href={`/dashboard/signature/${document.signed_id}?file=${document.sign_file_url ? document.sign_file_url : document.file_url}&type=${document.mimeType}`} className='text-tbutton-bg hover:text-tbutton-hover underline'>Signature</Link>
                                                     </div>
                                                 )
                                             }
@@ -236,19 +228,15 @@ const page = ({ params }) => {
                                     </TableRow>
                                 ))
                             }
-
                         </TableBody>
                     </Table>
                 </div>
             </main>
 
-
             <BigDialog open={open} onClose={() => setOpen(false)} width={'38'}>
-
                 <form className='space-y-8 mt-20 px-5' onSubmit={handleDocumentRequest}>
-
                     <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" className="text-foreground-primary">Name</Label>
                         <Input
                             id="name"
                             type="text"
@@ -257,11 +245,12 @@ const page = ({ params }) => {
                             value={formdata.name}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description" className="text-foreground-primary">Description</Label>
                         <Textarea
                             id="description"
                             type="text"
@@ -270,11 +259,12 @@ const page = ({ params }) => {
                             value={formdata.description}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="file">Document</Label>
+                        <Label htmlFor="file" className="text-foreground-primary">Document</Label>
                         <Input
                             id="file"
                             type="file"
@@ -282,9 +272,10 @@ const page = ({ params }) => {
                             onChange={handleFileChange}
                             required
                             accept="application/pdf, image/png, image/jpeg, image/jpg"
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
-                    <Button className={`bg-blue-500 hover:bg-blue-600 w-full disabled:opacity-40`} isLoading={submitLoading} disabled={submitLoading}>
+                    <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all w-full disabled:opacity-40' isLoading={submitLoading} disabled={submitLoading}>
                         {submitLoading ? "Loading..." : "Request"}
                     </Button>
                 </form>

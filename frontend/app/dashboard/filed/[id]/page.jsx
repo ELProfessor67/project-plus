@@ -102,8 +102,7 @@ const page = ({ params }) => {
 
     if (loading) {
         return <>
-            <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
-
+            <div className="h-screen bg-secondary m-2 rounded-md flex items-center justify-center">
                 <Loader />
             </div>
         </>
@@ -112,54 +111,52 @@ const page = ({ params }) => {
 
     return (
         <>
-            <main className="flex-1 overflow-auto p-8 bg-white m-2 rounded-md">
+            <main className="flex-1 overflow-auto p-8 bg-secondary m-2 rounded-md">
                 {
                     user?.Role == "PROVIDER" &&
-                    <div className="mb-8  flex items-center justify-between">
-                        <h1 className="text-3xl font-semibold text-gray-800">Project Filed</h1>
-                        <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => setOpen(true)}>
+                    <div className="mb-8 flex items-center justify-between">
+                        <h1 className="text-3xl font-semibold text-foreground-primary">Project Filed</h1>
+                        <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all' onClick={() => setOpen(true)}>
                             Create Filed
                         </Button>
                     </div>
                 }
 
                 <div className="flex-1 overflow-auto">
-                    <Table className="border-collapse border rounded-md">
-                        <TableHeader className="border-b">
+                    <Table className="border-collapse border border-primary rounded-md">
+                        <TableHeader className="border-b border-primary">
                             <TableRow>
-                                <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                                <TableHead className="w-[300px] border-r last:border-r-0">Name</TableHead>
-                                <TableHead className="border-r last:border-r-0">Description</TableHead>
-                                <TableHead className="border-r last:border-r-0">Date</TableHead>
-                                <TableHead className="border-r last:border-r-0">Progress</TableHead>
-                                <TableHead className="border-r last:border-r-0">Status</TableHead>
-                                <TableHead className="border-r last:border-r-0">Document</TableHead>
+                                <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary">#</TableHead>
+                                <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary">Name</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Description</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Date</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Progress</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Status</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Document</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="divide-y">
+                        <TableBody className="divide-y divide-primary">
                             {
                                 filed.map((file, index) => (
                                     <TableRow>
-                                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
+                                        <TableCell className='border-r border-primary last:border-r-0 cursor-pointer text-foreground-primary'>
                                             {index + 1}
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {file.name}
                                         </TableCell>
 
-                                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
+                                        <TableCell className="border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary">
                                             {file.description}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {moment(file.date).format("DD MMM YYYY")}
                                         </TableCell>
-                                        <TableCell className="border-r last:border-r-0 !p-1 text-center">
+                                        <TableCell className="border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary">
                                             {file.progress}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center`}>
-
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary'>
                                             {
                                                 user?.Role == "PROVIDER" &&
                                                 (
@@ -188,38 +185,28 @@ const page = ({ params }) => {
                                             }
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-center`}>
-
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-center text-foreground-primary'>
                                             {
-
                                                 file.filename &&
-                                                <a target='__black' href={file.file_url} className='text-blue-500 underline'>{file.filename}</a>
+                                                <a target='__black' href={file.file_url} className='text-tbutton-bg hover:text-tbutton-hover underline'>{file.filename}</a>
                                             }
-
                                             {
                                                 !file.filename &&
                                                 <span>NA</span>
                                             }
-
                                         </TableCell>
-
-
                                     </TableRow>
                                 ))
                             }
-
                         </TableBody>
                     </Table>
                 </div>
             </main>
 
-
             <BigDialog open={open} onClose={() => setOpen(false)} width={'38'}>
-
                 <form className='space-y-8 mt-5 px-5' onSubmit={handleCreateFiled}>
-
                     <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" className="text-foreground-primary">Name</Label>
                         <Input
                             id="name"
                             type="text"
@@ -228,11 +215,12 @@ const page = ({ params }) => {
                             value={formdata.name}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="date">Date</Label>
+                        <Label htmlFor="date" className="text-foreground-primary">Date</Label>
                         <Input
                             id="date"
                             type="date"
@@ -241,11 +229,12 @@ const page = ({ params }) => {
                             value={formdata.date}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description" className="text-foreground-primary">Description</Label>
                         <Textarea
                             id="description"
                             type="text"
@@ -254,13 +243,12 @@ const page = ({ params }) => {
                             value={formdata.description}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
-
-
                     <div className="space-y-2">
-                        <Label htmlFor="progress">Progress</Label>
+                        <Label htmlFor="progress" className="text-foreground-primary">Progress</Label>
                         <Textarea
                             id="progress"
                             type="text"
@@ -269,21 +257,22 @@ const page = ({ params }) => {
                             value={formdata.progress}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="document">Document (optional)</Label>
+                        <Label htmlFor="document" className="text-foreground-primary">Document (optional)</Label>
                         <Input
                             id="document"
                             type="file"
                             name="document"
                             placeholder="document"
                             onChange={handleDocumentChange}
-                            
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
-                    <Button className={`bg-blue-500 hover:bg-blue-600 w-full disabled:opacity-40`} isLoading={submitLoading} disabled={submitLoading}>
+                    <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all w-full disabled:opacity-40' isLoading={submitLoading} disabled={submitLoading}>
                         {submitLoading ? "Loading..." : "Request"}
                     </Button>
                 </form>

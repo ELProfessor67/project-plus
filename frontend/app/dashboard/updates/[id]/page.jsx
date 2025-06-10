@@ -85,7 +85,7 @@ const page = ({ params }) => {
 
     if (loading) {
         return <>
-            <div className=" h-screen bg-white m-2 rounded-md flex items-center justify-center">
+            <div className="h-screen bg-secondary m-2 rounded-md flex items-center justify-center">
                 <Loader />
             </div>
         </>
@@ -94,55 +94,53 @@ const page = ({ params }) => {
 
     return (
         <>
-            <main className="flex-1 overflow-auto p-8 bg-white m-2 rounded-md">
+            <main className="flex-1 overflow-auto p-8 bg-secondary m-2 rounded-md">
                 {
                     user?.Role == "PROVIDER" &&
-                    <div className="mb-8  flex items-center justify-between">
-                        <h1 className="text-3xl font-semibold text-gray-800">Project Updates</h1>
-                        <Button className='bg-blue-500 border border-white text-white hover:bg-gray-200 ' onClick={() => setOpen(true)}>
+                    <div className="mb-8 flex items-center justify-between">
+                        <h1 className="text-3xl font-semibold text-foreground-primary">Project Updates</h1>
+                        <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all' onClick={() => setOpen(true)}>
                             Give Update
                         </Button>
                     </div>
                 }
 
                 <div className="flex-1 overflow-auto">
-                    <Table className="border-collapse border rounded-md">
-                        <TableHeader className="border-b">
+                    <Table className="border-collapse border border-primary rounded-md">
+                        <TableHeader className="border-b border-primary">
                             <TableRow>
-                                <TableHead className="!w-[80px] border-r last:border-r-0">#</TableHead>
-
-                                <TableHead className="w-[300px] border-r last:border-r-0">Message</TableHead>
-                                <TableHead className="border-r last:border-r-0">Date</TableHead>
-                                <TableHead className="border-r last:border-r-0">File</TableHead>
+                                <TableHead className="!w-[80px] border-r border-primary last:border-r-0 text-foreground-primary">#</TableHead>
+                                <TableHead className="w-[300px] border-r border-primary last:border-r-0 text-foreground-primary">Message</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">Date</TableHead>
+                                <TableHead className="border-r border-primary last:border-r-0 text-foreground-primary">File</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="divide-y">
+                        <TableBody className="divide-y divide-primary">
                             {
                                 updates.map((document, index) => (
                                     <TableRow>
-                                        <TableCell className=' border-r last:border-r-0 cursor-pointer'>
+                                        <TableCell className='border-r border-primary last:border-r-0 cursor-pointer text-foreground-primary'>
                                             {index + 1}
                                         </TableCell>
 
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {document.message}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-0 text-center text-black cursor-pointer`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-0 text-center text-foreground-primary cursor-pointer'>
                                             {moment(document.created_at).format("DD MMM YYYY")}
                                         </TableCell>
-                                        <TableCell className={`border-r last:border-r-0 !p-1 text-black text-center relative cursor-pointer group`}>
+                                        <TableCell className='border-r border-primary last:border-r-0 !p-1 text-foreground-primary text-center relative cursor-pointer group'>
                                             {
                                                 document.filename ?
                                                 (
-                                                    <Link href={document.file_url} className='text-blue-500 underline'>{document.filename}</Link>
+                                                    <Link href={document.file_url} className='text-tbutton-bg hover:text-tbutton-hover underline'>{document.filename}</Link>
                                                 ):
-                                                "No FIle Attach"
+                                                "No File Attach"
                                             }
                                         </TableCell>
                                     </TableRow>
                                 ))
                             }
-
                         </TableBody>
                     </Table>
                 </div>
@@ -154,7 +152,7 @@ const page = ({ params }) => {
                 <form className='space-y-8 mt-20 px-5' onSubmit={handleUpdatesRequest}>
 
                     <div className="space-y-2">
-                        <Label htmlFor="message">Message</Label>
+                        <Label htmlFor="message" className="text-foreground-primary">Message</Label>
                         <Textarea
                             id="message"
                             type="text"
@@ -163,19 +161,21 @@ const page = ({ params }) => {
                             value={formdata.message}
                             onChange={handleFormChange}
                             required
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
                     
 
                     <div className="space-y-2">
-                        <Label htmlFor="message">File (Optional)</Label>
+                        <Label htmlFor="message" className="text-foreground-primary">File (Optional)</Label>
                         <Input
                             type="file"
                             onChange={handleFileChange}
+                            className="bg-primary border-primary text-foreground-primary"
                         />
                     </div>
 
-                    <Button className={`bg-blue-500 hover:bg-blue-600 w-full disabled:opacity-40`} isLoading={submitLoading} disabled={submitLoading}>
+                    <Button className='bg-tbutton-bg text-tbutton-text hover:bg-tbutton-hover hover:text-tbutton-text transition-all w-full disabled:opacity-40' isLoading={submitLoading} disabled={submitLoading}>
                         {submitLoading ? "Loading..." : "Request"}
                     </Button>
                 </form>
