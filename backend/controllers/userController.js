@@ -50,6 +50,15 @@ export const register = catchAsyncError(async (req, res, next) => {
         }
     });
 
+
+    if(!role){
+        await prisma.templateDocument.create({
+            data: {
+                owner_id: newUser.user_id
+            }
+        })
+    }
+
     await sendOTPOnMail(newUser,async (OTP,err) => {
         if (err) {
             return next(new ErrorHandler(err, 401));

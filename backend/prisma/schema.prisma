@@ -12,6 +12,7 @@ enum Roles {
   CLIENT
   PROVIDER
   BILLER
+  TEAM
 }
 
 model User {
@@ -33,6 +34,7 @@ model User {
   encryption_vi String?
 
   Role Roles @default(PROVIDER)
+  leader_id Int?
   // Relations
   Projects Project[]
   Collaboration ProjectMember[]
@@ -52,6 +54,9 @@ model User {
   Services ProjectClient[]
   Time TaskTime[]
   UserTeams UserTeam[]
+  lawyerFiles File[] @relation("FileLawyer")
+  clientFiles File[] @relation("FileClient")
+  
 }
 
 model UserTeam {
@@ -79,7 +84,86 @@ model Project {
   Media Media[]
   Time TaskTime[]
   Comments Comment[]
+  // TemplateDocuments TemplateDocument[]
 }
+
+model TDocuments {
+  t_document_id String @id @default(uuid())
+  user_id Int
+  file_url String?
+  created_at      DateTime @default(now())
+  size Int?
+  mimeType String?
+  filename String?
+  description String?
+  key String?
+  status DocumentStatus @default(PENDING)
+}
+ 
+
+model TemplateDocument {
+  template_document_id String  @id @default(uuid())
+
+  owner_id Int
+  // Relation to Project
+  // project_id Int
+  // project    Project @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
+
+  // One TemplateDocument has many folders and files
+  folders Folder[]
+  files   File[]
+}
+
+enum FileTypes {
+  FILE
+  FOLDER
+}
+
+model Folder {
+  folder_id String   @id @default(uuid())
+  name      String
+
+  parent_id String?
+  parent    Folder?  @relation("Subfolders", fields: [parent_id], references: [folder_id])
+  subfolders Folder[] @relation("Subfolders")
+  file_type FileTypes @default(FOLDER)
+
+  template_document_id String
+  templateDocument     TemplateDocument @relation(fields: [template_document_id], references: [template_document_id], onDelete: Cascade)
+
+
+  files File[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  file_id   String   @id @default(uuid())
+  name      String
+  size      Int
+  type      String   
+  path      String
+  file_type FileTypes @default(FILE)
+  // Relation to Folder
+  folder_id String
+  folder    Folder @relation(fields: [folder_id], references: [folder_id], onDelete: Cascade)
+
+  lawyer_id Int?
+  client_id Int?
+
+  lawyer User? @relation("FileLawyer", fields: [lawyer_id],references: [user_id])
+  client User? @relation("FileClient", fields: [client_id],references: [user_id])
+
+  // Relation to TemplateDocument
+  template_document_id String
+  templateDocument     TemplateDocument @relation(fields: [template_document_id], references: [template_document_id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
 
 enum Role {
   ADMIN

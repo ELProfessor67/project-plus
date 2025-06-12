@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import { projectSelector } from '../prisma/selectors/project.selector.js';
 import { sendInviation } from '../services/userService.js';
 import { prisma } from "../prisma/index.js";
+import { uploadToCloud } from '../services/mediaService.js';
 
 export const createProject = catchAsyncError(async (req, res, next) => {
     const { name, description,opposing } = req.body;
@@ -365,6 +366,16 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
         // });
 
         // Optionally delete the invitation (one-time use)
+        await prisma.user.update({
+            where: {
+                user_id: req.user.user_id
+            },
+            data: {
+                Role: "TEAM",
+                leader_id: invitation.user_id
+            }
+        });
+
         await prisma.invitation.delete({
             where: { token },
         });
@@ -431,6 +442,17 @@ export const addMemberThroughInvitation = catchAsyncError(async (req, res, next)
         // Optionally delete the invitation (one-time use)
         await prisma.invitation.delete({
             where: { token },
+        });
+
+
+        await prisma.user.update({
+            where: {
+                user_id: req.user.user_id
+            },
+            data: {
+                Role: "CLIENT",
+                leader_id: invitation.user_id
+            }
         });
 
         res.status(201).json({
@@ -517,3 +539,320 @@ export const sendInvitationViaMail = catchAsyncError(async (req, res, next) => {
         message: "Mail Send Successfully",
     });
 });
+
+
+
+
+
+export const createFolder = catchAsyncError(async (req, res, next) => {
+    const { name, parent_id } = req.body;
+
+    const user = req.user;
+
+    let user_id = user.Role == "TEAM" ? user.leader_id : user.user_id
+
+
+    let template_document = await prisma.templateDocument.findFirst({
+        where: {
+            owner_id: user_id
+        }
+    });
+
+    if(!template_document){
+        template_document = await prisma.templateDocument.create({
+            data: {
+                user_id: user_id,
+            }
+        });
+    }
+
+    const template_document_id = template_document.template_document_id;
+
+  
+    if (!name || !template_document_id) {
+      return next(new ErrorHandler("Folder name and template_document_id are required", 400));
+    }
+  
+    const folder = await prisma.folder.create({
+      data: {
+        name,
+        parent_id,
+        template_document_id
+      }
+    });
+  
+    res.status(201).json({
+      success: true,
+      folder
+    });
+});
+
+
+export const fileUpload =   catchAsyncError(async (req, res, next) => {
+    const { folder_id } = req.body;
+    const file = req.file;
+
+
+    const user = req.user;
+
+    let user_id = user.Role == "TEAM" ? user.leader_id : user.user_id
+
+
+    let template_document = await prisma.templateDocument.findFirst({
+        where: {
+            owner_id: user_id
+        }
+    });
+
+    if(!template_document){
+        template_document = await prisma.templateDocument.create({
+            data: {
+                user_id: user_id,
+            }
+        });
+    }
+
+    const template_document_id = template_document.template_document_id;
+
+    if (!file || !folder_id || !template_document_id) {
+      return next(new ErrorHandler("File, folder_id, and template_document_id are required", 400));
+    }
+
+    // Upload to Cloudinary
+    const cloudRes = await uploadToCloud(file);
+
+    // Save in DB
+    const savedFile = await prisma.file.create({
+      data: {
+        name: file.originalname,
+        size: file.size,
+        type: file.mimetype,
+        path: cloudRes.url,
+        folder_id,
+        template_document_id
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      file: savedFile
+    });
+})
+
+
+export const updateFileUpload =   catchAsyncError(async (req, res, next) => {
+    const { file_id } = req.body;
+    const file = req.file;
+
+
+    if (!file) {
+      return next(new ErrorHandler("File, folder_id, and template_document_id are required", 400));
+    }
+
+    // Upload to Cloudinary
+    const cloudRes = await uploadToCloud(file);
+
+    // Save in DB
+    const savedFile = await prisma.file.update({
+        where: {
+            file_id
+        },
+      data: {
+        size: file.size,
+        type: file.mimetype,
+        path: cloudRes.url
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "FIle Update Successfully"
+    });
+});
+
+
+
+
+
+
+
+export const getFolderTreeByTemplateDocument = catchAsyncError(async (req, res, next) => {
+    const { project_id } = req.params;
+    
+    const user = req.user;
+
+    let user_id = user.Role == "TEAM" ? user.leader_id : user.user_id
+
+    console.log("HELLO WORLD",user_id,user.leader_id)
+
+    let template_document = await prisma.templateDocument.findFirst({
+        where: {
+            owner_id: 1
+        }
+    });
+
+    if(!template_document){
+        template_document = await prisma.templateDocument.create({
+            data: {
+                owner_id: user_id,
+            }
+        });
+    }
+
+    const template_document_id = template_document.template_document_id;
+
+    if (!template_document_id) {
+      return next(new ErrorHandler("template_document_id is required", 400));
+    }
+  
+    // Fetch all folders and files for that template
+    const folders = await prisma.folder.findMany({
+      where: { template_document_id: String(template_document_id) },
+      include: { files: true }
+    });
+  
+    // Convert list to map for easy parent-child lookup
+    const folderMap = new Map();
+    folders.forEach(folder => folderMap.set(folder.folder_id, { ...folder, subfolders: [] }));
+  
+    let rootFolders = [];
+  
+    // Construct tree
+    for (const folder of folders) {
+      if (folder.parent_id) {
+        const parent = folderMap.get(folder.parent_id);
+        if (parent) {
+          parent.subfolders.push(folderMap.get(folder.folder_id));
+        }
+      } else {
+        rootFolders.push(folderMap.get(folder.folder_id));
+      }
+    }
+  
+    res.status(200).json({
+      success: true,
+      folders: rootFolders
+    });
+});
+
+
+
+export const sendToLawyer = catchAsyncError(async (req, res, next) => {
+    const {description} = req.body;
+    const file = req.file;
+    
+    const user = req.user;
+    let user_id = user.Role == "TEAM" ? user.leader_id : user.user_id
+    
+    if (!file) {
+        return next(new ErrorHandler("File, folder_id, and template_document_id are required", 400));
+    }
+
+
+    const cloudRes = await uploadToCloud(file);
+
+    const tdocument = await prisma.tDocuments.create({
+        data: {
+            user_id,
+            description,
+            file_url: cloudRes.url,
+            key: cloudRes.key,
+            filename: file.originalname,
+            mimeType: file.mimetype,
+            size: file.size,
+        }
+    });
+
+    
+    
+    res.status(200).json({
+        success: true,
+        message: `Send To Lawyer Successfully`,
+        tdocument
+    });
+});
+
+
+export const sendToClient = catchAsyncError(async (req, res, next) => {
+    const {description,user_id} = req.body;
+    const file = req.file;
+    
+    
+    if (!file) {
+        return next(new ErrorHandler("File, folder_id, and template_document_id are required", 400));
+    }
+
+
+    const cloudRes = await uploadToCloud(file);
+
+    const tdocument = await prisma.tDocuments.create({
+        data: {
+            user_id: parseInt(user_id),
+            description,
+            file_url: cloudRes.url,
+            key: cloudRes.key,
+            filename: file.originalname,
+            mimeType: file.mimetype,
+            size: file.size,
+        }
+    });
+
+    
+    
+    res.status(200).json({
+        success: true,
+        message: `Send To Lawyer Successfully`,
+        tdocument
+    });
+});
+
+export const updateTDocumentStatus = catchAsyncError(async (req, res, next) => {
+    const {id} = req.params;
+    const {status} = req.body;
+    
+
+
+    await prisma.tDocuments.update({
+        where: {
+            t_document_id: id
+        },
+        data: {
+            status
+        }
+    });
+    
+    res.status(200).json({
+        success: true,
+        message: `Status Update Successfully`,
+    });
+});
+  
+
+
+export const getTemplateDocumentFiles = catchAsyncError(async (req, res, next) => {
+
+    const user = req.user;
+    let user_id = user.Role == "TEAM" ? user.leader_id : user.user_id
+
+
+    const clients = await prisma.user.findMany({
+        where: {
+            leader_id: user_id,
+            Role: "CLIENT"
+        }
+    })
+
+    const documents = await prisma.tDocuments.findMany({
+        where: {
+            user_id
+        }
+    })
+
+    res.status(200).json({
+        success: true,
+        documents,
+        clients
+    });
+});
+
+  

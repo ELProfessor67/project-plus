@@ -20,6 +20,7 @@ export const authMiddleware = catchAsyncError(async (req,res,next) => {
           focus: true,
           account_name: true,
           Role: true,
+          leader_id: true,
           connect_mail_hash: true,
           Projects: {
             select: {
