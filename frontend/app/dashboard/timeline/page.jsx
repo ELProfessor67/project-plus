@@ -1,7 +1,7 @@
 "use client"
 import { getAllTaskProgressRequest } from '@/lib/http/task';
 import { getRecentDatesWithLabels } from '@/utils/getRecentDatesWithLabels';
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Select, SelectGroup, SelectLabel, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import moment from 'moment';
@@ -9,6 +9,7 @@ import Loader from '@/components/Loader';
 import { getHourMinDiff } from '@/utils/calculateTIme';
 import Timer from '@/components/Timer';
 import { useUser } from '@/providers/UserProvider';
+import { Input } from '@/components/ui/input';
 
 const page = () => {
   const [progress, setProgress] = React.useState([]);
@@ -20,7 +21,30 @@ const page = () => {
   const [documents, setDocuments] = useState([]);
   const [times, setTimes] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const { user } = useUser()
+  const [username, setUsername] = useState("");
+  const [progressUsername, setProgressUsername] = useState("");
+  const { user } = useUser();
+
+  const filterTimes = useMemo(() => {
+    if (!username) return times;
+
+    return times.map(project => ({
+      ...project,
+      Time: project.Time.filter(time => time.user?.name.toLowerCase().includes(username.toLowerCase()))
+    })).filter(project => project.Time.length > 0);
+  },[times, username]);
+
+  const filterProgress = useMemo(() => {
+    if (!progressUsername) return progress;
+    return progress.map(project => ({
+      ...project,
+      Tasks: project.Tasks.map(task => ({
+        ...task,
+        Progress: task.Progress.filter(progress => progress.user?.name.toLowerCase().includes(progressUsername.toLowerCase()))
+      })).filter(task => task.Progress.length > 0)
+    })).filter(project => project.Tasks.some(task => task.Progress.length > 0));
+  }, [progress, progressUsername]);
+
 
   const getProgress = React.useCallback(async () => {
     try {
@@ -51,7 +75,7 @@ const page = () => {
   return (
     <div className="h-screen bg-secondary m-2 rounded-md overflow-y-auto p-8">
       <div className="flex justify-between flex-1 mt-5">
-        <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Working Hour</h1>
+        <h1 className="text-4xl text-foreground-primary uppercase font-bold">Timeline</h1>
         <div className="flex gap-2 justify-end">
           <Select onValueChange={(value) => setSelectedDate(value)}>
             <SelectTrigger className="w-[180px] bg-white border-primary text-black">
@@ -126,9 +150,21 @@ const page = () => {
           </Select>
         </div>
       </div>
+      <div className="flex justify-between flex-1 mt-10">
+        <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Working Hour</h1>
+        <div className="flex gap-2 justify-end">
+          <Input
+            type="text"
+            placeholder="Search User by Name"
+            className="bg-white border-primary text-black w-[180px]"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+      </div>
 
       {
-        times.map(project => (
+        filterTimes.map(project => (
           <div className='mt-5'>
             <h1 className='text-2xl text-foreground-primary'>{project.name}</h1>
 
@@ -197,6 +233,14 @@ const page = () => {
       <div className="flex justify-between flex-1 mt-16">
         <h1 className="text-3xl text-foreground-primary uppercase">{selectedDate?.label} Progress</h1>
         <div className="flex gap-2 justify-end">
+          <Input
+            type="text"
+            placeholder="Search User by Name"
+            className="bg-white border-primary text-black w-[180px]"
+            value={progressUsername}
+            onChange={(e) => setProgressUsername(e.target.value)}
+          />
+
           <Select onValueChange={(value) => setSelectedType(value)}>
             <SelectTrigger className="w-[180px] bg-white border-primary text-black">
               <SelectValue placeholder="Select a Type" />
@@ -221,7 +265,7 @@ const page = () => {
       </div>
 
       {
-        progress.map(project => (
+        filterProgress.map(project => (
           <div className='mt-5'>
             <h1 className='text-2xl text-foreground-primary'>{project.name}</h1>
 

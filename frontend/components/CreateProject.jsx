@@ -18,8 +18,10 @@ const CreateProject = ({onClose}) => {
     const [formdata, setFormdata] = useState({
         name: '',
         description: '',
-        opposing: ''
-    });
+        opposing: '',
+        client_name: '',
+        client_address: ''
+     });
     const {loadUser} = useUser();
 
     const editor = useRef(null);
@@ -83,6 +85,32 @@ const CreateProject = ({onClose}) => {
                             name="name"
                             placeholder="Enter your project name"
                             value={formdata.name}
+                            onChange={handleFormChange}
+                            required
+                            className="bg-white border-primary text-black placeholder:text-gray-400"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="name" className="text-foreground-primary">Client Name</Label>
+                        <Input
+                            id="client_name"
+                            type="text"
+                            name="client_name"
+                            placeholder="Enter client name"
+                            value={formdata.client_name}
+                            onChange={handleFormChange}
+                            required
+                            className="bg-white border-primary text-black placeholder:text-gray-400"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="name" className="text-foreground-primary">Client Address</Label>
+                        <Input
+                            id="client_address"
+                            type="text"
+                            name="client_address"
+                            placeholder="Enter your project name"
+                            value={formdata.client_address}
                             onChange={handleFormChange}
                             required
                             className="bg-white border-primary text-black placeholder:text-gray-400"

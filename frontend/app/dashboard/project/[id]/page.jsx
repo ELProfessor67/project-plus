@@ -66,7 +66,6 @@ export default function Page({ params }) {
   const [sendMail, setSendMail] = useState(false);
   const [sendMailClient, setSendMailClient] = useState(false);
   const [selectedTaskOpen, setSelectedTaskOpen] = useState(false);
-
   const getProjectDetails = useCallback(async () => {
     setLoading(true);
     try {
@@ -191,7 +190,7 @@ export default function Page({ params }) {
             </div>
             <div>
               <p className="text-sm text-foreground-secondary">Client</p>
-              <p className="text-lg font-medium text-foreground-primary">{project?.Clients[0]?.user?.name || "NA"}</p>
+              <p className="text-lg font-medium text-foreground-primary">{project?.client_name || "NA"}</p>
             </div>
             <div>
               <p className="text-sm text-foreground-secondary">Opposing Party</p>

@@ -9,7 +9,7 @@ import { prisma } from "../prisma/index.js";
 import { uploadToCloud } from '../services/mediaService.js';
 
 export const createProject = catchAsyncError(async (req, res, next) => {
-    const { name, description,opposing } = req.body;
+    const { name, description,opposing,client_name,client_address } = req.body;
 
     const [err, isValidate] = await validateRequestBody(req.body, AddProjectRequestBodySchema);
     if (!isValidate) {
@@ -23,7 +23,9 @@ export const createProject = catchAsyncError(async (req, res, next) => {
             name,
             description,
             created_by: userId,
-            opposing
+            opposing,
+            client_name,
+            client_address
         },
     });
 

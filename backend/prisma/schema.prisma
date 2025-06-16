@@ -77,6 +77,8 @@ model Project {
   updated_at  DateTime @updatedAt
   opposing String?    
   user User @relation(fields: [created_by], references: [user_id])
+  client_name String?
+  client_address String?
   Members ProjectMember[]
   Clients ProjectClient[]
   Tasks Task[]
