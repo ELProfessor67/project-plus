@@ -1012,3 +1012,77 @@ export const getClientHistory = catchAsyncError(async (req, res, next) => {
         filed
     });
 });
+
+
+export const getAllClientDocuments = catchAsyncError(async (req, res, next) => {
+    let { project_client_id } = req.params;
+
+    // Documents
+    const documentsRaw = await prisma.documents.findMany({
+        where: {
+            projectClient: {
+                user_id: parseInt(project_client_id)
+            }
+        }
+    });
+
+    const documents = documentsRaw.map(doc => ({
+        name: doc.filename,
+        file_url: doc.file_url,
+        size: doc.size,
+        mimeType: doc.mimeType
+    }));
+
+    // Filed
+    const filedRaw = await prisma.filled.findMany({
+        where: {
+            projectClient: {
+                user_id: parseInt(project_client_id)
+            }
+        }
+    });
+    const filed = filedRaw.map(f => ({
+        name: f.filename,
+        file_url: f.file_url,
+        size: f.size,
+        mimeType: f.mimeType
+    }));
+
+    // Signed
+    const signedRaw = await prisma.signed.findMany({
+        where: {
+            projectClient: {
+                user_id: parseInt(project_client_id)
+            }
+        }
+    });
+    const signed = signedRaw.map(s => ({
+        name:  s.filename ,
+        file_url: s.file_url,
+        size: s.size,
+        mimeType: s.mimeType
+    }));
+
+    // tdocument (File)
+    const tdocumentRaw = await prisma.file.findMany({
+        where: {
+            client_id: parseInt(project_client_id)
+        }
+    });
+    const tdocument = tdocumentRaw.map(t => ({
+        name: t.name,
+        file_url: t.path || null,
+        size: t.size || null,
+        mimeType: t.type || null
+    }));
+
+    res.status(200).json({
+        success: true,
+        data: [
+            ...documents,
+            ...filed,
+            ...signed,
+            ...tdocument
+        ]
+    });
+});

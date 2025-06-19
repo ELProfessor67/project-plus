@@ -8,7 +8,9 @@ const page = () => {
     router.push('/sign-in')
   },[])
   return (
-    <div>page</div>
+    <div className="h-screen w-screen bg-primary">
+
+    </div>
   )
 }
 

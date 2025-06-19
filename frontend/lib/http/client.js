@@ -40,6 +40,9 @@ export const updateSignedStatusRequest = async (formdata) => api.post(`/client/s
 
 
 export const getPedingDocsRequest = async () => api.get(`/client/get-peding-documents`);
+
+export const getClientDocumentRequest = async (id) => api.get(`/client/client-document/${id}`);
+
 export const getPedingDocsByIdRequest = async (id) => api.get(`/client/get-peding-documents/${id}`);
 
 export const uploadDocumentRequest = async (formdata) => api.post(`/client/upload/`, formdata, {

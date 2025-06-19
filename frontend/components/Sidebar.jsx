@@ -1,13 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed, FileDiff, CheckCheck, TimerReset, Brain, Folder } from 'lucide-react'
+import { ChevronDown, Home, LayoutDashboard, MoreHorizontal, Plus, Search, Star, Briefcase, X, PanelRight, PanelLeft, PanelsTopLeft, MessageSquareMore, Presentation, Mail, CalendarCheck, Unplug, Mails, MessagesSquare, MessageCircleMore, Projector, Phone, View, Book, DollarSign, MapPinPlus, Megaphone, File, LayoutDashboardIcon, BookDashed, FileDiff, CheckCheck, TimerReset, Brain, Folder, User } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { useCallback, useState, useRef, useEffect } from "react"
+import { useCallback, useState, useRef, useEffect, useMemo } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import BigDialog from "./Dialogs/BigDialog"
@@ -29,9 +29,18 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
     const [openMeeting, setOpenMeeting] = useState(false);
     const [showCallPopup, setShowCallPopup] = useState(false);
     const [callDuration, setCallDuration] = useState(0);
+    const [clientOpen, setClientOpen] = useState(false);
     const timerRef = useRef(null);
     const pathname = usePathname();
     const { user } = useUser();
+
+    const clients = useMemo(() => {
+        if (!user) return [];
+        const clients = user.Projects?.map(project => project.Clients[0]?.user).filter(c => c);
+        return clients;
+    }, [user])
+
+
 
     const connectWhatsapp = useCallback(() => {
         if (typeof window !== 'undefined') {
@@ -173,44 +182,36 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                     Mail
                                 </Button>
                             </Link>
-                            {/* <Collapsible open={openMail} onOpenChange={setOpenMail}>
+                            <Collapsible open={clientOpen} onOpenChange={setClientOpen}>
                                 <CollapsibleTrigger asChild>
                                     <Button variant="ghost" className="w-full justify-between text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
                                         <div className="flex items-center">
                                             <Mails className="mr-2 h-4 w-4" />
-                                            MaiL
+                                            Clients
                                         </div>
-                                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openMail ? "rotate-180" : ""}`} />
+                                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${clientOpen ? "rotate-180" : ""}`} />
                                     </Button>
                                 </CollapsibleTrigger>
 
                                 <CollapsibleContent className="px-4 py-2">
                                     <div className="flex flex-col gap-2">
 
-                                        <Link href={'/dashboard/mail'}>
-                                            <Button variant="ghost" size="sm" className="justify-start w-full text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
-                                                <Mail className="mr-2 h-4 w-4" />
-                                                Mail
-                                            </Button>
-                                        </Link>
-                                        <Link href={'/dashboard/connect-mail'}>
-                                            <Button variant="ghost" size="sm" className="justify-start w-full text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
-                                                <Unplug className="mr-2 h-4 w-4" />
-                                                Connect Mail
-                                            </Button>
-                                        </Link>
+                                        {
+                                            clients.map((client) => (
+                                                <Link href={`/dashboard/clients/${client.user_id}`}>
+                                                    <Button variant="ghost" size="sm" className="justify-start w-full text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
+                                                        <User className="mr-2 h-4 w-4" />
+                                                        {client?.name}
+                                                    </Button>
+                                                </Link>
+                                            ))
+                                        }
 
                                     </div>
                                 </CollapsibleContent>
-                            </Collapsible> */}
+                            </Collapsible>
 
 
-                            {/* <Link href={'/dashboard/phone'}>
-                                <Button variant={pathname == '/dashboard/phone' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/phone' ? 'bg-tbutton-bg text-white hover:bg-tbutton-hover' : 'text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text'}`}>
-                                    <Phone className="mr-2 h-4 w-4" />
-                                    Phone
-                                </Button>
-                            </Link> */}
 
                             <Link href={'/dashboard/timeline'}>
                                 <Button variant={pathname == '/dashboard/timeline' ? 'secondary' : 'ghost'} className={`justify-start w-full ${pathname == '/dashboard/timeline' ? 'bg-tbutton-bg text-white hover:bg-tbutton-hover' : 'text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text'}`}>
@@ -270,6 +271,35 @@ const Sidebar = ({ setSidebarOpen, sidebarOpen, className }) => {
                                     Home
                                 </Button>
                             </Link>
+
+                            <Collapsible open={clientOpen} onOpenChange={setClientOpen}>
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="ghost" className="w-full justify-between text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
+                                        <div className="flex items-center">
+                                            <Mails className="mr-2 h-4 w-4" />
+                                            Clients
+                                        </div>
+                                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${clientOpen ? "rotate-180" : ""}`} />
+                                    </Button>
+                                </CollapsibleTrigger>
+
+                                <CollapsibleContent className="px-4 py-2">
+                                    <div className="flex flex-col gap-2">
+
+                                        {
+                                            clients.map((client) => (
+                                                <Link href={`/dashboard/clients/${client.user_id}`}>
+                                                    <Button variant="ghost" size="sm" className="justify-start w-full text-foreground-primary hover:bg-tbutton-hover hover:text-tbutton-text">
+                                                        <User className="mr-2 h-4 w-4" />
+                                                        {client?.name}
+                                                    </Button>
+                                                </Link>
+                                            ))
+                                        }
+
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
 
                             <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
                                 <CollapsibleTrigger asChild>
